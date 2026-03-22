@@ -2200,15 +2200,6 @@ function renderProperties(id) {
           <div class="storage-stat-lbl">${cam.retention}d total</div>
         </div>
       </div>
-      <div class="storage-bar-wrap">
-        <div class="storage-bar-label">
-          <span>Storage usage</span>
-          <span>${(parseFloat(calcStorage(cam)) * cam.retention).toFixed(0)} GB / ${cam.retention} days</span>
-        </div>
-        <div class="storage-bar-track">
-          <div class="storage-bar-fill" style="width:${Math.min(100, parseFloat(calcStorage(cam)) * cam.retention / 20)}%"></div>
-        </div>
-      </div>
     </div>
     <div class="props-section">
       <div class="props-section-title">Coverage</div>
