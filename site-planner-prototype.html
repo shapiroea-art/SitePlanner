@@ -141,8 +141,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .prop-range-row input[type=range] { flex: 1; accent-color: #7c3aed; }
 .prop-range-val { font-size: 12px; color: #667085; min-width: 38px; text-align: right; }
 .dori-zones { display: flex; gap: 5px; }
-.dori-z { flex: 1; padding: 5px 4px; border-radius: 4px; font-size: 11px; font-weight: 600; text-align: center; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; opacity: 0.45; }
+.dori-z { flex: 1; padding: 8px 4px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; text-align: center; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; opacity: 0.45; display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .dori-z.on { opacity: 1; }
+.dori-z-val { font-size: 11px; font-weight: 700; }
 /* Neutral single-hue toggles — intensity mirrors cone opacity (ID darkest, DET lightest) */
 .dori-id  { background: rgba(52,64,84,0.18); color: #344054; }
 .dori-id.on  { background: rgba(52,64,84,0.22); border-color: #667085; color: #1d2939; }
@@ -2211,18 +2212,22 @@ function renderProperties(id) {
     </div>
     <div class="props-section">
       <div class="props-section-title">Coverage</div>
-      <div class="prop-row"><span class="prop-label">Dead Zone</span><div class="prop-ctrl" style="font-size:12px;color:#344054">${calcDeadZone(cam)}</div></div>
-      <div class="prop-row"><span class="prop-label">ID Range</span><div class="prop-ctrl" style="font-size:12px;color:#7c3aed;font-weight:500">${(cam.idR / state.scalePPM).toFixed(1)}m</div></div>
-      <div class="prop-row">
-        <span class="prop-label">Show coverage zones</span>
-        <div class="prop-ctrl">
-          <div class="dori-zones">
-            <div class="dori-z dori-id ${cam.showId?'on':''}" onclick="toggleDori(${id},'id')" title="Identification zone — faces &amp; plates readable (inner, darkest)">ID</div>
-            <div class="dori-z dori-rec ${cam.showRec?'on':''}" onclick="toggleDori(${id},'rec')" title="Recognition zone — person identifiable (middle)">REC</div>
-            <div class="dori-z dori-det ${cam.showDet?'on':''}" onclick="toggleDori(${id},'det')" title="Detection zone — presence detected (outer, faintest)">DET</div>
+      ${(()=>{
+        const spm = state.scalePPM || 1;
+        const unit = cam.unit || 'imperial';
+        const toDisp = m => unit === 'metric' ? (m/spm).toFixed(1)+'m' : (m/spm*3.28084).toFixed(1)+'ft';
+        return `<div class="dori-zones">
+          <div class="dori-z dori-id ${cam.showId?'on':''}" onclick="toggleDori(${id},'id')" title="Identification zone">
+            <span>Identification</span><span class="dori-z-val">${toDisp(cam.idR)}</span>
           </div>
-        </div>
-      </div>
+          <div class="dori-z dori-rec ${cam.showRec?'on':''}" onclick="toggleDori(${id},'rec')" title="Recognition zone">
+            <span>Recognition</span><span class="dori-z-val">${toDisp(cam.recR)}</span>
+          </div>
+          <div class="dori-z dori-det ${cam.showDet?'on':''}" onclick="toggleDori(${id},'det')" title="Detection zone">
+            <span>Detection</span><span class="dori-z-val">${toDisp(cam.detR)}</span>
+          </div>
+        </div>`;
+      })()}
     </div>
   `;
 }
