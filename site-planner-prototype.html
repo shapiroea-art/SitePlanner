@@ -135,6 +135,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .prop-ctrl { flex: 1; }
 .prop-input { width: 100%; padding: 5px 10px; border: 1px solid #d0d5dd; border-radius: 5px; font-size: 13px; color: #344054; outline: none; }
 .prop-input:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.1); }
+.prop-input-wrap { position: relative; display: flex; align-items: center; flex: 1; }
+.prop-input-wrap input { padding-right: 28px; width: 100%; }
+.prop-input-unit { position: absolute; right: 8px; font-size: 11px; color: #98a2b3; pointer-events: none; }
 .prop-input:disabled, .prop-select:disabled { background: #f9fafb; border-color: #eaecf0; color: #344054; cursor: default; -webkit-text-fill-color: #344054; }
 .prop-select { width: 100%; padding: 5px 8px; border: 1px solid #d0d5dd; border-radius: 5px; font-size: 13px; color: #344054; outline: none; background: #fff; cursor: pointer; }
 .prop-range-row { display: flex; align-items: center; gap: 8px; }
@@ -285,23 +288,55 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .canvas-area.map-active { background-color: transparent; background-image: none; }
 .canvas-area.map-active #konva-container canvas { background: transparent !important; }
 
-/* ── Satellite Sub-toolbar ── */
-.sat-subtoolbar { flex-shrink: 0; background: #fff; border-bottom: 1px solid #eaecf0; display: none; align-items: center; padding: 0 14px; gap: 8px; flex-wrap: wrap; min-height: 38px; }
-.sat-subtoolbar.show { display: flex; }
-.map-mode-group { display: flex; border: 1px solid #d0d5dd; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
-.map-mode-btn { padding: 4px 11px; font-size: 11px; font-weight: 600; color: #667085; cursor: pointer; background: #fff; border-right: 1px solid #d0d5dd; user-select: none; transition: all 0.15s; white-space: nowrap; }
-.map-mode-btn:last-child { border-right: none; }
-.map-mode-btn:hover { background: #f9fafb; color: #344054; }
-.map-mode-btn.active { background: #7c3aed; color: #fff; border-color: #7c3aed; }
-.map-mode-btn.active + .map-mode-btn { border-left-color: #7c3aed; }
-.sat-search { display: flex; align-items: center; gap: 6px; padding: 4px 9px; border: 1px solid #d0d5dd; border-radius: 6px; background: #fff; flex: 1; min-width: 160px; max-width: 320px; }
-.sat-search svg { width: 13px; height: 13px; color: #98a2b3; flex-shrink: 0; }
-.sat-search input { border: none; outline: none; font-size: 12px; color: #344054; background: transparent; flex: 1; width: 0; }
-.sat-search input::placeholder { color: #98a2b3; }
-.sat-search-btn { padding: 3px 9px; font-size: 11px; font-weight: 600; border-radius: 5px; border: 1px solid #7c3aed; background: #7c3aed; color: #fff; cursor: pointer; white-space: nowrap; }
-.sat-search-btn:hover { background: #6d28d9; }
-.sat-opacity-group { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #667085; flex-shrink: 0; }
-.sat-opacity-group input[type=range] { width: 80px; accent-color: #7c3aed; }
+/* ── Basemap Toolbar Button ── */
+.bp-wrapper { position: relative; }
+.tool-btn-basemap { display: flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px 0 7px; border-radius: 6px; cursor: pointer; color: #667085; border: 1px solid transparent; background: transparent; transition: all 0.15s; font-size: 11px; font-weight: 600; white-space: nowrap; user-select: none; }
+.tool-btn-basemap:hover { background: #f2f4f7; color: #344054; }
+.tool-btn-basemap.active { background: #ede9fe; border-color: #c4b5fd; color: #7c3aed; }
+.tool-btn-basemap svg { width: 14px; height: 14px; flex-shrink: 0; }
+.tool-btn-basemap .bp-chev { width: 12px; height: 12px; transition: transform 0.2s; }
+.tool-btn-basemap.active .bp-chev { transform: rotate(180deg); }
+
+/* ── Basemap Panel (Popover) ── */
+.basemap-panel { position: absolute; top: 36px; right: 0; width: 296px; background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; box-shadow: 0 8px 24px rgba(16,24,40,0.12); z-index: 200; display: none; flex-direction: column; overflow: hidden; }
+.basemap-panel.show { display: flex; }
+.bp-section { padding: 12px 14px 13px; border-bottom: 1px solid #f2f4f7; }
+.bp-section:last-child { border-bottom: none; }
+.bp-section-label { font-size: 10px; font-weight: 700; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 9px; }
+.bp-seg-group { display: flex; border: 1px solid #d0d5dd; border-radius: 6px; overflow: hidden; }
+.bp-seg { flex: 1; padding: 5px 6px; font-size: 12px; font-weight: 500; color: #667085; cursor: pointer; background: #fff; border: none; border-right: 1px solid #d0d5dd; transition: all 0.15s; white-space: nowrap; line-height: 1.4; }
+.bp-seg:last-child { border-right: none; }
+.bp-seg:hover { background: #f9fafb; color: #344054; }
+.bp-seg.active { background: #7c3aed; color: #fff; }
+.bp-seg.active + .bp-seg { border-left-color: #7c3aed; }
+/* Floor plan tile — empty state */
+.bp-fp-empty { border: 1.5px dashed #d0d5dd; border-radius: 7px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; transition: all 0.15s; text-align: center; }
+.bp-fp-empty:hover { border-color: #7c3aed; background: #faf5ff; }
+.bp-fp-empty svg { width: 22px; height: 22px; color: #c4b5fd; }
+.bp-fp-empty-title { font-size: 12px; font-weight: 600; color: #667085; }
+.bp-fp-empty-sub { font-size: 11px; color: #98a2b3; }
+/* Floor plan tile — loaded state */
+.bp-fp-loaded { display: flex; align-items: center; gap: 9px; padding: 7px 10px; background: #f9fafb; border: 1px solid #eaecf0; border-radius: 7px; }
+.bp-fp-icon { width: 34px; height: 26px; border-radius: 4px; background: #ede9fe; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.bp-fp-icon svg { width: 16px; height: 16px; color: #7c3aed; }
+.bp-fp-name { flex: 1; font-size: 12px; color: #344054; font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bp-fp-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.bp-fp-btn { padding: 3px 8px; font-size: 11px; font-weight: 500; border: 1px solid #d0d5dd; border-radius: 5px; background: #fff; color: #344054; cursor: pointer; white-space: nowrap; transition: all 0.12s; }
+.bp-fp-btn:hover { background: #f9fafb; border-color: #98a2b3; }
+.bp-fp-btn-del { border-color: #fca5a5; color: #d92d20; }
+.bp-fp-btn-del:hover { background: #fff5f5 !important; border-color: #f97066 !important; }
+/* Opacity row */
+.bp-opacity-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.bp-opacity-label { font-size: 11px; color: #667085; flex-shrink: 0; }
+.bp-opacity-row input[type=range] { flex: 1; accent-color: #7c3aed; cursor: pointer; }
+.bp-opacity-val { font-size: 11px; font-weight: 600; color: #344054; min-width: 30px; text-align: right; flex-shrink: 0; }
+/* Address row */
+.bp-addr-row { display: flex; align-items: center; gap: 6px; margin-bottom: 9px; padding: 5px 9px; border: 1px solid #d0d5dd; border-radius: 6px; background: #fff; }
+.bp-addr-row svg { width: 13px; height: 13px; color: #98a2b3; flex-shrink: 0; }
+.bp-addr-row input { border: none; outline: none; font-size: 12px; color: #344054; background: transparent; flex: 1; min-width: 0; }
+.bp-addr-row input::placeholder { color: #98a2b3; }
+.bp-addr-btn { padding: 3px 10px; font-size: 11px; font-weight: 600; border-radius: 5px; border: 1px solid #7c3aed; background: #7c3aed; color: #fff; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all 0.15s; }
+.bp-addr-btn:hover { background: #6d28d9; }
 
 /* ── Wall Sub-toolbar ── */
 .wall-subtoolbar { height: 34px; flex-shrink: 0; background: #fafafa; border-bottom: 1px solid #eaecf0; display: none; align-items: center; padding: 0 14px; gap: 8px; }
@@ -412,26 +447,38 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .mp-search input::placeholder { color: #98a2b3; }
 .mp-filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ff-chips { display: flex; gap: 4px; flex-wrap: wrap; }
-.ff-chip { display: flex; align-items: center; gap: 4px; padding: 4px 10px; border: 1px solid #d0d5dd; border-radius: 20px; font-size: 11px; font-weight: 500; color: #667085; cursor: pointer; transition: all 0.15s; background: #fff; white-space: nowrap; }
+.ff-chip { display: flex; align-items: center; gap: 4px; padding: 4px 10px; border: 1px solid #d0d5dd; border-radius: 20px; font-size: 12px; font-weight: 500; color: #667085; cursor: pointer; transition: all 0.15s; background: #fff; white-space: nowrap; }
 .ff-chip:hover { border-color: #a78bfa; color: #7c3aed; }
 .ff-chip.active { background: #ede9fe; border-color: #a78bfa; color: #7c3aed; }
 .ff-chip svg { width: 13px; height: 13px; }
-.mp-toggles { display: flex; gap: 6px; margin-left: auto; }
-.mp-toggle { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border: 1px solid #d0d5dd; border-radius: 20px; font-size: 11px; font-weight: 500; color: #667085; cursor: pointer; transition: all 0.15s; background: #fff; white-space: nowrap; }
+.mp-toggles { display: flex; gap: 6px; }
+.mp-toggle { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border: 1px solid #d0d5dd; border-radius: 20px; font-size: 12px; font-weight: 500; color: #667085; cursor: pointer; transition: all 0.15s; background: #fff; white-space: nowrap; }
 .mp-toggle:hover { border-color: #d0d5dd; }
 .mp-toggle.active { background: #f0fdf4; border-color: #86efac; color: #16a34a; }
-.mp-slider-row { display: flex; align-items: center; gap: 12px; }
-.mp-slider-label { font-size: 11px; color: #667085; min-width: 64px; }
-.mp-slider-val { font-size: 11px; color: #344054; font-weight: 500; min-width: 48px; }
-.mp-slider-wrap { flex: 1; display: flex; align-items: center; gap: 8px; }
-.mp-slider-wrap input[type=range] { flex: 1; accent-color: #7c3aed; height: 4px; }
+.mp-eol-group { display: flex; border: 1px solid #d0d5dd; border-radius: 20px; overflow: hidden; }
+.mp-eol-btn { padding: 4px 10px; font-size: 12px; font-weight: 500; color: #667085; cursor: pointer; background: #fff; border: none; transition: all 0.15s; white-space: nowrap; }
+.mp-eol-btn.active { background: #ede9fe; color: #7c3aed; }
+.mp-generic-btn { display: flex; align-items: center; gap: 5px; padding: 5px 11px; background: #7c3aed; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.mp-generic-btn:hover { background: #6941c6; }
+.mp-sliders-row { display: flex; align-items: flex-start; gap: 20px; }
+.mp-slider-group { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.mp-slider-group-label { font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; }
+.mp-slider-group-val { font-size: 12px; color: #344054; font-weight: 500; }
+.mp-dual-range { position: relative; height: 16px; display: flex; align-items: center; }
+.mp-dual-range-track { width: 100%; height: 3px; background: #e4e7ec; border-radius: 2px; position: absolute; }
+.mp-dual-range-fill { height: 3px; background: #7c3aed; border-radius: 2px; position: absolute; }
+.mp-dual-range input[type=range] { position: absolute; width: 100%; appearance: none; -webkit-appearance: none; pointer-events: none; background: transparent; height: 3px; margin: 0; }
+.mp-dual-range input[type=range]::-webkit-slider-thumb { pointer-events: all; -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: #7c3aed; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px #7c3aed; }
+.mp-dual-range input[type=range]::-moz-range-thumb { pointer-events: all; width: 13px; height: 13px; border-radius: 50%; background: #7c3aed; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px #7c3aed; }
+.mp-single-range { width: 100%; accent-color: #7c3aed; margin: 0; }
+.eol-badge { background: #d92d20; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.3px; flex-shrink: 0; }
 .mp-body { display: flex; flex: 1; min-height: 0; }
 .mp-brands { width: 180px; flex-shrink: 0; border-right: 1px solid #eaecf0; overflow-y: auto; }
 .brand-row { padding: 8px 16px; font-size: 13px; color: #344054; cursor: pointer; transition: background 0.1s; border-left: 3px solid transparent; }
 .brand-row:hover { background: #f9fafb; }
 .brand-row.active { background: #ede9fe; color: #7c3aed; font-weight: 600; border-left-color: #7c3aed; }
 .mp-models { width: 300px; flex-shrink: 0; border-right: 1px solid #eaecf0; overflow-y: auto; }
-.mp-models-hdr { padding: 8px 16px; font-size: 10px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f2f4f7; position: sticky; top: 0; background: #fff; z-index: 1; }
+.mp-models-hdr { padding: 8px 16px; font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f2f4f7; position: sticky; top: 0; background: #fff; z-index: 1; }
 .model-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #f9fafb; transition: background 0.1s; }
 .model-row:hover { background: #f9fafb; }
 .model-row.active { background: #ede9fe; }
@@ -441,10 +488,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .model-row.active .model-form-icon svg { color: #7c3aed; }
 .model-name { font-size: 12px; font-weight: 500; color: #344054; flex: 1; }
 .model-tags { display: flex; gap: 3px; }
-.tag { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+.tag { font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
 .tag-eol { background: #fee2e2; color: #dc2626; }
 .tag-ndaa { background: #dcfce7; color: #16a34a; }
-.model-price { font-size: 11px; color: #667085; white-space: nowrap; }
+.model-price { font-size: 12px; color: #667085; white-space: nowrap; }
 .mp-info { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 0; }
 .mp-info-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 12px; }
 .mp-info-empty svg { width: 40px; height: 40px; color: #d0d5dd; }
@@ -459,7 +506,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .mp-badge-res  { background: #f0f9ff; color: #0369a1; }
 .mp-spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
 .mp-spec { background: #f9fafb; border-radius: 8px; padding: 10px 12px; }
-.mp-spec-label { font-size: 10px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+.mp-spec-label { font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
 .mp-spec-val { font-size: 14px; font-weight: 600; color: #344054; }
 .mp-price { font-size: 24px; font-weight: 800; color: #7c3aed; margin-bottom: 16px; }
 .mp-fov-preview { width: 100%; height: 80px; background: #1c2333; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; overflow: hidden; }
@@ -566,11 +613,62 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         </div>
       </div>
       <div class="tool-group">
-        <div class="tool-btn" data-tip="Update Floor Plan" onclick="document.getElementById('floorPlanInput').click()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        </div>
-        <div class="tool-btn" id="tool-map" data-tip="Show map" onclick="toggleSatSubtoolbar()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        <div class="bp-wrapper">
+          <div class="tool-btn-basemap" id="btn-basemap" onclick="toggleBasemapPanel()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6l9-3 9 3v12l-9 3-9-3V6z"/><line x1="12" y1="3" x2="12" y2="21"/><path d="M3 6l9 3 9-3"/></svg>
+            <span id="basemapLabel">Basemap</span>
+            <svg class="bp-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <!-- Basemap Popover -->
+          <div class="basemap-panel" id="basemapPanel">
+            <!-- Show section -->
+            <div class="bp-section">
+              <div class="bp-section-label">Show</div>
+              <div class="bp-seg-group">
+                <button class="bp-seg" id="bpmode-floorplan" onclick="setMapMode('floorplan')">Floor Plan</button>
+                <button class="bp-seg" id="bpmode-map"       onclick="setMapMode('map')">Map</button>
+                <button class="bp-seg active" id="bpmode-both"      onclick="setMapMode('both')">Both</button>
+              </div>
+            </div>
+            <!-- Floor Plan section -->
+            <div class="bp-section" id="bpFloorSection">
+              <div class="bp-section-label">Floor Plan</div>
+              <div id="bpFloorEmpty" class="bp-fp-empty" onclick="document.getElementById('floorPlanInput').click()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <div class="bp-fp-empty-title">Upload floor plan</div>
+                <div class="bp-fp-empty-sub">JPG, PNG or PDF</div>
+              </div>
+              <div id="bpFloorLoaded" class="bp-fp-loaded" style="display:none">
+                <div class="bp-fp-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+                <span class="bp-fp-name" id="bpFloorName">floor-plan.png</span>
+                <div class="bp-fp-actions">
+                  <button class="bp-fp-btn" onclick="document.getElementById('floorPlanInput').click()">Change</button>
+                  <button class="bp-fp-btn bp-fp-btn-del" onclick="deleteFloorPlan()">Delete</button>
+                </div>
+              </div>
+              <div id="bpOpacityRow" class="bp-opacity-row" style="display:none">
+                <span class="bp-opacity-label">Opacity</span>
+                <input type="range" min="10" max="100" value="70" oninput="setFloorPlanOpacity(this.value/100)" id="bpOpacitySlider">
+                <span class="bp-opacity-val" id="bpOpacityVal">70%</span>
+              </div>
+            </div>
+            <!-- Map section -->
+            <div class="bp-section" id="bpMapSection">
+              <div class="bp-section-label">Map</div>
+              <div class="bp-addr-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+                <input type="text" id="bpAddressInput" placeholder="Search address or place…" onkeydown="if(event.key==='Enter')geocodeAddress()">
+                <button class="bp-addr-btn" onclick="geocodeAddress()">Go</button>
+              </div>
+              <div class="bp-section-label" style="margin-top:2px">Map Type</div>
+              <div class="bp-seg-group">
+                <button class="bp-seg" id="bptype-standard"  onclick="setMapType('standard')">Standard</button>
+                <button class="bp-seg active" id="bptype-satellite" onclick="setMapType('satellite')">Satellite</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="tool-group">
@@ -580,25 +678,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       </div>
       <div class="tool-spacer"></div>
       <span class="zoom-display" id="zoom-display">100%</span>
-    </div>
-
-    <!-- Satellite Sub-toolbar -->
-    <div class="sat-subtoolbar" id="satSubtoolbar">
-      <div class="map-mode-group">
-        <div class="map-mode-btn active" id="mmode-canvas" onclick="setMapMode('canvas')">Canvas</div>
-        <div class="map-mode-btn" id="mmode-satellite" onclick="setMapMode('satellite')">Satellite</div>
-        <div class="map-mode-btn" id="mmode-both" onclick="setMapMode('both')">Both</div>
-      </div>
-      <div class="sat-search" id="satSearchBox">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="satAddressInput" placeholder="Search address or place…" onkeydown="if(event.key==='Enter')geocodeAddress()">
-        <button class="sat-search-btn" onclick="geocodeAddress()">Go</button>
-      </div>
-      <div class="sat-opacity-group" id="satOpacityGroup" style="display:none">
-        <span>Floor plan:</span>
-        <input type="range" min="10" max="100" value="70" oninput="setFloorPlanOpacity(this.value/100)">
-        <span id="satOpacityVal">70%</span>
-      </div>
     </div>
 
     <!-- Wall Type Sub-toolbar (shown when Wall tool active) -->
@@ -821,25 +900,54 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <button class="mp-close" onclick="closeModelPicker()">✕</button>
   </div>
   <div class="mp-filters">
-    <div class="mp-search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="mpSearchInput" placeholder="Search by model name, SKU, or resolution…" oninput="applyMpFilters()">
-    </div>
-    <div class="mp-filter-row">
-      <div class="ff-chips" id="mpFfChips"></div>
-      <div class="mp-toggles">
-        <div class="mp-toggle" id="mpToggleNdaa" onclick="toggleMpNdaa()" title="Show NDAA-compliant cameras only">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          NDAA Only
+    <!-- Row 1: Search + EOL + NDAA + Generic -->
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <div class="mp-search" style="flex:1;min-width:180px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="mpSearchInput" placeholder="Search by brand, model name, SKU, or resolution…" oninput="applyMpFilters()">
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;flex-shrink:0">
+        <span style="font-size:11px;color:#667085">EOL:</span>
+        <div class="mp-eol-group">
+          <button class="mp-eol-btn" id="mpEolAll" onclick="setMpEol(false)">All cameras</button>
+          <button class="mp-eol-btn active" id="mpEolExclude" onclick="setMpEol(true)">Exclude EOL</button>
         </div>
       </div>
-    </div>
-    <div class="mp-slider-row">
-      <span class="mp-slider-label">Min range</span>
-      <div class="mp-slider-wrap">
-        <input type="range" id="mpRangeSlider" min="0" max="400" value="0" step="20" oninput="applyMpFilters()">
+      <div class="mp-toggle" id="mpToggleNdaa" onclick="toggleMpNdaa()" title="Show NDAA-compliant cameras only" style="flex-shrink:0">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        NDAA Only
       </div>
-      <span class="mp-slider-val" id="mpRangeVal">Any</span>
+      <button class="mp-generic-btn" onclick="selectGenericCamera()" style="flex-shrink:0">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Select Generic Camera
+      </button>
+    </div>
+    <!-- Row 2: Form factor chips -->
+    <div class="mp-filter-row">
+      <div class="ff-chips" id="mpFfChips"></div>
+    </div>
+    <!-- Row 3: Sliders -->
+    <div class="mp-sliders-row">
+      <div class="mp-slider-group" style="flex:1.4">
+        <div class="mp-slider-group-label">Resolution</div>
+        <div class="mp-dual-range" id="mpResTrack">
+          <div class="mp-dual-range-track"></div>
+          <div class="mp-dual-range-fill" id="mpResFill"></div>
+          <input type="range" id="mpResMin" min="0" max="6" value="0" step="1" oninput="applyMpFilters()">
+          <input type="range" id="mpResMax" min="0" max="6" value="6" step="1" oninput="applyMpFilters()">
+        </div>
+        <div class="mp-slider-group-val" id="mpResVal">Any to Any</div>
+      </div>
+      <div class="mp-slider-group" style="flex:1">
+        <div class="mp-slider-group-label">IR Max Range</div>
+        <input type="range" id="mpIrSlider" class="mp-single-range" min="0" max="500" value="500" step="20" oninput="applyMpFilters()">
+        <div class="mp-slider-group-val" id="mpIrVal">0m – 500m</div>
+      </div>
+      <div class="mp-slider-group" style="flex:1">
+        <div class="mp-slider-group-label">HAoV</div>
+        <input type="range" id="mpHaovSlider" class="mp-single-range" min="1" max="360" value="360" step="5" oninput="applyMpFilters()">
+        <div class="mp-slider-group-val" id="mpHaovVal">1° – 360°</div>
+      </div>
     </div>
   </div>
   <div class="mp-body">
@@ -948,9 +1056,9 @@ const CAMERA_DB = [
   { id:'bs-dinion',  brand:'Bosch',     name:'DINION 7100i',     formFactor:'bullet',  resolution:'8MP',   fov:55,  detR:300, recR:150, idR:68,  price:1099, ndaa:false, iconType:'bullet',  color:'#e42313' },
   { id:'bs-autodome',brand:'Bosch',     name:'AutoDome 7000i',   formFactor:'ptz',     resolution:'2MP',   fov:60,  detR:380, recR:190, idR:86,  price:3799, ndaa:false, iconType:'dome',    color:'#e42313' },
   // ── Hikvision ──
-  { id:'hk-2cd2185', brand:'Hikvision', name:'DS-2CD2185G0-I',   formFactor:'dome',    resolution:'8MP',   fov:103, detR:160, recR:80,  idR:36,  price:189,  ndaa:false, iconType:'dome',    color:'#c00d0d' },
-  { id:'hk-2cd2t87', brand:'Hikvision', name:'DS-2CD2T87G2-L',   formFactor:'bullet',  resolution:'8MP',   fov:106, detR:280, recR:140, idR:64,  price:259,  ndaa:false, iconType:'bullet',  color:'#c00d0d' },
-  { id:'hk-2de4a220',brand:'Hikvision', name:'DS-2DE4A220IWG-E', formFactor:'ptz',     resolution:'2MP',   fov:58,  detR:350, recR:175, idR:80,  price:449,  ndaa:false, iconType:'dome',    color:'#c00d0d' },
+  { id:'hk-2cd2185', brand:'Hikvision', name:'DS-2CD2185G0-I',   formFactor:'dome',    resolution:'8MP',   fov:103, detR:160, recR:80,  idR:36,  price:189,  ndaa:false, eol:true,  iconType:'dome',    color:'#c00d0d' },
+  { id:'hk-2cd2t87', brand:'Hikvision', name:'DS-2CD2T87G2-L',   formFactor:'bullet',  resolution:'8MP',   fov:106, detR:280, recR:140, idR:64,  price:259,  ndaa:false, eol:false, iconType:'bullet',  color:'#c00d0d' },
+  { id:'hk-2de4a220',brand:'Hikvision', name:'DS-2DE4A220IWG-E', formFactor:'ptz',     resolution:'2MP',   fov:58,  detR:350, recR:175, idR:80,  price:449,  ndaa:false, eol:true,  iconType:'dome',    color:'#c00d0d' },
   { id:'hk-2cd2955', brand:'Hikvision', name:'DS-2CD2955FWD-I',  formFactor:'fisheye', resolution:'5MP',   fov:360, detR:80,  recR:40,  idR:18,  price:179,  ndaa:false, iconType:'fisheye', color:'#c00d0d' },
   { id:'hk-2cd2387', brand:'Hikvision', name:'DS-2CD2387G2-LU',  formFactor:'dome',    resolution:'8MP',   fov:95,  detR:170, recR:85,  idR:38,  price:249,  ndaa:false, iconType:'dome',    color:'#c00d0d' },
   // ── Dahua ──
@@ -1007,7 +1115,9 @@ const state = {
   wallLine: null,
   wallLineNode: null,
   // Satellite map (Phase 8)
-  mapMode: 'canvas',   // 'canvas' | 'satellite' | 'both'
+  mapMode: 'both',          // 'floorplan' | 'map' | 'both'
+  mapType: 'satellite',     // 'standard' | 'satellite'
+  floorPlanFile: null,      // null | { name }
   floorPlanOpacity: 0.7,
 };
 
@@ -1019,13 +1129,28 @@ const WALL_CONFIGS = {
 };
 
 // Modal state
+const RES_STEPS = [0, 2, 4, 5, 8, 12, 32]; // 0 = Any
+function parseResMp(res) {
+  if (!res) return 0;
+  const mx = res.match(/(\d+)[×x](\d+)MP/i);
+  if (mx) return parseInt(mx[1]) * parseInt(mx[2]);
+  const m = res.match(/(\d+)MP/i);
+  if (m) return parseInt(m[1]);
+  if (res === '4K') return 8;
+  if (res === '2K') return 4;
+  return 0;
+}
 const mpState = {
   selectedBrand: 'All',
   selectedModelId: null,
   ffFilter: null,
   ndaaOnly: false,
-  minRange: 0,
-  editCamId: null,   // if set, picker updates this camera instead of placing new one
+  excludeEol: true,
+  resMinStep: 0,
+  resMaxStep: 6,
+  irMax: 500,
+  haovMax: 360,
+  editCamId: null,
 };
 
 // Demo floor plan wall segments (world coords, filled in after stage init)
@@ -1670,6 +1795,11 @@ function loadFloorPlan(e) {
       floorLayer.add(kImg);
       floorLayer.draw();
       document.getElementById('canvasEmpty').classList.add('hidden');
+      // Store file metadata and update panel
+      state.floorPlanFile = { name: file.name };
+      renderBasemapFloorState();
+      // Switch to 'both' mode so the floor plan is visible over the map
+      if (state.mapMode === 'map') setMapMode('both');
     };
     img.src = ev.target.result;
   };
@@ -1934,9 +2064,23 @@ function updateInfo3D(cam, dist, detR, recR, idR) {
 }
 
 // ═══════════════════════════════════════════════
-// SATELLITE MAP (Phase 8)
+// BASEMAP & FLOOR PLAN
 // ═══════════════════════════════════════════════
 let leafletMap = null;
+let activeTileLayer = null;
+
+const TILE_LAYERS = {
+  satellite: {
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: 'Tiles © Esri — Source: Esri, Maxar, GeoEye, Earthstar Geographics',
+    maxZoom: 22,
+  },
+  standard: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19,
+  },
+};
 
 function initLeafletMap() {
   if (leafletMap) return;
@@ -1946,16 +2090,12 @@ function initLeafletMap() {
   leafletMap = L.map('map-container', {
     zoomControl: false,
     attributionControl: true,
-  }).setView([37.7749, -122.4194], 18); // default: San Francisco
+  }).setView([37.7749, -122.4194], 18);
 
-  // ESRI World Imagery (satellite, no API key)
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles © Esri — Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN',
-    maxZoom: 22,
-  }).addTo(leafletMap);
+  const cfg = TILE_LAYERS[state.mapType];
+  activeTileLayer = L.tileLayer(cfg.url, { attribution: cfg.attribution, maxZoom: cfg.maxZoom });
+  activeTileLayer.addTo(leafletMap);
 
-  // Sync Konva scroll/zoom so map tiles don't interact with Konva pan
-  // Disable map pointer interaction — Konva handles mouse events
   leafletMap.dragging.disable();
   leafletMap.scrollWheelZoom.disable();
   leafletMap.doubleClickZoom.disable();
@@ -1966,70 +2106,94 @@ function initLeafletMap() {
   leafletMap.on('zoomend moveend', syncScaleFromMap);
 }
 
+function setMapType(type) {
+  state.mapType = type;
+  // Update type segment buttons
+  ['standard','satellite'].forEach(t => {
+    document.getElementById('bptype-' + t).classList.toggle('active', t === type);
+  });
+  if (!leafletMap) return;
+  if (activeTileLayer) { leafletMap.removeLayer(activeTileLayer); activeTileLayer = null; }
+  const cfg = TILE_LAYERS[type];
+  activeTileLayer = L.tileLayer(cfg.url, { attribution: cfg.attribution, maxZoom: cfg.maxZoom });
+  activeTileLayer.addTo(leafletMap);
+}
+
 function setMapMode(mode) {
   state.mapMode = mode;
   const ca = document.getElementById('canvasArea');
   const mapEl = document.getElementById('map-container');
-  const opacityGroup = document.getElementById('satOpacityGroup');
 
-  // Update mode button states
-  ['canvas','satellite','both'].forEach(m => {
-    document.getElementById('mmode-' + m).classList.toggle('active', m === mode);
+  // Update mode segment buttons
+  ['floorplan','map','both'].forEach(m => {
+    document.getElementById('bpmode-' + m).classList.toggle('active', m === mode);
   });
 
-  if (mode === 'canvas') {
+  // Update toolbar label
+  const labels = { floorplan: 'Floor Plan', map: 'Map', both: 'Both' };
+  document.getElementById('basemapLabel').textContent = labels[mode] || 'Basemap';
+
+  if (mode === 'floorplan') {
     mapEl.style.display = 'none';
     ca.classList.remove('map-active');
-    opacityGroup.style.display = 'none';
+    setFloorLayerOpacity(1);
+    document.getElementById('bpFloorSection').style.display = '';
+    document.getElementById('bpMapSection').style.display = 'none';
+    document.getElementById('bpOpacityRow').style.display = 'none';
     updateStatusBar();
     return;
   }
 
-  // Satellite or Both — init map if needed
+  // map or both — init Leaflet if needed
   initLeafletMap();
   mapEl.style.display = 'block';
   ca.classList.add('map-active');
 
-  if (mode === 'satellite') {
-    opacityGroup.style.display = 'none';
-    // Hide floor plan layer
+  if (mode === 'map') {
     setFloorLayerOpacity(0);
+    document.getElementById('bpFloorSection').style.display = 'none';
+    document.getElementById('bpMapSection').style.display = '';
+    document.getElementById('bpOpacityRow').style.display = 'none';
   } else {
-    // Both — show floor plan over satellite
-    opacityGroup.style.display = 'flex';
+    // both
     setFloorLayerOpacity(state.floorPlanOpacity);
+    document.getElementById('bpFloorSection').style.display = '';
+    document.getElementById('bpMapSection').style.display = '';
+    document.getElementById('bpOpacityRow').style.display = state.floorPlanFile ? 'flex' : 'none';
   }
 
-  // Trigger Leaflet to resize now that its container is visible
   setTimeout(() => leafletMap.invalidateSize(), 50);
   syncScaleFromMap();
 }
 
-function toggleSatSubtoolbar() {
-  const tb = document.getElementById('satSubtoolbar');
-  const btn = document.getElementById('tool-map');
-  const show = !tb.classList.contains('show');
-  tb.classList.toggle('show', show);
+function toggleBasemapPanel() {
+  const panel = document.getElementById('basemapPanel');
+  const btn = document.getElementById('btn-basemap');
+  const show = !panel.classList.contains('show');
+  panel.classList.toggle('show', show);
   btn.classList.toggle('active', show);
 }
 
+// Close panel when clicking outside
+document.addEventListener('click', e => {
+  const wrapper = document.querySelector('.bp-wrapper');
+  if (wrapper && !wrapper.contains(e.target)) {
+    document.getElementById('basemapPanel').classList.remove('show');
+    document.getElementById('btn-basemap').classList.remove('active');
+  }
+});
+
 async function geocodeAddress() {
-  const q = document.getElementById('satAddressInput').value.trim();
+  const q = document.getElementById('bpAddressInput').value.trim();
   if (!q) return;
-
-  // Ensure map is initialised and visible
-  if (state.mapMode === 'canvas') setMapMode('satellite');
-
+  if (state.mapMode === 'floorplan') setMapMode('both');
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`,
       { headers: { 'Accept-Language': 'en' } }
     );
     const data = await res.json();
-    if (data.length === 0) {
-      alert('Address not found. Try a more specific search.');
-      return;
-    }
+    if (data.length === 0) { alert('Address not found. Try a more specific search.'); return; }
     leafletMap.setView([+data[0].lat, +data[0].lon], 18);
   } catch (e) {
     alert('Geocoding failed. Check your connection and try again.');
@@ -2037,10 +2201,9 @@ async function geocodeAddress() {
 }
 
 function syncScaleFromMap() {
-  if (!leafletMap || state.mapMode === 'canvas') return;
+  if (!leafletMap || state.mapMode === 'floorplan') return;
   const zoom = leafletMap.getZoom();
   const lat = leafletMap.getCenter().lat;
-  // Web Mercator: meters per pixel = 156543.03392 × cos(lat) / 2^zoom
   const mPerPx = 156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, zoom);
   state.scalePPM = 1 / mPerPx;
   state.scaleCalibrated = true;
@@ -2049,7 +2212,8 @@ function syncScaleFromMap() {
 
 function setFloorPlanOpacity(val) {
   state.floorPlanOpacity = val;
-  document.getElementById('satOpacityVal').textContent = Math.round(val * 100) + '%';
+  document.getElementById('bpOpacityVal').textContent = Math.round(val * 100) + '%';
+  document.getElementById('bpOpacitySlider').value = Math.round(val * 100);
   setFloorLayerOpacity(val);
 }
 
@@ -2058,6 +2222,27 @@ function setFloorLayerOpacity(val) {
     floorLayer.opacity(val);
     floorLayer.draw();
   }
+}
+
+function deleteFloorPlan() {
+  if (!confirm('Remove the floor plan from this project?')) return;
+  state.floorPlanFile = null;
+  if (typeof floorLayer !== 'undefined') { floorLayer.destroyChildren(); floorLayer.draw(); }
+  document.getElementById('bpFloorEmpty').style.display = '';
+  document.getElementById('bpFloorLoaded').style.display = 'none';
+  document.getElementById('bpOpacityRow').style.display = 'none';
+  document.getElementById('canvasEmpty').classList.remove('hidden');
+  // If mode was floor plan only, switch to map
+  if (state.mapMode === 'floorplan') setMapMode('map');
+}
+
+function renderBasemapFloorState() {
+  const hasFile = !!state.floorPlanFile;
+  document.getElementById('bpFloorEmpty').style.display = hasFile ? 'none' : '';
+  document.getElementById('bpFloorLoaded').style.display = hasFile ? 'flex' : 'none';
+  if (hasFile) document.getElementById('bpFloorName').textContent = state.floorPlanFile.name;
+  const showOpacity = hasFile && state.mapMode === 'both';
+  document.getElementById('bpOpacityRow').style.display = showOpacity ? 'flex' : 'none';
 }
 
 // ═══════════════════════════════════════════════
@@ -2118,50 +2303,48 @@ function renderProperties(id) {
         const ppf = wFt > 0 ? (hPx / wFt).toFixed(1) : '0';
         const disabledStyle = 'pointer-events:none';
         return `
-      <div class="prop-row" style="${isModel ? disabledStyle : ''}">
-        <span class="prop-label">Resolution</span>
-        <div class="prop-ctrl">
-          <select class="prop-select" onchange="updateCamProp(${id},'resolution',this.value)" ${isModel ? 'disabled' : ''}>
-            ${['1080p','4K','8MP','12MP'].map(r=>`<option ${cam.resolution===r?'selected':''}>${r}</option>`).join('')}
-          </select>
-        </div>
-      </div>
       <div class="prop-row">
         <span class="prop-label">Unit</span>
         <div class="prop-ctrl">
-          <select class="prop-select" onchange="updateCamUnit(${id},this.value)">
+          <select class="prop-select" style="width:auto" onchange="updateCamUnit(${id},this.value)">
             <option value="imperial" ${unit==='imperial'?'selected':''}>Imperial (ft)</option>
             <option value="metric" ${unit==='metric'?'selected':''}>Metric (m)</option>
           </select>
         </div>
       </div>
+      <div class="prop-row" style="${isModel ? disabledStyle : ''}">
+        <span class="prop-label">Resolution</span>
+        <div class="prop-ctrl" style="display:flex;align-items:center;gap:8px">
+          <select class="prop-select" style="width:auto" onchange="updateCamProp(${id},'resolution',this.value)" ${isModel ? 'disabled' : ''}>
+            ${['1080p','4K','8MP','12MP'].map(r=>`<option ${cam.resolution===r?'selected':''}>${r}</option>`).join('')}
+          </select>
+          <span class="prop-label" style="width:auto;flex-shrink:0">HAoV</span>
+          <div style="${(isModel || cam.fovAngle>=360) ? disabledStyle : ''}">
+            <div class="prop-input-wrap" style="width:68px">
+              <input type="number" id="cam-haov-${id}" class="prop-input" style="text-align:right" value="${haov}" min="1" max="${cam.fovAngle<360?179:360}" step="1" ${(isModel || cam.fovAngle>=360)?'disabled':''} onchange="updateCamHaov(${id},+this.value)">
+              <span class="prop-input-unit">°</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="prop-row">
         <span class="prop-label">Distance</span>
-        <div class="prop-ctrl"><div class="prop-range-row">
-          <input type="number" id="cam-dist-${id}" class="prop-input" style="text-align:right" value="${distDisp}" min="0.5" max="500" step="0.5" onchange="updateCamDistance(${id},+this.value)">
-          <span class="prop-range-val">${unitLabel}</span>
-        </div></div>
-      </div>
-      <div class="prop-row" style="${(isModel || cam.fovAngle>=360) ? disabledStyle : ''}">
-        <span class="prop-label">HAoV</span>
-        <div class="prop-ctrl"><div class="prop-range-row">
-          <input type="number" id="cam-haov-${id}" class="prop-input" style="text-align:right" value="${haov}" min="1" max="${cam.fovAngle<360?179:360}" step="1" ${(isModel || cam.fovAngle>=360)?'disabled':''} onchange="updateCamHaov(${id},+this.value)">
-          <span class="prop-range-val">°</span>
-        </div></div>
-      </div>
-      <div class="prop-row">
-        <span class="prop-label">Width</span>
-        <div class="prop-ctrl"><div class="prop-range-row">
-          <input type="number" id="cam-width-${id}" class="prop-input" style="text-align:right" value="${wDisp}" min="0.1" max="1000" step="0.1" onchange="updateCamWidth(${id},+this.value)">
-          <span class="prop-range-val">${unitLabel}</span>
-        </div></div>
-      </div>
-      <div class="prop-row">
-        <span class="prop-label">PPF</span>
-        <div class="prop-ctrl"><div class="prop-range-row">
-          <input type="number" id="cam-ppf-${id}" class="prop-input" style="text-align:right" value="${ppf}" min="0.1" max="1000" step="0.1" onchange="updateCamPPF(${id},+this.value)">
-          <span class="prop-range-val">px/ft</span>
-        </div></div>
+        <div class="prop-ctrl" style="display:flex;align-items:center;gap:6px">
+          <div class="prop-input-wrap">
+            <input type="number" id="cam-dist-${id}" class="prop-input" style="text-align:right" value="${distDisp}" min="0.5" max="500" step="0.5" onchange="updateCamDistance(${id},+this.value)">
+            <span class="prop-input-unit">${unitLabel}</span>
+          </div>
+          <span class="prop-label" style="width:auto;flex-shrink:0">W</span>
+          <div class="prop-input-wrap">
+            <input type="number" id="cam-width-${id}" class="prop-input" style="text-align:right" value="${wDisp}" min="0.1" max="1000" step="0.1" onchange="updateCamWidth(${id},+this.value)">
+            <span class="prop-input-unit">${unitLabel}</span>
+          </div>
+          <span class="prop-label" style="width:auto;flex-shrink:0">PPF</span>
+          <div class="prop-input-wrap">
+            <input type="number" id="cam-ppf-${id}" class="prop-input" style="text-align:right" value="${ppf}" min="0.1" max="1000" step="0.1" onchange="updateCamPPF(${id},+this.value)">
+            <span class="prop-input-unit">px/ft</span>
+          </div>
+        </div>
       </div>`;
       })()}
     </div>
@@ -2170,7 +2353,7 @@ function renderProperties(id) {
       <div class="prop-row">
         <span class="prop-label">Retention</span>
         <div class="prop-ctrl">
-          <select class="prop-select" onchange="updateCamProp(${id},'retention',+this.value)">
+          <select class="prop-select" style="width:120px" onchange="updateCamProp(${id},'retention',+this.value)">
             ${[30,60,90,365].map(r=>`<option value="${r}" ${cam.retention===r?'selected':''}>${r} days</option>`).join('')}
           </select>
         </div>
@@ -2178,7 +2361,7 @@ function renderProperties(id) {
       <div class="prop-row">
         <span class="prop-label">License</span>
         <div class="prop-ctrl">
-          <select class="prop-select" onchange="updateCamProp(${id},'license',this.value)">
+          <select class="prop-select" style="width:120px" onchange="updateCamProp(${id},'license',this.value)">
             ${['Standard','Enterprise'].map(l=>`<option ${cam.license===l?'selected':''}>${l}</option>`).join('')}
           </select>
         </div>
@@ -2602,7 +2785,7 @@ function updateStatusBar() {
   document.getElementById('sb-storage').textContent = (totalStorageGB / 1024).toFixed(2) + ' TB';
   document.getElementById('sb-bw').textContent = totalBW + ' Mbps';
   const scaleLabel = !state.scaleCalibrated ? 'Not calibrated'
-    : state.mapMode !== 'canvas' ? `${state.scalePPM.toFixed(1)} px/m (map)`
+    : state.mapMode !== 'floorplan' ? `${state.scalePPM.toFixed(1)} px/m (map)`
     : `${state.scalePPM.toFixed(1)} px/m`;
   document.getElementById('sb-scale').textContent = scaleLabel;
 }
@@ -2610,6 +2793,7 @@ function updateStatusBar() {
 function updateUI() {
   updateProjectTotal();
   updateStatusBar();
+  renderLeftPanel();
   // Show wall legend when any typed user walls exist
   const hasWalls = state.userWalls.length > 0;
   document.getElementById('wallLegend').classList.toggle('show', hasWalls);
@@ -2853,19 +3037,32 @@ function renderLeftPanel() {
   const body = document.getElementById('catalogBody');
   let html = '';
 
-  if (state.recentlyUsed.length) {
+  // Unique camera types currently on the floor plan (preserve first-seen order)
+  const seen = new Set();
+  const onCanvas = [];
+  state.cameras.forEach(cam => {
+    if (!seen.has(cam.typeId)) {
+      seen.add(cam.typeId);
+      onCanvas.push(cam);
+    }
+  });
+
+  if (onCanvas.length) {
     html += '<div class="ff-section-label" style="padding-top:6px">Add recent cameras</div>';
-    state.recentlyUsed.forEach(id => {
-      const m = CAMERA_DB.find(x => x.id === id);
-      if (!m) return;
+    onCanvas.forEach(cam => {
+      const def = CAMERA_DB.find(x => x.id === cam.typeId) || CATALOG.find(x => x.id === cam.typeId);
+      if (!def) return;
+      const label  = def.brand ? `${def.brand} ${def.name}` : def.name;
+      const sub    = def.brand ? `${def.brand} · $${def.price.toLocaleString()}` : def.name;
+      const count  = state.cameras.filter(c => c.typeId === cam.typeId).length;
       html += `<div class="recent-tile" draggable="true"
-        ondragstart="state.dragType='${m.id}';state.activeModel=null;event.dataTransfer.setData('text','${m.id}')"
-        onclick="setTool('camera');state.dragType='${m.id}';state.activeModel=null"
-        title="${m.brand} ${m.name} — drag or click to place">
-        <div class="recent-tile-icon" style="background:${m.color}">${ICONS[m.iconType] || ICONS.dome}</div>
+        ondragstart="state.dragType='${def.id}';state.activeModel=null;event.dataTransfer.setData('text','${def.id}')"
+        onclick="setTool('camera');state.dragType='${def.id}';state.activeModel=null"
+        title="${label} — drag or click to place">
+        <div class="recent-tile-icon" style="background:${cam.color}">${ICONS[def.iconType] || ICONS.dome}</div>
         <div class="recent-tile-info">
-          <div class="recent-tile-name">${m.name}</div>
-          <div class="recent-tile-sub">${m.brand} · $${m.price.toLocaleString()}</div>
+          <div class="recent-tile-name">${escHtml(cam.name.split(' ').slice(0,3).join(' '))}</div>
+          <div class="recent-tile-sub">${escHtml(sub)} · ×${count}</div>
         </div>
         <div class="recent-tile-drag">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1" fill="currentColor"/><circle cx="15" cy="5" r="1" fill="currentColor"/><circle cx="9" cy="12" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="9" cy="19" r="1" fill="currentColor"/><circle cx="15" cy="19" r="1" fill="currentColor"/></svg>
@@ -2884,12 +3081,24 @@ function openModelPicker(editCamId) {
   mpState.selectedModelId = null;
   mpState.ffFilter = null;
   mpState.ndaaOnly = false;
-  mpState.minRange = 0;
+  mpState.excludeEol = true;
+  mpState.resMinStep = 0;
+  mpState.resMaxStep = 6;
+  mpState.irMax = 500;
+  mpState.haovMax = 360;
   mpState.editCamId = editCamId || null;
   document.getElementById('mpSearchInput').value = '';
-  document.getElementById('mpRangeSlider').value = 0;
-  document.getElementById('mpRangeVal').textContent = 'Any';
+  document.getElementById('mpResMin').value = 0;
+  document.getElementById('mpResMax').value = 6;
+  document.getElementById('mpResVal').textContent = 'Any to Any';
+  document.getElementById('mpIrSlider').value = 500;
+  document.getElementById('mpIrVal').textContent = '0m – 500m';
+  document.getElementById('mpHaovSlider').value = 360;
+  document.getElementById('mpHaovVal').textContent = '1° – 360°';
+  document.getElementById('mpEolAll').classList.remove('active');
+  document.getElementById('mpEolExclude').classList.add('active');
   document.getElementById('mpToggleNdaa').classList.remove('active');
+  _updateResFill();
   const placeBtn = document.getElementById('mpPlaceBtn');
   placeBtn.style.opacity = '0.4';
   placeBtn.style.pointerEvents = 'none';
@@ -2925,12 +3134,18 @@ function closeModelPicker() {
 
 function getMpFilteredModels() {
   const q = (document.getElementById('mpSearchInput').value || '').toLowerCase();
-  const minR = parseInt(document.getElementById('mpRangeSlider').value) || 0;
+  const resMinMp = RES_STEPS[mpState.resMinStep] || 0;
+  const resMaxMp = RES_STEPS[mpState.resMaxStep] || 999;
   return CAMERA_DB.filter(m => {
     if (mpState.selectedBrand !== 'All' && m.brand !== mpState.selectedBrand) return false;
     if (mpState.ffFilter && m.formFactor !== mpState.ffFilter) return false;
     if (mpState.ndaaOnly && !m.ndaa) return false;
-    if (minR > 0 && m.detR < minR) return false;
+    if (mpState.excludeEol && m.eol) return false;
+    const mp = parseResMp(m.resolution);
+    if (resMinMp > 0 && mp < resMinMp) return false;
+    if (resMaxMp < 999 && mp > resMaxMp) return false;
+    if (m.detR > mpState.irMax) return false;
+    if (m.fov > mpState.haovMax) return false;
     if (q && !m.name.toLowerCase().includes(q) && !m.brand.toLowerCase().includes(q) && !m.resolution.toLowerCase().includes(q)) return false;
     return true;
   });
@@ -2955,11 +3170,13 @@ function renderMpBrands() {
   const models = getMpFilteredModels();
   const brandCounts = {};
   models.forEach(m => { brandCounts[m.brand] = (brandCounts[m.brand] || 0) + 1; });
-  let html = `<div class="brand-row ${mpState.selectedBrand === 'All' ? 'active' : ''}" onclick="selectMpBrand('All')">All Brands <span style="color:#98a2b3;font-size:11px;margin-left:auto">${models.length}</span></div>`;
+  const allBrandCounts = {};
+  CAMERA_DB.forEach(m => { allBrandCounts[m.brand] = (allBrandCounts[m.brand] || 0) + 1; });
+  let html = `<div class="brand-row ${mpState.selectedBrand === 'All' ? 'active' : ''}" onclick="selectMpBrand('All')">All Brands <span style="color:#98a2b3;font-size:12px;margin-left:auto">${models.length}</span></div>`;
   ALL_BRANDS.slice(1).forEach(b => {
     const cnt = brandCounts[b] || 0;
-    if (cnt === 0 && mpState.selectedBrand !== b) return;
-    html += `<div class="brand-row ${mpState.selectedBrand === b ? 'active' : ''}" style="display:flex;justify-content:space-between;align-items:center" onclick="selectMpBrand('${b}')"><span>${b}</span><span style="color:#98a2b3;font-size:11px">${cnt}</span></div>`;
+    const muted = cnt === 0;
+    html += `<div class="brand-row ${mpState.selectedBrand === b ? 'active' : ''}" style="display:flex;justify-content:space-between;align-items:center;${muted?'opacity:0.4':''}" onclick="selectMpBrand('${b}')"><span>${b}</span><span style="color:#98a2b3;font-size:12px">${cnt}</span></div>`;
   });
   document.getElementById('mpBrands').innerHTML = html;
 }
@@ -2980,6 +3197,7 @@ function renderMpModels() {
       <span class="model-name">${m.name}</span>
       <div class="model-tags">
         ${m.ndaa ? '<span class="tag tag-ndaa">NDAA</span>' : ''}
+        ${m.eol  ? '<span class="eol-badge">EOL</span>' : ''}
       </div>
       <span class="model-price">$${m.price.toLocaleString()}</span>
     </div>`;
@@ -3084,12 +3302,59 @@ function toggleMpNdaa() {
   renderMpModels();
 }
 
+function _updateResFill() {
+  const minS = +document.getElementById('mpResMin').value;
+  const maxS = +document.getElementById('mpResMax').value;
+  const track = document.getElementById('mpResTrack');
+  const fill  = document.getElementById('mpResFill');
+  if (!track || !fill) return;
+  const w = track.offsetWidth || 200;
+  const minPct = minS / 6 * 100;
+  const maxPct = maxS / 6 * 100;
+  fill.style.left  = minPct + '%';
+  fill.style.width = (maxPct - minPct) + '%';
+}
 function applyMpFilters() {
-  const val = parseInt(document.getElementById('mpRangeSlider').value) || 0;
-  mpState.minRange = val;
-  document.getElementById('mpRangeVal').textContent = val > 0 ? `${val} ft` : 'Any';
+  let minS = +document.getElementById('mpResMin').value;
+  let maxS = +document.getElementById('mpResMax').value;
+  if (minS > maxS) { const t = minS; minS = maxS; maxS = t; }
+  mpState.resMinStep = minS;
+  mpState.resMaxStep = maxS;
+  const minLabel = minS === 0 ? 'Any' : (RES_STEPS[minS] + 'MP');
+  const maxLabel = maxS === 6 ? 'Any' : (RES_STEPS[maxS] + 'MP');
+  document.getElementById('mpResVal').textContent = minLabel + ' to ' + maxLabel;
+  _updateResFill();
+
+  const irVal = +document.getElementById('mpIrSlider').value;
+  mpState.irMax = irVal;
+  document.getElementById('mpIrVal').textContent = irVal >= 500 ? '0m – 500m' : '0m – ' + irVal + 'm';
+
+  const haovVal = +document.getElementById('mpHaovSlider').value;
+  mpState.haovMax = haovVal;
+  document.getElementById('mpHaovVal').textContent = haovVal >= 360 ? '1° – 360°' : '1° – ' + haovVal + '°';
+
   renderMpBrands();
   renderMpModels();
+}
+function setMpEol(exclude) {
+  mpState.excludeEol = exclude;
+  document.getElementById('mpEolAll').classList.toggle('active', !exclude);
+  document.getElementById('mpEolExclude').classList.toggle('active', exclude);
+  renderMpBrands();
+  renderMpModels();
+}
+function selectGenericCamera() {
+  const editId = mpState.editCamId;
+  closeModelPicker();
+  if (editId) {
+    clearCamModel(editId);
+  } else {
+    const center = {
+      x: (stage.width()  / 2 - stage.x()) / stage.scaleX(),
+      y: (stage.height() / 2 - stage.y()) / stage.scaleY(),
+    };
+    addCamera(CATALOG[0].id, center.x, center.y);
+  }
 }
 
 function placeFromPicker() {
@@ -3547,6 +3812,11 @@ window.addEventListener('DOMContentLoaded', () => {
   initStage();
   updateUI();
   checkHashPlan();
+  // Initialize map in 'both' mode by default (map shows behind canvas)
+  initLeafletMap();
+  document.getElementById('canvasArea').classList.add('map-active');
+  document.getElementById('map-container').style.display = 'block';
+  setTimeout(() => leafletMap && leafletMap.invalidateSize(), 100);
 });
 </script>
 </body>
