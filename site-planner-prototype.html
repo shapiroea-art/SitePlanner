@@ -644,7 +644,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <div class="bp-wrapper">
           <div class="tool-btn-basemap" id="btn-basemap" onclick="toggleBasemapPanel()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6l9-3 9 3v12l-9 3-9-3V6z"/><line x1="12" y1="3" x2="12" y2="21"/><path d="M3 6l9 3 9-3"/></svg>
-            <span id="basemapLabel">Basemap</span>
+            <span id="basemapLabel">Show: Floor plan and Map</span>
             <svg class="bp-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
           <!-- Basemap Popover -->
@@ -655,31 +655,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
               <div class="bp-seg-group">
                 <button class="bp-seg" id="bpmode-floorplan" onclick="setMapMode('floorplan')">Floor Plan</button>
                 <button class="bp-seg" id="bpmode-map"       onclick="setMapMode('map')">Map</button>
-                <button class="bp-seg active" id="bpmode-both"      onclick="setMapMode('both')">Both</button>
+                <button class="bp-seg active" id="bpmode-both" onclick="setMapMode('both')">Floor plan and Map</button>
               </div>
             </div>
             <!-- Floor Plan section -->
             <div class="bp-section" id="bpFloorSection">
               <div class="bp-section-label">Floor Plan</div>
+              <!-- No floor plan loaded -->
               <div id="bpFloorEmpty" class="bp-fp-empty" onclick="document.getElementById('floorPlanInput').click()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 <div class="bp-fp-empty-title">Upload floor plan</div>
                 <div class="bp-fp-empty-sub">JPG, PNG or PDF</div>
               </div>
+              <!-- Floor plan loaded: name row -->
               <div id="bpFloorLoaded" class="bp-fp-loaded" style="display:none">
                 <div class="bp-fp-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 </div>
                 <span class="bp-fp-name" id="bpFloorName">floor-plan.png</span>
-                <div class="bp-fp-actions">
-                  <button class="bp-fp-btn" onclick="document.getElementById('floorPlanInput').click()">Change</button>
-                  <button class="bp-fp-btn bp-fp-btn-del" onclick="deleteFloorPlan()">Delete</button>
-                </div>
+                <button class="bp-fp-btn bp-fp-btn-del" title="Delete floor plan" onclick="deleteFloorPlan()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                </button>
               </div>
+              <!-- Resize & Rotate (loaded only) -->
               <button class="bp-fp-edit-btn" id="bpFloorEditBtn" style="display:none" onclick="toggleFloorPlanEdit()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
                 Resize &amp; Rotate
               </button>
+              <!-- Change floor plan (loaded only) -->
+              <button class="bp-fp-edit-btn" id="bpChangeFloorBtn" style="display:none" onclick="document.getElementById('floorPlanInput').click()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Change floor plan
+              </button>
+              <!-- Opacity (only in Floor plan and Map mode) -->
               <div id="bpOpacityRow" class="bp-opacity-row" style="display:none">
                 <span class="bp-opacity-label">Opacity</span>
                 <input type="range" min="10" max="100" value="70" oninput="setFloorPlanOpacity(this.value/100)" id="bpOpacitySlider">
@@ -692,9 +700,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
               <div class="bp-addr-row">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
                 <input type="text" id="bpAddressInput" placeholder="Search address or place…" onkeydown="if(event.key==='Enter')geocodeAddress()">
-                <button class="bp-addr-btn" onclick="geocodeAddress()">Go</button>
+                <button class="bp-addr-btn" onclick="geocodeAddress()">Edit</button>
               </div>
-              <div class="bp-section-label" style="margin-top:2px">Map Type</div>
               <div class="bp-seg-group">
                 <button class="bp-seg" id="bptype-standard"  onclick="setMapType('standard')">Standard</button>
                 <button class="bp-seg active" id="bptype-satellite" onclick="setMapType('satellite')">Satellite</button>
@@ -2147,8 +2154,8 @@ function setMapMode(mode) {
   });
 
   // Update toolbar label
-  const labels = { floorplan: 'Floor Plan', map: 'Map', both: 'Both' };
-  document.getElementById('basemapLabel').textContent = labels[mode] || 'Basemap';
+  const labels = { floorplan: 'Show: Floor plan', map: 'Show: Map', both: 'Show: Floor plan and Map' };
+  document.getElementById('basemapLabel').textContent = labels[mode];
 
   if (mode === 'floorplan') {
     mapEl.style.display = 'none';
@@ -2312,6 +2319,7 @@ function renderBasemapFloorState() {
   document.getElementById('bpFloorLoaded').style.display = hasFile ? 'flex' : 'none';
   document.getElementById('bpFloorEditBtn').style.display = hasFile ? '' : 'none';
   document.getElementById('bpFloorEditBtn').classList.toggle('active', state.floorPlanEditMode);
+  document.getElementById('bpChangeFloorBtn').style.display = hasFile ? '' : 'none';
   if (hasFile) document.getElementById('bpFloorName').textContent = state.floorPlanFile.name;
   const showOpacity = hasFile && state.mapMode === 'both';
   document.getElementById('bpOpacityRow').style.display = showOpacity ? 'flex' : 'none';
