@@ -45,6 +45,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .btn-icon:hover { background: #f9fafb; color: #344054; }
 .btn-icon svg { width: 16px; height: 16px; }
 
+/* ── Export Dropdown ── */
+.export-wrap { position: relative; }
+.export-dropdown { position: absolute; top: calc(100% + 5px); right: 0; width: 160px; background: #fff; border: 1px solid #e4e7ec; border-radius: 8px; box-shadow: 0 8px 20px rgba(16,24,40,0.1); z-index: 300; display: none; flex-direction: column; overflow: hidden; }
+.export-dropdown.show { display: flex; }
+.export-item { display: flex; align-items: center; gap: 9px; padding: 9px 13px; font-size: 13px; color: #344054; cursor: pointer; transition: background 0.12s; }
+.export-item:hover { background: #f9fafb; }
+.export-item svg { width: 15px; height: 15px; color: #667085; flex-shrink: 0; }
+.export-item-label { flex: 1; }
+.export-item-sub { font-size: 11px; color: #98a2b3; }
+
 /* ── Toolbar ── */
 .toolbar { height: 40px; flex-shrink: 0; background: #fff; border-bottom: 1px solid #eaecf0; display: flex; align-items: center; padding: 0 12px; gap: 2px; }
 .tool-group { display: flex; align-items: center; gap: 2px; padding-right: 10px; margin-right: 6px; border-right: 1px solid #eaecf0; }
@@ -210,8 +220,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-grand { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 2px solid #eaecf0; background: #fafafa; margin-top: auto; }
 .bom-grand-label { font-size: 12px; font-weight: 600; color: #344054; }
 .bom-grand-val { font-size: 18px; font-weight: 800; color: #7c3aed; }
-.bom-export { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 9px 16px; font-size: 11px; color: #7c3aed; cursor: pointer; border-top: 1px solid #f2f4f7; background: #fff; }
-.bom-export:hover { background: #faf5ff; }
 .bom-empty-pane { display: flex; flex-direction: column; align-items: center; padding: 48px 20px; text-align: center; flex: 1; justify-content: center; }
 .bom-empty-pane svg { width: 32px; height: 32px; color: #d0d5dd; margin-bottom: 12px; }
 .bom-empty-pane p { font-size: 12px; color: #98a2b3; line-height: 1.7; }
@@ -569,10 +577,27 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
           Share
         </button>
 
-        <button class="btn" onclick="exportPDF()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Export PDF
-        </button>
+        <div class="export-wrap">
+          <button class="btn" id="btn-export" onclick="toggleExportDropdown()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="export-dropdown" id="exportDropdown">
+            <div class="export-item" onclick="exportPDF();closeExportDropdown()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="export-item-label">PDF</span>
+            </div>
+            <div class="export-item" onclick="exportCSV();closeExportDropdown()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              <span class="export-item-label">CSV</span>
+            </div>
+            <div class="export-item" onclick="exportSnapshot();closeExportDropdown()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span class="export-item-label">Snapshot</span>
+            </div>
+          </div>
+        </div>
         <button class="btn btn-primary" onclick="saveDesign()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Save
@@ -2675,12 +2700,7 @@ function renderBOMPane() {
       <span class="bom-grand-label">Grand Total</span>
       <span class="bom-grand-val">$${grandTotal.toLocaleString()}</span>
     </div>
-    <div class="bom-export" onclick="exportCSV()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
-      Export CSV
-    </div>`;
+`;
 }
 
 function exportCSV() {
@@ -3386,10 +3406,36 @@ function shareLink() {
   document.getElementById('shareUrlInput').value = url;
   openShareModal();
 }
+function toggleExportDropdown() {
+  const dd = document.getElementById('exportDropdown');
+  const btn = document.getElementById('btn-export');
+  const show = !dd.classList.contains('show');
+  dd.classList.toggle('show', show);
+  btn.classList.toggle('active', show);
+}
+
+function closeExportDropdown() {
+  document.getElementById('exportDropdown').classList.remove('show');
+  document.getElementById('btn-export').classList.remove('active');
+}
+
+document.addEventListener('click', e => {
+  const wrap = document.querySelector('.export-wrap');
+  if (wrap && !wrap.contains(e.target)) closeExportDropdown();
+});
+
+function exportSnapshot() {
+  const dataUrl = stage.toDataURL({ pixelRatio: 2 });
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = 'site-plan-snapshot.png';
+  a.click();
+}
+
 async function exportPDF() {
   if (typeof jspdf === 'undefined') { alert('PDF library still loading — please try again in a moment.'); return; }
 
-  const btn = document.querySelector('button[onclick="exportPDF()"]');
+  const btn = document.getElementById('btn-export');
   const origHTML = btn.innerHTML;
   btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Generating…';
   btn.disabled = true;
