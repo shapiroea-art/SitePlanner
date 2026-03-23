@@ -48,6 +48,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .topbar-breadcrumb a:hover { color: #344054; text-decoration: underline; }
 .topbar-breadcrumb .sep { color: #d0d5dd; }
 .topbar-breadcrumb .current { color: #344054; font-weight: 500; }
+.topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #d0d5dd; background: #fff; color: #344054; transition: all 0.15s; white-space: nowrap; font-family: inherit; }
+.btn:hover { background: #f9fafb; }
+.btn-primary { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+.btn-primary:hover { background: #6d28d9; }
 
 /* ── Body (sidebar + main) ── */
 .body { flex: 1; display: flex; min-height: 0; }
@@ -244,6 +249,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <!-- Top Bar -->
     <div class="topbar">
       <div class="topbar-breadcrumb" id="topbarBreadcrumb"></div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" id="newLocationBtn">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>
+          Create location
+        </button>
+      </div>
     </div>
 
     <!-- Body: sidebar + main -->
@@ -751,6 +762,15 @@ const locNameInput = document.getElementById('locationNameInput');
 const locAddressInput = document.getElementById('locationAddressInput');
 const confirmLocBtn = document.getElementById('confirmLocationBtn');
 const cancelLocBtn = document.getElementById('cancelLocationBtn');
+
+document.getElementById('newLocationBtn').addEventListener('click', function() {
+  locNameInput.value = '';
+  locAddressInput.value = '';
+  confirmLocBtn.disabled = true;
+  document.getElementById('modalSuccessBanner').classList.remove('show');
+  createLocModal.classList.add('show');
+  setTimeout(function() { locNameInput.focus(); }, 50);
+});
 
 function updateLocBtnState() {
   confirmLocBtn.disabled = !locNameInput.value.trim();
