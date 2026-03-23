@@ -812,16 +812,11 @@ confirmPlanBtn.addEventListener('click', function() {
   const protoUrl = `site-planner-prototype.html?siteId=${siteId}&locationId=${locationId}&planId=99&newPlan=1`;
   createPlanModal.classList.remove('show');
 
-  if (uploadedFile && uploadedFile.type.startsWith('image/')) {
-    /* Show floor plan preview modal with the uploaded image */
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById('fpPreviewImg').src = e.target.result;
-      document.getElementById('floorPlanPreviewModal').classList.add('show');
-    };
-    reader.readAsDataURL(uploadedFile);
+  if (uploadedFile) {
+    /* Navigate to View plan page with floor plan wizard */
+    window.location.href = protoUrl + '&floorPlan=1';
   } else {
-    /* No floor plan (or PDF) → go to View plan page with map mode */
+    /* No floor plan → go to View plan page with map mode */
     window.location.href = protoUrl;
   }
 });
