@@ -169,7 +169,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 /* ── Floor Plan Wizard Modal ── */
 .fpw-overlay { position: fixed; inset: 0; background: rgba(16,24,40,0.55); z-index: 1100; display: none; align-items: flex-start; justify-content: center; padding-top: 40px; }
 .fpw-overlay.show { display: flex; }
-.fpw-modal { background: #fff; border-radius: 14px; box-shadow: 0 24px 64px rgba(16,24,40,0.22); width: 640px; max-width: 92vw; max-height: calc(100vh - 80px); display: flex; flex-direction: column; overflow: hidden; }
+.fpw-modal { background: #fff; border-radius: 14px; box-shadow: 0 24px 64px rgba(16,24,40,0.22); width: 900px; max-width: 94vw; max-height: calc(100vh - 60px); display: flex; flex-direction: column; overflow: hidden; }
 .fpw-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 24px 24px 0; }
 .fpw-header-left { flex: 1; }
 .fpw-close { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: none; color: #667085; cursor: pointer; border-radius: 6px; flex-shrink: 0; margin: -4px -4px 0 8px; }
@@ -199,7 +199,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .fpw-step-content { display: none; }
 .fpw-step-content.active { display: block; }
 .fpw-step-desc { font-size: 13px; color: #667085; margin-bottom: 16px; line-height: 1.5; }
-.fpw-canvas-area { width: 100%; height: 320px; background: #f2f4f7; border-radius: 10px; border: 1px solid #eaecf0; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.fpw-canvas-area { width: 100%; height: 460px; background: #f2f4f7; border-radius: 10px; border: 1px solid #eaecf0; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
 .fpw-canvas-area img { max-width: 100%; max-height: 100%; object-fit: contain; }
 .fpw-canvas-area .fpw-map-bg { position: absolute; inset: 0; z-index: 0; }
 .fpw-canvas-area .fpw-map-bg .leaflet-control-attribution { display: none; }
@@ -380,7 +380,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <p class="fpw-step-desc">Click two points on the floor plan, then define the distance between them. This will enable you to accurately demonstrate how cameras will behave in reality.</p>
         <div class="fpw-canvas-area" id="fpwScaleArea">
           <img id="fpwScaleImg" src="" alt="Floor plan"/>
-          <div class="fpw-crop-hint"><span>Click two points to set scale (prototype)</span></div>
+          <div class="fpw-crop-hint"><span>Click two points to set scale</span></div>
         </div>
       </div>
       <div class="fpw-step-content" id="fpwStep2">
