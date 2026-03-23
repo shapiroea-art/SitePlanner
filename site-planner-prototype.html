@@ -39,6 +39,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .topbar-breadcrumb .sep { color: #d0d5dd; }
 .topbar-breadcrumb .current { color: #344054; font-weight: 500; }
 .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.success-banner { display: none; align-items: center; gap: 8px; padding: 10px 16px; background: #ecfdf5; border-bottom: 1px solid #a7f3d0; font-size: 13px; font-weight: 500; color: #065f46; flex-shrink: 0; }
+.success-banner.show { display: flex; }
+.success-banner svg { width: 16px; height: 16px; flex-shrink: 0; color: #10b981; }
+.success-banner .banner-close { margin-left: auto; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: none; background: none; color: #065f46; cursor: pointer; border-radius: 4px; }
+.success-banner .banner-close:hover { background: rgba(0,0,0,0.06); }
 .btn { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #d0d5dd; background: #fff; color: #344054; transition: all 0.15s; white-space: nowrap; }
 .btn:hover { background: #f9fafb; }
 .btn-primary { background: #7c3aed; border-color: #7c3aed; color: #fff; }
@@ -615,6 +620,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         </button>
       </div>
     </header>
+
+    <!-- Success Banner -->
+    <div class="success-banner" id="newPlanBanner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      You created a plan
+      <button class="banner-close" id="closeBanner" title="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
 
     <!-- Toolbar -->
     <div class="toolbar">
@@ -3953,11 +3965,17 @@ window.addEventListener('DOMContentLoaded', () => {
   if (bcLoc) { bcLoc.href = `site-planner-location.html?siteId=${siteId}&locationId=${locationId}`; bcLoc.textContent = 'Location: ' + (bcLocNames[locationId] || 'Location'); }
   if (bcPlan) { bcPlan.href = `site-planner-location.html?siteId=${siteId}&locationId=${locationId}&planId=${planId}`; bcPlan.textContent = 'Plan: ' + (bcPlanNames[planId] || 'Plan'); }
 
-  /* If arriving from Create Plan without floor plan → show Map only, hide floor plan */
+  /* If arriving from Create Plan without floor plan → show Map only, hide floor plan, show banner */
   if (params.get('newPlan') === '1') {
     state.floorPlanFile = null;
     setMapMode('map');
     renderPanel();
+    const banner = document.getElementById('newPlanBanner');
+    banner.classList.add('show');
+    document.getElementById('closeBanner').addEventListener('click', function() {
+      banner.classList.remove('show');
+    });
+    setTimeout(() => banner.classList.remove('show'), 6000);
   }
 });
 </script>
