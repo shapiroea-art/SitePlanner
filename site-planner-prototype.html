@@ -108,7 +108,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .canvas-area.cursor-crosshair { cursor: crosshair; }
 .canvas-area.cursor-grab { cursor: grab; }
 .canvas-area.cursor-grabbing { cursor: grabbing; }
-#konva-container { position: absolute; inset: 0; }
 
 .canvas-empty { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 5; pointer-events: none; }
 .canvas-empty.hidden { display: none; }
@@ -137,9 +136,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .props-collapse-tab { position: absolute; top: 8px; left: -20px; width: 20px; height: 32px; background: #fff; border: 1px solid #eaecf0; border-right: none; border-radius: 4px 0 0 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; }
 .props-collapse-tab:hover { background: #f9fafb; }
 .props-collapse-tab svg { width: 12px; height: 12px; color: #667085; transition: transform 0.2s; flex-shrink: 0; }
-.props-hdr { padding: 14px 20px 12px; border-bottom: 1px solid #eaecf0; flex-shrink: 0; }
-.props-title { font-size: 14px; font-weight: 600; color: #344054; }
-.props-sub { font-size: 12px; color: #98a2b3; margin-top: 2px; }
+.props-hdr { padding: 14px 20px 12px; border-bottom: 1px solid #eaecf0; flex-shrink: 0; display: flex; gap: 12px; align-items: center; }
+.props-hdr-icon { width: 36px; height: 36px; border-radius: 8px; display: none; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; }
+.props-hdr-icon svg { width: 20px; height: 20px; }
+.props-hdr-icon.show { display: flex; }
+.props-hdr-text { flex: 1; min-width: 0; }
+.props-title-row { display: flex; align-items: baseline; gap: 8px; }
+.props-title { font-size: 14px; font-weight: 600; color: #344054; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+.props-price { font-size: 14px; font-weight: 700; color: #101828; white-space: nowrap; flex-shrink: 0; display: none; }
+.props-price.show { display: block; }
+.props-sub { font-size: 12px; color: #98a2b3; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .props-body { flex: 1; overflow-y: auto; }
 .props-empty { display: flex; flex-direction: column; align-items: center; padding: 48px 20px; text-align: center; }
 .props-empty svg { width: 32px; height: 32px; color: #d0d5dd; margin-bottom: 12px; }
@@ -231,6 +237,71 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-empty-pane svg { width: 32px; height: 32px; color: #d0d5dd; margin-bottom: 12px; }
 .bom-empty-pane p { font-size: 12px; color: #98a2b3; line-height: 1.7; }
 
+/* ── BOM Hierarchical Tree ── */
+.bom-group { margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #eaecf0; }
+.bom-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.bom-group-hdr { display: flex; align-items: center; gap: 6px; padding: 8px 16px; cursor: pointer; user-select: none; transition: background 0.12s; }
+.bom-group-hdr:hover { background: #f9fafb; }
+.bom-chev { width: 18px; height: 18px; flex-shrink: 0; transition: transform 0.2s; color: #98a2b3; }
+.bom-group.collapsed .bom-chev { transform: rotate(-90deg); }
+.bom-group.collapsed .bom-group-children { display: none; }
+.bom-group-hdr-core { border-left: 4px solid var(--core-color, #667085); background: #f9fafb; }
+.bom-group-hdr-unassigned { border-left: 4px dashed #d0d5dd; background: #f9fafb; }
+.bom-group-name { font-size: 16px; font-weight: 600; color: #344054; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bom-group-type { font-size: 16px; font-weight: 400; color: #98a2b3; white-space: nowrap; margin-left: 4px; }
+.bom-group-name-wrap { flex: 1; display: flex; align-items: baseline; min-width: 0; overflow: hidden; }
+.bom-group-count-badge { font-size: 11px; font-weight: 600; color: #667085; background: #eaecf0; border-radius: 10px; padding: 1px 8px; white-space: nowrap; flex-shrink: 0; }
+.bom-group-price-wrap { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; flex-shrink: 0; min-width: 140px; justify-content: flex-end; }
+.bom-group-price { font-size: 16px; font-weight: 700; color: #344054; white-space: nowrap; }
+.bom-group-price-sep { font-size: 14px; color: #d0d5dd; }
+.bom-group-total { font-size: 14px; font-weight: 500; color: #667085; white-space: nowrap; }
+.bom-group-children { padding: 0 16px 8px 16px; }
+.bom-group-core-details { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 4px 6px; padding: 0 0 8px 42px; }
+.bom-group-icon { width: 16px; height: 16px; flex-shrink: 0; color: #667085; display: flex; align-items: center; justify-content: center; }
+.bom-group-icon svg { width: 16px; height: 16px; }
+.bom-item { padding: 8px 4px 8px 24px; border-bottom: 1px solid #f2f4f7; border-radius: 4px; }
+.bom-item:hover { background: #f5f3ff; }
+.bom-item:hover .bom-item-name { color: #7c3aed; }
+.bom-item:last-child { border-bottom: none; }
+.bom-item-primary { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.bom-item-icon { width: 16px; height: 16px; flex-shrink: 0; color: #667085; }
+.bom-item-icon svg { width: 16px; height: 16px; }
+.bom-item-name { font-size: 16px; font-weight: 500; color: #344054; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bom-item-model { font-size: 16px; font-weight: 400; color: #98a2b3; white-space: nowrap; margin-left: 4px; }
+.bom-item-name-wrap { flex: 1; display: flex; align-items: baseline; min-width: 0; overflow: hidden; }
+.bom-item-price { font-size: 16px; font-weight: 600; color: #344054; white-space: nowrap; min-width: 140px; text-align: right; flex-shrink: 0; }
+.bom-item-details { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px 6px; padding-left: 22px; margin-top: 6px; }
+.bom-detail-tag { font-size: 14px; color: #667085; white-space: nowrap; cursor: pointer; padding: 2px 0; border-radius: 3px; transition: color 0.12s; text-align: left; }
+.bom-detail-tag:hover { color: #7c3aed; }
+.bom-detail-tag select { font-size: 14px; color: #344054; border: 1px solid #d0d5dd; border-radius: 4px; padding: 2px 4px; background: #fff; font-family: inherit; outline: none; cursor: pointer; width: 100%; }
+.bom-detail-tag select:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
+
+/* ── BOM Drag Reorder ── */
+.bom-drag-mode .bom-item { cursor: grab; border: 1px dashed transparent; border-radius: 6px; transition: border-color 0.15s, background 0.15s; }
+.bom-drag-mode .bom-item:hover { border-color: #d0d5dd; }
+.bom-drag-mode .bom-item.dragging { opacity: 0.4; }
+.bom-drag-handle { width: 16px; height: 16px; flex-shrink: 0; color: #98a2b3; cursor: grab; margin-right: 2px; }
+.bom-drop-zone { height: 0; transition: height 0.15s, background 0.15s; border-radius: 4px; overflow: hidden; }
+.bom-drop-zone.over { height: 32px; background: #f5f3ff; border: 2px dashed #7c3aed; margin: 2px 0; }
+.bom-group-hdr.drop-target { background: #f5f3ff; }
+
+/* ── BOM Bulk Edit ── */
+.bom-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; border-bottom: 1px solid #eaecf0; flex-shrink: 0; }
+.bom-bulk-btn { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #d0d5dd; background: #fff; color: #344054; font-family: inherit; transition: all 0.15s; }
+.bom-bulk-btn:hover { background: #f9fafb; border-color: #98a2b3; }
+.bom-bulk-btn.active { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+.bom-bulk-btn svg { width: 13px; height: 13px; }
+.bom-bulk-bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #faf5ff; border-bottom: 1px solid #e9d5ff; flex-shrink: 0; }
+.bom-bulk-bar-hint { font-size: 12px; color: #6b21a8; flex: 1; line-height: 1.4; }
+.bom-bulk-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.bom-bulk-select-all { display: flex; align-items: center; gap: 6px; padding: 8px 16px 6px; border-bottom: 1px solid #f2f4f7; }
+.bom-bulk-select-all label { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #344054; cursor: pointer; }
+.bom-cb { width: 16px; height: 16px; accent-color: #7c3aed; cursor: pointer; flex-shrink: 0; margin: 0; }
+.bom-item-cb { margin-right: 2px; }
+.bom-success { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #ecfdf5; border-bottom: 1px solid #a7f3d0; font-size: 13px; font-weight: 500; color: #065f46; flex-shrink: 0; animation: bomSuccessFade 3s forwards; }
+.bom-success svg { width: 16px; height: 16px; color: #10b981; flex-shrink: 0; }
+@keyframes bomSuccessFade { 0%,70% { opacity: 1; } 100% { opacity: 0; } }
+
 
 /* ── Share Modal (Phase 11) ── */
 .share-overlay { position:fixed; inset:0; background:rgba(16,24,40,0.5); z-index:400; display:none; }
@@ -292,7 +363,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .fl-chip.active { background: #ede9fe; border-color: #a78bfa; color: #7c3aed; }
 
 /* ── Satellite map container (behind Konva) ── */
-#map-container { position: absolute; inset: 0; z-index: 0; display: none; }
+#map-container { position: absolute; inset: 0; z-index: 0; display: none; pointer-events: none; }
 #konva-container { position: absolute; inset: 0; z-index: 1; }
 .canvas-area.map-active { background-color: transparent; background-image: none; }
 .canvas-area.map-active #konva-container canvas { background: transparent !important; }
@@ -309,9 +380,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 /* ── Basemap Panel (Popover) ── */
 .basemap-panel { position: absolute; top: 36px; right: 0; width: 296px; background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; box-shadow: 0 8px 24px rgba(16,24,40,0.12); z-index: 200; display: none; flex-direction: column; overflow: hidden; }
 .basemap-panel.show { display: flex; }
-.bp-section { padding: 12px 14px 13px; border-bottom: 1px solid #f2f4f7; }
+.bp-section { padding: 14px 14px 16px; border-bottom: 1px solid #eaecf0; }
 .bp-section:last-child { border-bottom: none; }
-.bp-section-label { font-size: 10px; font-weight: 700; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 9px; }
+.bp-section-label { font-size: 12px; font-weight: 600; color: #344054; letter-spacing: 0.2px; margin-bottom: 10px; }
 .bp-seg-group { display: flex; border: 1px solid #d0d5dd; border-radius: 6px; overflow: hidden; }
 .bp-seg { flex: 1; padding: 5px 6px; font-size: 12px; font-weight: 500; color: #667085; cursor: pointer; background: #fff; border: none; border-right: 1px solid #d0d5dd; transition: all 0.15s; white-space: nowrap; line-height: 1.4; }
 .bp-seg:last-child { border-right: none; }
@@ -455,7 +526,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .mp-filters { padding: 12px 20px 10px; border-bottom: 1px solid #eaecf0; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
 .mp-search { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid #d0d5dd; border-radius: 7px; background: #fff; }
 .mp-search svg { width: 14px; height: 14px; color: #98a2b3; flex-shrink: 0; }
-.mp-search input { border: none; outline: none; font-size: 13px; color: #344054; flex: 1; background: transparent; }
+.mp-search input { border: none; outline: none; font-size: 13px; color: #344054; background: transparent; width: auto; }
 .mp-search input::placeholder { color: #98a2b3; }
 .mp-filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ff-chips { display: flex; gap: 4px; flex-wrap: wrap; }
@@ -467,11 +538,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .mp-toggle { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border: 1px solid #d0d5dd; border-radius: 20px; font-size: 12px; font-weight: 500; color: #667085; cursor: pointer; transition: all 0.15s; background: #fff; white-space: nowrap; }
 .mp-toggle:hover { border-color: #d0d5dd; }
 .mp-toggle.active { background: #f0fdf4; border-color: #86efac; color: #16a34a; }
-.mp-eol-group { display: flex; border: 1px solid #d0d5dd; border-radius: 20px; overflow: hidden; }
-.mp-eol-btn { padding: 4px 10px; font-size: 12px; font-weight: 500; color: #667085; cursor: pointer; background: #fff; border: none; transition: all 0.15s; white-space: nowrap; }
-.mp-eol-btn.active { background: #ede9fe; color: #7c3aed; }
-.mp-generic-btn { display: flex; align-items: center; gap: 5px; padding: 5px 11px; background: #7c3aed; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; }
-.mp-generic-btn:hover { background: #6941c6; }
 .mp-sliders-row { display: flex; align-items: flex-start; gap: 20px; }
 .mp-slider-group { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .mp-slider-group-label { font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -483,14 +549,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .mp-dual-range input[type=range]::-webkit-slider-thumb { pointer-events: all; -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: #7c3aed; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px #7c3aed; }
 .mp-dual-range input[type=range]::-moz-range-thumb { pointer-events: all; width: 13px; height: 13px; border-radius: 50%; background: #7c3aed; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px #7c3aed; }
 .mp-single-range { width: 100%; accent-color: #7c3aed; margin: 0; }
-.eol-badge { background: #d92d20; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.3px; flex-shrink: 0; }
 .mp-body { display: flex; flex: 1; min-height: 0; }
 .mp-brands { width: 180px; flex-shrink: 0; border-right: 1px solid #eaecf0; overflow-y: auto; }
 .brand-row { padding: 8px 16px; font-size: 13px; color: #344054; cursor: pointer; transition: background 0.1s; border-left: 3px solid transparent; }
 .brand-row:hover { background: #f9fafb; }
 .brand-row.active { background: #ede9fe; color: #7c3aed; font-weight: 600; border-left-color: #7c3aed; }
 .mp-models { width: 300px; flex-shrink: 0; border-right: 1px solid #eaecf0; overflow-y: auto; }
-.mp-models-hdr { padding: 8px 16px; font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f2f4f7; position: sticky; top: 0; background: #fff; z-index: 1; }
+.mp-models-hdr { padding: 8px 16px; font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f2f4f7; background: #fff; }
 .model-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #f9fafb; transition: background 0.1s; }
 .model-row:hover { background: #f9fafb; }
 .model-row.active { background: #ede9fe; }
@@ -499,11 +564,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .model-row.active .model-form-icon { background: rgba(124,58,237,0.15); }
 .model-row.active .model-form-icon svg { color: #7c3aed; }
 .model-name { font-size: 12px; font-weight: 500; color: #344054; flex: 1; }
-.model-tags { display: flex; gap: 3px; }
-.tag { font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
-.tag-eol { background: #fee2e2; color: #dc2626; }
-.tag-ndaa { background: #dcfce7; color: #16a34a; }
-.model-price { font-size: 12px; color: #667085; white-space: nowrap; }
 .mp-info { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 0; }
 .mp-info-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 12px; }
 .mp-info-empty svg { width: 40px; height: 40px; color: #d0d5dd; }
@@ -513,14 +573,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .mp-info-brand { font-size: 12px; color: #98a2b3; margin-bottom: 16px; }
 .mp-info-badges { display: flex; gap: 6px; margin-bottom: 16px; }
 .mp-badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 4px; }
-.mp-badge-ndaa { background: #dcfce7; color: #15803d; }
 .mp-badge-form { background: #ede9fe; color: #7c3aed; }
 .mp-badge-res  { background: #f0f9ff; color: #0369a1; }
 .mp-spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
 .mp-spec { background: #f9fafb; border-radius: 8px; padding: 10px 12px; }
 .mp-spec-label { font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
 .mp-spec-val { font-size: 14px; font-weight: 600; color: #344054; }
-.mp-price { font-size: 24px; font-weight: 800; color: #7c3aed; margin-bottom: 16px; }
 .mp-fov-preview { width: 100%; height: 80px; background: #1c2333; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; overflow: hidden; }
 .mp-ftr { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid #eaecf0; flex-shrink: 0; background: #f9fafb; }
 .mp-count { font-size: 12px; color: #667085; }
@@ -557,6 +615,55 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .toggle input:checked + .toggle-slider { background: #7c3aed; }
 .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
 
+/* ── Add core button separator ── */
+.catalog-separator { width: 100%; height: 1px; background: #eaecf0; margin: 8px 0; }
+.browse-btn-core { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 8px 12px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #d0d5dd; background: #fff; color: #344054; transition: all 0.15s; }
+.browse-btn-core:hover { background: #f9fafb; border-color: #98a2b3; }
+.browse-btn-core svg { width: 14px; height: 14px; }
+
+/* ── Core Type Picker Modal ── */
+.core-picker-overlay { position: fixed; inset: 0; background: rgba(16,24,40,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; }
+.core-picker-overlay.show { display: flex; }
+.core-picker-modal { background: #fff; border-radius: 12px; box-shadow: 0 20px 60px rgba(16,24,40,0.2); width: 400px; max-width: 90vw; overflow: hidden; }
+.core-picker-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid #eaecf0; }
+.core-picker-title { font-size: 16px; font-weight: 600; color: #101828; }
+.core-picker-close { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: none; color: #667085; cursor: pointer; border-radius: 6px; margin: -4px -4px 0 0; }
+.core-picker-close:hover { background: #f2f4f7; color: #344054; }
+.core-picker-close svg { width: 18px; height: 18px; }
+.core-picker-body { padding: 20px 24px 24px; }
+.core-picker-label { font-size: 13px; font-weight: 500; color: #344054; margin-bottom: 8px; }
+.core-picker-select { width: 100%; padding: 9px 12px; border: 1px solid #d0d5dd; border-radius: 8px; font-size: 14px; color: #344054; background: #fff; cursor: pointer; outline: none; font-family: inherit; }
+.core-picker-select:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
+.core-picker-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 24px 20px; border-top: 1px solid #eaecf0; }
+.core-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.core-chip { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #344054; background: #fff; border: 1px solid #d0d5dd; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.core-chip:hover { border-color: #98a2b3; background: #f9fafb; }
+.core-chip.active { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+
+/* ── Core camera list rows ── */
+.core-cam-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #f2f4f7; }
+.core-cam-row:last-of-type { border-bottom: none; }
+.core-cam-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.core-cam-info { flex: 1; min-width: 0; overflow: hidden; }
+.core-cam-name { font-size: 13px; color: #344054; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+.core-cam-name:hover { color: #7c3aed; text-decoration: underline; }
+.core-cam-meta { font-size: 11px; color: #98a2b3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.core-cam-remove { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: #d0d5dd; cursor: pointer; border-radius: 4px; flex-shrink: 0; padding: 0; }
+.core-cam-remove:hover { background: #fef2f2; color: #ef4444; }
+.core-add-cam-modal { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16,24,40,0.25); z-index: 50; display: none; }
+.core-add-cam-modal.show { display: flex; align-items: center; justify-content: center; }
+.core-add-cam-panel { background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.16); width: 320px; max-height: 400px; display: flex; flex-direction: column; }
+.core-add-cam-hdr { padding: 14px 16px 10px; border-bottom: 1px solid #eaecf0; font-size: 14px; font-weight: 600; color: #344054; }
+.core-add-cam-list { flex: 1; overflow-y: auto; padding: 4px 0; }
+.core-add-cam-item { display: flex; align-items: center; gap: 10px; padding: 8px 16px; cursor: pointer; transition: background 0.1s; }
+.core-add-cam-item:hover { background: #f9fafb; }
+.core-add-cam-item .bom-cb { flex-shrink: 0; }
+.core-add-cam-item-info { flex: 1; min-width: 0; }
+.core-add-cam-item-name { font-size: 13px; font-weight: 500; color: #344054; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.core-add-cam-item-meta { font-size: 11px; color: #98a2b3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.core-add-cam-empty { padding: 24px 16px; text-align: center; font-size: 13px; color: #98a2b3; }
+.core-add-cam-footer { padding: 10px 16px; border-top: 1px solid #eaecf0; display: flex; justify-content: flex-end; gap: 8px; }
+
 </style>
 </head>
 <body>
@@ -569,9 +676,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg>
       </div>
       <div class="nav-sep"></div>
-      <div class="nav-icon" title="Cameras">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-      </div>
       <div class="nav-icon" title="Live View">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       </div>
@@ -590,9 +694,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       <div class="nav-icon" title="Reports">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       </div>
-      <div class="nav-icon" id="navSettingsBtn" title="Settings" onclick="document.getElementById('settingsOverlay').classList.add('show')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-      </div>
     </div>
     <div class="nav-bottom">
       <div class="nav-icon" title="Help">
@@ -608,9 +709,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <!-- Top Bar -->
     <header class="topbar">
       <div class="topbar-breadcrumb">
-        <a href="site-planner-sites.html" style="color:#667085;text-decoration:none">Sites</a>
+        <a href="site-planner-sites.html" style="color:#667085;text-decoration:none">Projects</a>
         <span class="sep">›</span>
-        <a href="#" id="bc-site" style="color:#667085;text-decoration:none">Site: HQ Campus</a>
+        <a href="#" id="bc-site" style="color:#667085;text-decoration:none">Project: HQ Campus</a>
         <span class="sep">›</span>
         <a href="#" id="bc-location" style="color:#667085;text-decoration:none">Location: Main Building</a>
         <span class="sep">›</span>
@@ -670,21 +771,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         </div>
       </div>
       <div class="tool-group">
-        <div class="tool-btn" id="tool-camera" data-tool="camera" data-tip="Place Camera (C)" onclick="setTool('camera')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-        </div>
         <div class="tool-btn" id="tool-wall" data-tool="wall" data-tip="Draw Wall (W)" onclick="setTool('wall')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </div>
-        <div class="tool-btn" id="tool-scale" data-tool="scale" data-tip="Scale Calibration (S)" onclick="setTool('scale')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="8" x2="3" y2="16"/><line x1="21" y1="8" x2="21" y2="16"/></svg>
         </div>
       </div>
       <div class="tool-group">
         <div class="bp-wrapper">
           <div class="tool-btn-basemap" id="btn-basemap" onclick="toggleBasemapPanel()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6l9-3 9 3v12l-9 3-9-3V6z"/><line x1="12" y1="3" x2="12" y2="21"/><path d="M3 6l9 3 9-3"/></svg>
-            <span id="basemapLabel">Show: Floor plan and Map</span>
+            <span id="basemapLabel">Show: Floor plan & Map</span>
             <svg class="bp-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
           <!-- Basemap Popover -->
@@ -695,7 +790,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
               <div class="bp-seg-group">
                 <button class="bp-seg" id="bpmode-floorplan" onclick="setMapMode('floorplan')">Floor Plan</button>
                 <button class="bp-seg" id="bpmode-map"       onclick="setMapMode('map')">Map</button>
-                <button class="bp-seg active" id="bpmode-both" onclick="setMapMode('both')">Floor plan and Map</button>
+                <button class="bp-seg active" id="bpmode-both" onclick="setMapMode('both')">Floor plan & Map</button>
               </div>
             </div>
             <!-- Floor Plan section -->
@@ -722,6 +817,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
                 Resize &amp; Rotate
               </button>
+              <button class="bp-fp-edit-btn" id="bpScaleBtn" style="display:none" onclick="setTool('scale');toggleBasemapPanel()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="8" x2="3" y2="16"/><line x1="21" y1="8" x2="21" y2="16"/></svg>
+                Scale Calibration
+              </button>
               <!-- Change floor plan: always visible in this section -->
               <button class="bp-fp-edit-btn" id="bpChangeFloorBtn" onclick="document.getElementById('floorPlanInput').click()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -733,7 +832,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
               <div class="bp-section-label">Map</div>
               <div class="bp-addr-row">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-                <input type="text" id="bpAddressInput" placeholder="Search address or place…" onkeydown="if(event.key==='Enter')geocodeAddress()">
+                <input type="text" id="bpAddressInput" placeholder="Search address or place…" value="San Francisco, CA" onkeydown="if(event.key==='Enter')geocodeAddress()">
                 <button class="bp-addr-btn" onclick="geocodeAddress()">Edit</button>
               </div>
               <div class="bp-seg-group">
@@ -745,12 +844,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         </div>
       </div>
       <div class="tool-group">
+        <div class="tool-btn" id="navSettingsBtn" data-tip="Plan options" onclick="document.getElementById('settingsOverlay').classList.add('show')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        <div style="width:1px;height:20px;background:#d0d5dd;margin:0 2px;flex-shrink:0"></div>
         <div class="tool-btn" data-tip="Clear All" onclick="clearAll()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
         </div>
       </div>
       <div class="tool-spacer"></div>
-      <span class="zoom-display" id="zoom-display">100%</span>
     </div>
 
     <!-- Wall Type Sub-toolbar (shown when Wall tool active) -->
@@ -781,9 +883,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         </div>
 
         <div class="catalog-header">
+          <button class="browse-btn-core" onclick="openCoreTypePicker()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1" opacity="0.4"/></svg>
+            Add core
+          </button>
+          <div class="catalog-separator"></div>
           <button class="browse-btn" onclick="openModelPicker()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            Add camera by model
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            Add camera
           </button>
         </div>
         <div class="catalog-body" id="catalogBody">
@@ -852,15 +959,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         </div>
         <!-- Camera selected header -->
         <div class="rp-cam-header" id="rpCamHeader" style="display:none">
-          <button class="rp-cam-back" onclick="selectCamera(null)" title="Back">
+          <button class="rp-cam-back" onclick="rpBackClick()" title="Back">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
             Back
           </button>
           <div class="rp-cam-actions">
-            <button class="rp-cam-icon-btn" title="Duplicate" onclick="duplicateCamera(state.selectedId)">
+            <button class="rp-cam-icon-btn" title="Duplicate" onclick="rpDuplicateClick()" id="rpDuplicateBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             </button>
-            <button class="rp-cam-icon-btn rp-cam-del-btn" title="Delete" onclick="deleteCamera(state.selectedId)">
+            <button class="rp-cam-icon-btn rp-cam-del-btn" title="Delete" onclick="rpDeleteClick()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
             </button>
           </div>
@@ -875,7 +982,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
           <div class="rp-total-label">MSRP Estimate</div>
           <div class="rp-total-amount" id="rpTotalVal">$0</div>
           <div class="rp-total-meta" id="rpTotalMeta">0 cameras · $0 avg</div>
-          <div class="rp-total-bar"><div class="rp-total-fill" id="rpTotalFill" style="width:0%"></div></div>
         </div>
         <!-- Tabs -->
         <div class="rp-tabs">
@@ -889,8 +995,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
           <!-- Properties pane -->
           <div class="props-pane" id="propsPane">
             <div class="props-hdr">
-              <div class="props-title" id="propsTitle">Properties</div>
-              <div class="props-sub" id="propsSub">Select a device to configure</div>
+              <div class="props-hdr-icon" id="propsIcon"></div>
+              <div class="props-hdr-text">
+                <div class="props-title-row">
+                  <div class="props-title" id="propsTitle">Properties</div>
+                  <div class="props-price" id="propsPrice"></div>
+                </div>
+                <div class="props-sub" id="propsSub">Select a device to configure</div>
+              </div>
             </div>
             <div class="props-empty" id="propsEmpty">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
@@ -952,34 +1064,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <button class="mp-close" onclick="closeModelPicker()">✕</button>
   </div>
   <div class="mp-filters">
-    <!-- Row 1: Search + EOL + NDAA + Generic -->
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <div class="mp-search" style="flex:1;min-width:180px">
+    <!-- Row 1: Search + Show filters -->
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="mp-search" style="width:auto">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="mpSearchInput" placeholder="Search by brand, model name, SKU, or resolution…" oninput="applyMpFilters()">
+        <input type="text" id="mpSearchInput" placeholder="Search by brand, model name, or resolution…" oninput="applyMpFilters()" size="42">
       </div>
-      <div style="display:flex;align-items:center;gap:5px;flex-shrink:0">
-        <span style="font-size:11px;color:#667085">EOL:</span>
-        <div class="mp-eol-group">
-          <button class="mp-eol-btn" id="mpEolAll" onclick="setMpEol(false)">All cameras</button>
-          <button class="mp-eol-btn active" id="mpEolExclude" onclick="setMpEol(true)">Exclude EOL</button>
-        </div>
-      </div>
-      <div class="mp-toggle" id="mpToggleNdaa" onclick="toggleMpNdaa()" title="Show NDAA-compliant cameras only" style="flex-shrink:0">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        NDAA Only
-      </div>
-      <button class="mp-generic-btn" onclick="selectGenericCamera()" style="flex-shrink:0">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-        Select Generic Camera
+      <button class="mp-toggle" id="mpShowFiltersBtn" onclick="toggleMpFiltersPanel()" style="flex-shrink:0">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor"/><circle cx="16" cy="12" r="2" fill="currentColor"/><circle cx="10" cy="18" r="2" fill="currentColor"/></svg>
+        Show filters
       </button>
     </div>
-    <!-- Row 2: Form factor chips -->
-    <div class="mp-filter-row">
-      <div class="ff-chips" id="mpFfChips"></div>
-    </div>
-    <!-- Row 3: Sliders -->
-    <div class="mp-sliders-row">
+    <!-- Sliders (hidden by default) -->
+    <div class="mp-sliders-row" id="mpSlidersRow" style="display:none">
       <div class="mp-slider-group" style="flex:1.4">
         <div class="mp-slider-group-label">Resolution</div>
         <div class="mp-dual-range" id="mpResTrack">
@@ -1005,7 +1102,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   <div class="mp-body">
     <div class="mp-brands" id="mpBrands"></div>
     <div class="mp-models">
-      <div class="mp-models-hdr" id="mpModelsHdr">All Models</div>
+      <div class="mp-models-hdr" id="mpModelsHdr">Models</div>
+      <div style="padding:6px 12px 8px;border-bottom:1px solid #f2f4f7;background:#fff;position:sticky;top:0;z-index:1" id="mpFfChipsWrap">
+        <div class="ff-chips" id="mpFfChips"></div>
+      </div>
       <div id="mpModelList"></div>
     </div>
     <div class="mp-info" id="mpInfo"></div>
@@ -1015,6 +1115,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <div class="mp-ftr-actions">
       <button class="btn" onclick="closeModelPicker()">Cancel</button>
       <button class="btn btn-primary" id="mpPlaceBtn" onclick="placeFromPicker()" style="opacity:0.4;pointer-events:none">Place Camera</button>
+    </div>
+  </div>
+</div>
+
+<!-- Core Type Picker Modal -->
+<div class="core-picker-overlay" id="corePickerOverlay" onclick="if(event.target===this)closeCoreTypePicker()">
+  <div class="core-picker-modal">
+    <div class="core-picker-header">
+      <span class="core-picker-title">Core Type Picker</span>
+      <button class="core-picker-close" onclick="closeCoreTypePicker()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="core-picker-body">
+      <div class="core-picker-label">Core type</div>
+      <div class="core-chips" id="coreChips">
+        <button class="core-chip active" data-val="core-10" onclick="selectCoreChip(this)">Core 10</button>
+        <button class="core-chip" data-val="1u-core-64" onclick="selectCoreChip(this)">1U Core 64</button>
+        <button class="core-chip" data-val="2u-core-128" onclick="selectCoreChip(this)">2U Core 128</button>
+        <button class="core-chip" data-val="2u-core-256" onclick="selectCoreChip(this)">2U Core 256</button>
+      </div>
+    </div>
+    <div class="core-picker-footer">
+      <button class="btn" onclick="closeCoreTypePicker()">Cancel</button>
+      <button class="btn btn-primary" onclick="placeCore()">Place core</button>
     </div>
   </div>
 </div>
@@ -1082,15 +1207,10 @@ const CATALOG = [
 // EXTENDED CAMERA DATABASE (~40 models, 8 brands)
 // ═══════════════════════════════════════════════
 const CAMERA_DB = [
-  // ── Verkada ──
-  { id:'vk-cd63',    brand:'Verkada',   name:'CD63',             formFactor:'dome',    resolution:'4K',    fov:90,  detR:160, recR:80,  idR:36,  price:699,  ndaa:true,  iconType:'dome',    color:'#7c3aed' },
-  { id:'vk-cd63e',   brand:'Verkada',   name:'CD63-E',           formFactor:'dome',    resolution:'4K',    fov:100, detR:200, recR:100, idR:46,  price:899,  ndaa:true,  iconType:'dome',    color:'#7c3aed' },
-  { id:'vk-cb62',    brand:'Verkada',   name:'CB62',             formFactor:'bullet',  resolution:'4K',    fov:55,  detR:280, recR:140, idR:64,  price:799,  ndaa:true,  iconType:'bullet',  color:'#2563eb' },
-  { id:'vk-cb51',    brand:'Verkada',   name:'CB51',             formFactor:'bullet',  resolution:'2K',    fov:62,  detR:200, recR:100, idR:46,  price:599,  ndaa:true,  iconType:'bullet',  color:'#2563eb' },
-  { id:'vk-cf81',    brand:'Verkada',   name:'CF81',             formFactor:'fisheye', resolution:'12MP',  fov:360, detR:100, recR:50,  idR:22,  price:1199, ndaa:true,  iconType:'fisheye', color:'#0891b2' },
-  { id:'vk-cm8x',    brand:'Verkada',   name:'CM8X',             formFactor:'multi',   resolution:'32MP',  fov:270, detR:180, recR:90,  idR:40,  price:1999, ndaa:true,  iconType:'dome',    color:'#0891b2' },
-  { id:'vk-td52',    brand:'Verkada',   name:'TD52',             formFactor:'ptz',     resolution:'2K',    fov:62,  detR:380, recR:190, idR:88,  price:2499, ndaa:true,  iconType:'dome',    color:'#7c3aed' },
+  // ── Generic ──
+  { id:'generic-cam', brand:'Generic',  name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:false, iconType:'dome',    color:'#98a2b3', isGeneric:true },
   // ── Axis ──
+  { id:'ax-generic',  brand:'Axis',      name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:false, iconType:'dome',    color:'#dc6026', isGeneric:true },
   { id:'ax-p3245',   brand:'Axis',      name:'P3245-V',          formFactor:'dome',    resolution:'2MP',   fov:100, detR:140, recR:70,  idR:32,  price:549,  ndaa:false, iconType:'dome',    color:'#dc6026' },
   { id:'ax-p1448',   brand:'Axis',      name:'P1448-LE',         formFactor:'bullet',  resolution:'8MP',   fov:50,  detR:320, recR:160, idR:74,  price:1249, ndaa:false, iconType:'bullet',  color:'#dc6026' },
   { id:'ax-m3106',   brand:'Axis',      name:'M3106-L MK II',    formFactor:'dome',    resolution:'4MP',   fov:106, detR:120, recR:60,  idR:28,  price:379,  ndaa:false, iconType:'dome',    color:'#dc6026' },
@@ -1098,39 +1218,45 @@ const CAMERA_DB = [
   { id:'ax-f4005',   brand:'Axis',      name:'F4005-E',          formFactor:'fisheye', resolution:'2MP',   fov:180, detR:80,  recR:40,  idR:18,  price:299,  ndaa:false, iconType:'fisheye', color:'#dc6026' },
   { id:'ax-q6135',   brand:'Axis',      name:'Q6135-LE',         formFactor:'ptz',     resolution:'2MP',   fov:62,  detR:420, recR:210, idR:96,  price:4299, ndaa:false, iconType:'dome',    color:'#dc6026' },
   // ── Hanwha ──
+  { id:'hw-generic',  brand:'Hanwha',    name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:false, iconType:'dome',    color:'#0f6ea1', isGeneric:true },
   { id:'hw-qno8080', brand:'Hanwha',    name:'QNO-8080R',        formFactor:'bullet',  resolution:'5MP',   fov:110, detR:240, recR:120, idR:56,  price:499,  ndaa:false, iconType:'bullet',  color:'#0f6ea1' },
   { id:'hw-xnv8080', brand:'Hanwha',    name:'XNV-8080R',        formFactor:'dome',    resolution:'5MP',   fov:115, detR:200, recR:100, idR:46,  price:579,  ndaa:false, iconType:'dome',    color:'#0f6ea1' },
   { id:'hw-pnm9322', brand:'Hanwha',    name:'PNM-9322VQP',      formFactor:'multi',   resolution:'4×2MP', fov:270, detR:160, recR:80,  idR:36,  price:1599, ndaa:false, iconType:'dome',    color:'#0f6ea1' },
   { id:'hw-qnf8010', brand:'Hanwha',    name:'QNF-8010',         formFactor:'fisheye', resolution:'5MP',   fov:360, detR:90,  recR:45,  idR:20,  price:449,  ndaa:false, iconType:'fisheye', color:'#0f6ea1' },
   { id:'hw-xnp9300', brand:'Hanwha',    name:'XNP-9300RW',       formFactor:'ptz',     resolution:'4K',    fov:58,  detR:400, recR:200, idR:92,  price:3199, ndaa:false, iconType:'dome',    color:'#0f6ea1' },
   // ── Bosch ──
+  { id:'bs-generic',  brand:'Bosch',     name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:false, iconType:'dome',    color:'#e42313', isGeneric:true },
   { id:'bs-flex5100', brand:'Bosch',    name:'FLEXIDOME 5100i',  formFactor:'dome',    resolution:'2MP',   fov:100, detR:130, recR:65,  idR:30,  price:639,  ndaa:false, iconType:'dome',    color:'#e42313' },
   { id:'bs-dinion',  brand:'Bosch',     name:'DINION 7100i',     formFactor:'bullet',  resolution:'8MP',   fov:55,  detR:300, recR:150, idR:68,  price:1099, ndaa:false, iconType:'bullet',  color:'#e42313' },
   { id:'bs-autodome',brand:'Bosch',     name:'AutoDome 7000i',   formFactor:'ptz',     resolution:'2MP',   fov:60,  detR:380, recR:190, idR:86,  price:3799, ndaa:false, iconType:'dome',    color:'#e42313' },
   // ── Hikvision ──
+  { id:'hk-generic',  brand:'Hikvision', name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:false, iconType:'dome',    color:'#c00d0d', isGeneric:true },
   { id:'hk-2cd2185', brand:'Hikvision', name:'DS-2CD2185G0-I',   formFactor:'dome',    resolution:'8MP',   fov:103, detR:160, recR:80,  idR:36,  price:189,  ndaa:false, eol:true,  iconType:'dome',    color:'#c00d0d' },
   { id:'hk-2cd2t87', brand:'Hikvision', name:'DS-2CD2T87G2-L',   formFactor:'bullet',  resolution:'8MP',   fov:106, detR:280, recR:140, idR:64,  price:259,  ndaa:false, eol:false, iconType:'bullet',  color:'#c00d0d' },
   { id:'hk-2de4a220',brand:'Hikvision', name:'DS-2DE4A220IWG-E', formFactor:'ptz',     resolution:'2MP',   fov:58,  detR:350, recR:175, idR:80,  price:449,  ndaa:false, eol:true,  iconType:'dome',    color:'#c00d0d' },
   { id:'hk-2cd2955', brand:'Hikvision', name:'DS-2CD2955FWD-I',  formFactor:'fisheye', resolution:'5MP',   fov:360, detR:80,  recR:40,  idR:18,  price:179,  ndaa:false, iconType:'fisheye', color:'#c00d0d' },
   { id:'hk-2cd2387', brand:'Hikvision', name:'DS-2CD2387G2-LU',  formFactor:'dome',    resolution:'8MP',   fov:95,  detR:170, recR:85,  idR:38,  price:249,  ndaa:false, iconType:'dome',    color:'#c00d0d' },
   // ── Dahua ──
+  { id:'da-generic',  brand:'Dahua',     name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:false, iconType:'dome',    color:'#0265c4', isGeneric:true },
   { id:'da-hdw3849',  brand:'Dahua',    name:'IPC-HDW3849H-ZAS', formFactor:'dome',    resolution:'8MP',   fov:94,  detR:150, recR:75,  idR:34,  price:149,  ndaa:false, iconType:'dome',    color:'#0265c4' },
   { id:'da-hfw3849',  brand:'Dahua',    name:'IPC-HFW3849T-ZAS', formFactor:'bullet',  resolution:'8MP',   fov:55,  detR:260, recR:130, idR:60,  price:189,  ndaa:false, iconType:'bullet',  color:'#0265c4' },
   { id:'da-sd49425',  brand:'Dahua',    name:'SD49425XB-HNR',    formFactor:'ptz',     resolution:'4MP',   fov:60,  detR:360, recR:180, idR:82,  price:789,  ndaa:false, iconType:'dome',    color:'#0265c4' },
   { id:'da-psd81606', brand:'Dahua',    name:'PSD81606',         formFactor:'multi',   resolution:'4×4MP', fov:220, detR:170, recR:85,  idR:38,  price:1299, ndaa:false, iconType:'dome',    color:'#0265c4' },
   // ── Avigilon ──
+  { id:'av-generic',  brand:'Avigilon',  name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:false, iconType:'dome',    color:'#1a6632', isGeneric:true },
   { id:'av-h5sl-d1',  brand:'Avigilon', name:'H5SL-D1',          formFactor:'dome',    resolution:'2MP',   fov:102, detR:140, recR:70,  idR:32,  price:399,  ndaa:true,  iconType:'dome',    color:'#1a6632' },
   { id:'av-h5a-b2',   brand:'Avigilon', name:'H5A-B2',           formFactor:'bullet',  resolution:'2MP',   fov:72,  detR:240, recR:120, idR:56,  price:449,  ndaa:true,  iconType:'bullet',  color:'#1a6632' },
   { id:'av-h6m-d4',   brand:'Avigilon', name:'H6M-D4',           formFactor:'dome',    resolution:'4MP',   fov:102, detR:180, recR:90,  idR:40,  price:699,  ndaa:true,  iconType:'dome',    color:'#1a6632' },
   { id:'av-hd-ptz',   brand:'Avigilon', name:'H4PTZ-DP20-IR',    formFactor:'ptz',     resolution:'2MP',   fov:63,  detR:360, recR:180, idR:82,  price:2199, ndaa:true,  iconType:'dome',    color:'#1a6632' },
   // ── Pelco ──
+  { id:'pl-generic',  brand:'Pelco',     name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:false, iconType:'dome',    color:'#6b5e00', isGeneric:true },
   { id:'pl-ib20',     brand:'Pelco',    name:'Sarix IB20',       formFactor:'bullet',  resolution:'2MP',   fov:65,  detR:220, recR:110, idR:50,  price:349,  ndaa:false, iconType:'bullet',  color:'#6b5e00' },
   { id:'pl-evo180',   brand:'Pelco',    name:'Evo 180',          formFactor:'multi',   resolution:'4×2MP', fov:180, detR:160, recR:80,  idR:36,  price:1199, ndaa:false, iconType:'dome',    color:'#6b5e00' },
   { id:'pl-spectra',  brand:'Pelco',    name:'Spectra Pro',      formFactor:'ptz',     resolution:'4K',    fov:60,  detR:440, recR:220, idR:100, price:5199, ndaa:false, iconType:'dome',    color:'#6b5e00' },
 ];
 
 const ALL_BRANDS = ['All', ...[ ...new Set(CAMERA_DB.map(m => m.brand)) ]];
-const FF_LABELS = { dome:'Dome', bullet:'Bullet', fisheye:'Fisheye', multi:'Multi-sensor', ptz:'PTZ' };
+const FF_LABELS = { dome:'Dome', bullet:'Bullet', fisheye:'Fisheye', multi:'Multi-sensor', ptz:'PTZ', other:'Other' };
 
 const ICONS = {
   dome: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><ellipse cx="12" cy="13" rx="9" ry="5"/><path d="M3 13V9a9 4 0 0118 0v4"/><circle cx="12" cy="10" r="2" fill="currentColor" opacity=".4"/></svg>`,
@@ -1172,7 +1298,24 @@ const state = {
   floorPlanFile: { name: 'floor-plan.png' },
   floorPlanOpacity: 0.7,
   floorPlanEditMode: false,
+  // Cores
+  cores: [],
+  selectedCoreId: null,
+  nextCoreId: 1,
+  placingCoreType: null,  // set when user is placing a core on canvas
 };
+
+// ═══════════════════════════════════════════════
+// CORE TYPES
+// ═══════════════════════════════════════════════
+const CORE_TYPES = {
+  'core-10':      { id: 'core-10',      name: 'Core 10',       channels: 10,  price: 1500,  color: '#059669' },
+  '1u-core-64':   { id: '1u-core-64',   name: '1U Core 64',    channels: 64,  price: 5000,  color: '#2563eb' },
+  '2u-core-128':  { id: '2u-core-128',  name: '2U Core 128',   channels: 128, price: 9000,  color: '#7c3aed' },
+  '2u-core-256':  { id: '2u-core-256',  name: '2U Core 256',   channels: 256, price: 15000, color: '#dc2626' },
+};
+
+const CORE_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1" opacity="0.4"/></svg>`;
 
 // Wall type visual configs
 const WALL_CONFIGS = {
@@ -1197,8 +1340,7 @@ const mpState = {
   selectedBrand: 'All',
   selectedModelId: null,
   ffFilter: null,
-  ndaaOnly: false,
-  excludeEol: true,
+  ffChipsExpanded: false,
   resMinStep: 0,
   resMaxStep: 6,
   irMax: 500,
@@ -1431,7 +1573,7 @@ function addCamera(typeId, x, y, skipNameInput) {
     distance: 30,
     unit: 'imperial',
     retention: 30,
-    license: 'Standard',
+    license: 'Essential',
     // DORI visibility
     showDet: true, showRec: true, showId: true,
   };
@@ -1696,7 +1838,7 @@ function addDemoCameras() {
 // SELECTION
 // ═══════════════════════════════════════════════
 function selectCamera(id) {
-  // Deselect all
+  // Deselect all cameras
   state.cameras.forEach(c => {
     const g = cameraLayer.findOne('#cam-'+c.id);
     if (g) {
@@ -1705,6 +1847,9 @@ function selectCamera(id) {
       g.findOne('#rot-line').visible(false);
     }
   });
+
+  // Deselect any selected core
+  if (id !== null && typeof deselectCores === 'function') deselectCores();
 
   // Clear all labels
   if (labelLayer) { labelLayer.destroyChildren(); labelLayer.draw(); }
@@ -1735,8 +1880,10 @@ function setTool(tool) {
   state.tool = tool;
   document.querySelectorAll('.tool-btn[data-tool]').forEach(el => el.classList.toggle('active', el.dataset.tool === tool));
   const ca = document.getElementById('canvasArea');
+  const keepMap = ca.classList.contains('map-active');
   ca.className = 'canvas-area';
-  if (tool === 'camera' || tool === 'wall' || tool === 'scale') ca.classList.add('cursor-crosshair');
+  if (keepMap) ca.classList.add('map-active');
+  if (tool === 'camera' || tool === 'wall' || tool === 'scale' || tool === 'place-core') ca.classList.add('cursor-crosshair');
   if (tool === 'move') ca.classList.add('cursor-grab');
   // Show wall sub-toolbar only when wall tool active
   document.getElementById('wallSubtoolbar').classList.toggle('show', tool === 'wall');
@@ -1763,11 +1910,18 @@ function onStageClick(e) {
   if (e.target === stage) {
     if (state.tool === 'select') {
       selectCamera(null);
+      deselectCores();
     }
   }
   if (state.tool === 'camera' && e.target === stage) {
     const p = getScaledPos(stage.getPointerPosition());
     addCamera(state.dragType || 'indoor-dome', p.x, p.y);
+  }
+  if (state.tool === 'place-core' && e.target === stage) {
+    const p = getScaledPos(stage.getPointerPosition());
+    addCore(state.placingCoreType || 'core-10', p.x, p.y);
+    setTool('select');
+    state.placingCoreType = null;
   }
   if (state.tool === 'scale') {
     const p = getScaledPos(stage.getPointerPosition());
@@ -2204,7 +2358,7 @@ function setMapMode(mode) {
   });
 
   // Update toolbar label
-  const labels = { floorplan: 'Show: Floor plan', map: 'Show: Map', both: 'Show: Floor plan and Map' };
+  const labels = { floorplan: 'Show: Floor plan', map: 'Show: Map', both: 'Show: Floor plan & Map' };
   document.getElementById('basemapLabel').textContent = labels[mode];
 
   if (mode === 'floorplan') {
@@ -2382,6 +2536,7 @@ function renderPanel() {
   document.getElementById('bpFloorLoaded').style.display  = hasFile ? 'flex' : 'none';
   document.getElementById('bpFloorEditBtn').style.display = hasFile ? '' : 'none';
   document.getElementById('bpFloorEditBtn').classList.toggle('active', state.floorPlanEditMode);
+  document.getElementById('bpScaleBtn').style.display = hasFile ? '' : 'none';
   if (hasFile) document.getElementById('bpFloorName').textContent = state.floorPlanFile.name;
   document.getElementById('bpChangeFloorLabel').textContent = hasFile ? 'Change floor plan' : 'Upload floor plan';
 
@@ -2410,7 +2565,14 @@ function renderProperties(id) {
   document.getElementById('propsEmpty').style.display = 'none';
   document.getElementById('propsContent').style.display = 'block';
   document.getElementById('propsTitle').textContent = cam.name;
-  document.getElementById('propsSub').textContent = cam.model + ' · $' + cam.price.toLocaleString();
+  document.getElementById('propsSub').textContent = cam.model || 'Generic';
+  const propsPrice = document.getElementById('propsPrice');
+  propsPrice.className = 'props-price show';
+  propsPrice.textContent = '$' + cam.price.toLocaleString();
+  const propsIcon = document.getElementById('propsIcon');
+  propsIcon.className = 'props-hdr-icon show';
+  propsIcon.style.background = '#7c3aed';
+  propsIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`;
 
   const c = document.getElementById('propsContent');
   c.innerHTML = `
@@ -2496,38 +2658,54 @@ function renderProperties(id) {
       })()}
     </div>
     <div class="props-section">
-      <div class="props-section-title">Recording & License</div>
-      <div class="prop-row">
-        <span class="prop-label">Retention</span>
-        <div class="prop-ctrl">
-          <select class="prop-select" style="width:120px" onchange="updateCamProp(${id},'retention',+this.value)">
-            ${[30,60,90,365].map(r=>`<option value="${r}" ${cam.retention===r?'selected':''}>${r} days</option>`).join('')}
-          </select>
-        </div>
-      </div>
+      <div class="props-section-title">License & Recording</div>
       <div class="prop-row">
         <span class="prop-label">License</span>
         <div class="prop-ctrl">
           <select class="prop-select" style="width:120px" onchange="updateCamProp(${id},'license',this.value)">
-            ${['Standard','Enterprise'].map(l=>`<option ${cam.license===l?'selected':''}>${l}</option>`).join('')}
+            ${['Essential','Enterprise'].map(l=>`<option ${cam.license===l?'selected':''}>${l}</option>`).join('')}
           </select>
         </div>
       </div>
+      <div class="prop-row">
+        <span class="prop-label">Retention</span>
+        <div class="prop-ctrl">
+          <select class="prop-select" style="width:120px" onchange="updateCamProp(${id},'retention',+this.value)">
+            ${[30,60,90,180,365].map(r=>`<option value="${r}" ${cam.retention===r?'selected':''}>${r} days</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Payment</span>
+        <div class="prop-ctrl">
+          <select class="prop-select" style="width:120px" onchange="updateCamPayment(${id},this.value)">
+            <option value="Upfront" ${(cam.payment||'Upfront')==='Upfront'?'selected':''}>Upfront</option>
+            <option value="Yearly" ${cam.payment==='Yearly'?'selected':''}>Yearly</option>
+          </select>
+        </div>
+      </div>
+      ${cam.payment === 'Yearly' ? `<div class="prop-row">
+        <span class="prop-label">Duration</span>
+        <div class="prop-ctrl">
+          <select class="prop-select" style="width:120px" onchange="updateCamProp(${id},'duration',+this.value)">
+            ${[1,3,5,10].map(d=>`<option value="${d}" ${(cam.duration||1)===d?'selected':''}>${d} year${d>1?'s':''}</option>`).join('')}
+          </select>
+        </div>
+      </div>` : ''}
     </div>
     <div class="props-section">
-      <div class="props-section-title">Bandwidth & Storage</div>
-      <div class="storage-stats">
-        <div class="storage-stat">
-          <div class="storage-stat-val">${calcBandwidth(cam)} Mbps</div>
-          <div class="storage-stat-lbl">Bandwidth</div>
-        </div>
-        <div class="storage-stat">
-          <div class="storage-stat-val">${calcStorage(cam)} GB</div>
-          <div class="storage-stat-lbl">Per day</div>
-        </div>
-        <div class="storage-stat">
-          <div class="storage-stat-val">${(parseFloat(calcStorage(cam)) * cam.retention / 1024).toFixed(2)} TB</div>
-          <div class="storage-stat-lbl">${cam.retention}d total</div>
+      <div class="props-section-title">Core Assignment</div>
+      <div class="prop-row">
+        <span class="prop-label">Core</span>
+        <div class="prop-ctrl">
+          <select class="prop-select" style="width:160px" onchange="assignCamToCore(${id},this.value)">
+            <option value="">Unassigned</option>
+            ${state.cores.map(core => {
+              const assigned = (core.cameraIds || []).includes(id);
+              const full = !assigned && (core.cameraIds || []).length >= core.channels;
+              return '<option value="' + core.id + '" ' + (assigned ? 'selected' : '') + (full ? ' disabled' : '') + '>' + escHtml(core.name) + ' (' + (core.cameraIds || []).length + '/' + core.channels + ')' + '</option>';
+            }).join('')}
+          </select>
         </div>
       </div>
     </div>
@@ -2566,6 +2744,8 @@ function renderPropertiesEmpty() {
   document.getElementById('propsContent').style.display = 'none';
   document.getElementById('propsTitle').textContent = 'Properties';
   document.getElementById('propsSub').textContent = 'Select a device to configure';
+  document.getElementById('propsIcon').className = 'props-hdr-icon';
+  document.getElementById('propsPrice').className = 'props-price';
   renderBOMPane();
   update3DScene();
 }
@@ -2601,12 +2781,38 @@ function updateFov(id, val, el) {
   updateUI();
 }
 
+function assignCamToCore(camId, coreIdStr) {
+  saveUndo();
+  // Remove from all cores first
+  state.cores.forEach(core => {
+    core.cameraIds = (core.cameraIds || []).filter(id => id !== camId);
+  });
+  // Assign to selected core
+  if (coreIdStr) {
+    const core = state.cores.find(c => c.id === parseInt(coreIdStr));
+    if (core) {
+      if (!core.cameraIds) core.cameraIds = [];
+      core.cameraIds.push(camId);
+    }
+  }
+  renderBOMPane();
+  updateProjectTotal();
+}
+
 function updateCamProp(id, key, val) {
   const cam = state.cameras.find(c => c.id === id);
   if (!cam) return;
   cam[key] = val;
   if (key === 'name') renderCamLabel(cam);
   updateUI();
+}
+
+function updateCamPayment(id, val) {
+  const cam = state.cameras.find(c => c.id === id);
+  if (!cam) return;
+  cam.payment = val;
+  if (val === 'Upfront') cam.duration = 1;
+  selectCamera(id);
 }
 
 function updateCamColor(id, color) {
@@ -2764,117 +2970,566 @@ function switchTab(tab) {
   if (tab === 'bom') renderBOMPane();
 }
 
+// ── BOM Hierarchical Tree Helpers ──
+const _bomCollapseState = {};
+
+function toggleBomGroup(key, evt) {
+  if (evt) evt.stopPropagation();
+  _bomCollapseState[key] = !_bomCollapseState[key];
+  const el = document.querySelector('[data-bom-group="' + key + '"]');
+  if (el) el.classList.toggle('collapsed', _bomCollapseState[key]);
+}
+
+const BOM_CAM_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`;
+const BOM_CORE_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1" opacity="0.4"/></svg>`;
+
+// ── Bulk edit state ──
+const _bulkEdit = {
+  active: false,
+  selected: new Set(),       // 'cam-{id}' or 'core-{id}'
+  pendingChanges: {},        // field -> value, captured from first edit
+  showSuccess: false,
+};
+
+function toggleBulkEdit() {
+  if (_dragMode.active) { _dragMode.active = false; _dragMode.showSuccess = false; }
+  _bulkEdit.active = !_bulkEdit.active;
+  _bulkEdit.selected.clear();
+  _bulkEdit.pendingChanges = {};
+  _bulkEdit.showSuccess = false;
+  renderBOMPane();
+}
+
+function bulkToggleItem(key, evt) {
+  evt.stopPropagation();
+  if (_bulkEdit.selected.has(key)) _bulkEdit.selected.delete(key);
+  else _bulkEdit.selected.add(key);
+  renderBOMPane();
+}
+
+function bulkToggleAll(checked) {
+  _bulkEdit.selected.clear();
+  if (checked) {
+    state.cameras.forEach(c => _bulkEdit.selected.add('cam-' + c.id));
+    state.cores.forEach(c => _bulkEdit.selected.add('core-' + c.id));
+  }
+  renderBOMPane();
+}
+
+function bulkEditField(field, el, evt) {
+  evt.stopPropagation();
+  const opts = {
+    payment: ['Upfront','Yearly'],
+    duration: ['1 yr','3 yr','5 yr','10 yr'],
+    license: ['Essential','Enterprise'],
+    retention: ['30d','60d','90d','180d','365d'],
+    resolution: ['1080p','4K','8MP','12MP'],
+  };
+  const options = opts[field];
+  if (!options) return;
+  const curVal = el.textContent.trim();
+  const sel = document.createElement('select');
+  sel.style.cssText = 'font-size:14px;color:#344054;border:1px solid #d0d5dd;border-radius:4px;padding:2px 4px;background:#fff;font-family:inherit;outline:none;cursor:pointer;width:100%';
+  options.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o; opt.textContent = o;
+    if (o === curVal) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  el.textContent = '';
+  el.appendChild(sel);
+  sel.focus();
+  const commit = () => {
+    const v = sel.value;
+    sel.remove();
+    _bulkEdit.pendingChanges[field] = v;
+    renderBOMPane();
+  };
+  sel.addEventListener('change', commit);
+  sel.addEventListener('blur', commit, { once: true });
+}
+
+function bulkApply() {
+  const changes = _bulkEdit.pendingChanges;
+  if (Object.keys(changes).length === 0) return;
+  saveUndo();
+  _bulkEdit.selected.forEach(key => {
+    const [type, idStr] = key.split('-');
+    const id = parseInt(idStr);
+    if (type === 'cam') {
+      const cam = state.cameras.find(c => c.id === id);
+      if (!cam) return;
+      if (changes.payment) { cam.payment = changes.payment; if (changes.payment === 'Upfront') cam.duration = 1; }
+      if (changes.duration) { const d = parseInt(changes.duration); cam.duration = d; cam.payment = 'Yearly'; }
+      if (changes.license) cam.license = changes.license;
+      if (changes.retention) cam.retention = parseInt(changes.retention);
+      if (changes.resolution) cam.resolution = changes.resolution;
+    } else if (type === 'core') {
+      const core = state.cores.find(c => c.id === id);
+      if (!core) return;
+      if (changes.payment) { core.payment = changes.payment; if (changes.payment === 'Upfront') core.duration = 1; }
+      if (changes.duration) { const d = parseInt(changes.duration); core.duration = d; core.payment = 'Yearly'; }
+    }
+  });
+  _bulkEdit.active = false;
+  _bulkEdit.selected.clear();
+  _bulkEdit.pendingChanges = {};
+  _bulkEdit.showSuccess = true;
+  renderBOMPane();
+  updateProjectTotal();
+  setTimeout(() => { _bulkEdit.showSuccess = false; renderBOMPane(); }, 3000);
+}
+
+function bulkCancel() {
+  _bulkEdit.active = false;
+  _bulkEdit.selected.clear();
+  _bulkEdit.pendingChanges = {};
+  _bulkEdit.showSuccess = false;
+  renderBOMPane();
+}
+
+// ── Drag reorder state ──
+const _dragMode = {
+  active: false,
+  dragCamId: null,
+  showSuccess: false,
+  moveCount: 0,
+  snapshot: null,  // core cameraIds snapshot for cancel
+};
+
+function toggleDragMode() {
+  if (_bulkEdit.active) { bulkCancel(); }
+  _dragMode.active = !_dragMode.active;
+  _dragMode.dragCamId = null;
+  _dragMode.showSuccess = false;
+  _dragMode.moveCount = 0;
+  if (_dragMode.active) {
+    _dragMode.snapshot = state.cores.map(c => ({ id: c.id, cameraIds: [...(c.cameraIds || [])] }));
+  } else {
+    _dragMode.snapshot = null;
+  }
+  renderBOMPane();
+}
+
+function dragApply() {
+  saveUndo();
+  _dragMode.active = false;
+  _dragMode.dragCamId = null;
+  _dragMode.showSuccess = true;
+  const count = _dragMode.moveCount;
+  _dragMode.moveCount = 0;
+  _dragMode.snapshot = null;
+  renderBOMPane();
+  updateProjectTotal();
+  setTimeout(() => { _dragMode.showSuccess = false; renderBOMPane(); }, 3000);
+}
+
+function dragCancel() {
+  // Restore snapshot
+  if (_dragMode.snapshot) {
+    _dragMode.snapshot.forEach(snap => {
+      const core = state.cores.find(c => c.id === snap.id);
+      if (core) core.cameraIds = [...snap.cameraIds];
+    });
+  }
+  _dragMode.active = false;
+  _dragMode.dragCamId = null;
+  _dragMode.showSuccess = false;
+  _dragMode.moveCount = 0;
+  _dragMode.snapshot = null;
+  renderBOMPane();
+}
+
+function bomDragStart(camId, evt) {
+  _dragMode.dragCamId = camId;
+  evt.dataTransfer.effectAllowed = 'move';
+  evt.dataTransfer.setData('text/plain', camId);
+  requestAnimationFrame(() => {
+    const el = evt.target.closest('.bom-item');
+    if (el) el.classList.add('dragging');
+  });
+}
+
+function bomDragEnd(evt) {
+  const el = evt.target.closest('.bom-item');
+  if (el) el.classList.remove('dragging');
+  _dragMode.dragCamId = null;
+  document.querySelectorAll('.bom-drop-zone.over').forEach(z => z.classList.remove('over'));
+  document.querySelectorAll('.bom-group-hdr.drop-target').forEach(h => h.classList.remove('drop-target'));
+}
+
+function bomDropZoneDragOver(evt) {
+  evt.preventDefault();
+  evt.dataTransfer.dropEffect = 'move';
+  evt.target.closest('.bom-drop-zone')?.classList.add('over');
+}
+
+function bomDropZoneDragLeave(evt) {
+  evt.target.closest('.bom-drop-zone')?.classList.remove('over');
+}
+
+function bomDropOnGroup(targetCoreId, position, evt) {
+  evt.preventDefault();
+  const camId = _dragMode.dragCamId;
+  if (!camId) return;
+
+  // Remove camera from any current core
+  state.cores.forEach(core => {
+    core.cameraIds = (core.cameraIds || []).filter(id => id !== camId);
+  });
+
+  // Add to target core (null = unassigned)
+  if (targetCoreId !== null) {
+    const core = state.cores.find(c => c.id === targetCoreId);
+    if (core) {
+      if (!core.cameraIds) core.cameraIds = [];
+      if (typeof position === 'number') {
+        core.cameraIds.splice(position, 0, camId);
+      } else {
+        core.cameraIds.push(camId);
+      }
+    }
+  }
+
+  _dragMode.dragCamId = null;
+  _dragMode.moveCount++;
+  renderBOMPane();
+}
+
+function bomEditTag(camId, field, el, evt) {
+  evt.stopPropagation();
+  const cam = state.cameras.find(c => c.id === camId);
+  if (!cam) return;
+  if (field === 'duration' && cam.payment === 'Upfront') return;
+  if (field === 'resolution' && (cam.model || 'Generic') !== 'Generic') return;
+  const opts = {
+    payment: ['Upfront','Yearly'],
+    duration: ['1 yr','3 yr','5 yr','10 yr'],
+    license: ['Essential','Enterprise'],
+    retention: ['30d','60d','90d','180d','365d'],
+    resolution: ['1080p','4K','8MP','12MP'],
+  };
+  const options = opts[field];
+  if (!options) return;
+  const curVal = el.textContent.trim();
+  const sel = document.createElement('select');
+  sel.className = '';
+  sel.style.cssText = 'font-size:14px;color:#344054;border:1px solid #d0d5dd;border-radius:4px;padding:2px 4px;background:#fff;font-family:inherit;outline:none;cursor:pointer;width:100%';
+  options.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o; opt.textContent = o;
+    if (o === curVal) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  el.textContent = '';
+  el.appendChild(sel);
+  sel.focus();
+  const commit = () => {
+    const v = sel.value;
+    sel.remove();
+    if (field === 'payment') { cam.payment = v; if (v === 'Upfront') cam.duration = 1; }
+    else if (field === 'duration') { cam.duration = parseInt(v); }
+    else if (field === 'license') { cam.license = v; }
+    else if (field === 'retention') { cam.retention = parseInt(v); }
+    else if (field === 'resolution') { cam.resolution = v; }
+    renderBOMPane();
+    updateProjectTotal();
+  };
+  sel.addEventListener('change', commit);
+  sel.addEventListener('blur', commit, { once: true });
+}
+
+function bomEditCoreTag(coreId, field, el, evt) {
+  evt.stopPropagation();
+  const core = state.cores.find(c => c.id === coreId);
+  if (!core) return;
+  if (field === 'duration' && core.payment === 'Upfront') return;
+  const opts = {
+    payment: ['Upfront','Yearly'],
+    duration: ['1 yr','3 yr','5 yr','10 yr'],
+  };
+  const options = opts[field];
+  if (!options) return;
+  const curVal = el.textContent.trim();
+  const sel = document.createElement('select');
+  sel.style.cssText = 'font-size:14px;color:#344054;border:1px solid #d0d5dd;border-radius:4px;padding:2px 4px;background:#fff;font-family:inherit;outline:none;cursor:pointer;width:100%';
+  options.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o; opt.textContent = o;
+    if (o === curVal) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  el.textContent = '';
+  el.appendChild(sel);
+  sel.focus();
+  const commit = () => {
+    const v = sel.value;
+    sel.remove();
+    if (field === 'payment') { core.payment = v; if (v === 'Upfront') core.duration = 1; }
+    else if (field === 'duration') { core.duration = parseInt(v); }
+    renderBOMPane();
+    updateProjectTotal();
+  };
+  sel.addEventListener('change', commit);
+  sel.addEventListener('blur', commit, { once: true });
+}
+
+function _bomTagHtml(field, value, bulk, camId, model) {
+  const p = _bulkEdit.pendingChanges;
+  const display = (bulk && p[field]) ? p[field] : value;
+  const changed = bulk && p[field];
+  if (field === 'duration' && value === '—' && !changed) {
+    return `<span class="bom-detail-tag" style="cursor:default;color:#98a2b3" title="Duration">—</span>`;
+  }
+  if (field === 'resolution' && model && model !== 'Generic' && !changed) {
+    return `<span class="bom-detail-tag" style="cursor:default" title="Resolution">${display}</span>`;
+  }
+  const style = changed ? 'color:#7c3aed;font-weight:600' : '';
+  const click = bulk
+    ? `onclick="bulkEditField('${field}',this,event)"`
+    : `onclick="bomEditTag(${camId},'${field}',this,event)"`;
+  return `<span class="bom-detail-tag" style="${style}" title="${field.charAt(0).toUpperCase()+field.slice(1)}" ${click}>${display}</span>`;
+}
+
+function renderBomCamItem(cam, coreId, idx) {
+  const icon = ICONS[cam.iconType] || BOM_CAM_ICON;
+  const payment = cam.payment || 'Upfront';
+  const duration = cam.payment === 'Yearly' ? (cam.duration || 1) + ' yr' : '—';
+  const bulk = _bulkEdit.active;
+  const drag = _dragMode.active;
+  const key = 'cam-' + cam.id;
+  const checked = _bulkEdit.selected.has(key);
+  const cbHtml = bulk ? `<input type="checkbox" class="bom-cb bom-item-cb" ${checked ? 'checked' : ''} onclick="bulkToggleItem('${key}',event)">` : '';
+  const detailPad = bulk ? 'padding-left:40px' : '';
+  const dragHandleSvg = `<svg class="bom-drag-handle" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>`;
+  const dragAttr = drag ? `draggable="true" ondragstart="bomDragStart(${cam.id},event)" ondragend="bomDragEnd(event)"` : '';
+  const dropZone = drag ? `<div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(${coreId},${idx},event)"></div>` : '';
+  return `${dropZone}<div class="bom-item" ${dragAttr}>
+    <div class="bom-item-primary" ${drag ? '' : (bulk ? '' : 'onclick="selectCamera(' + cam.id + ')" title="Select camera"')}>
+      ${drag ? dragHandleSvg : ''}${cbHtml}
+      <span class="bom-item-icon">${icon}</span>
+      <span class="bom-item-name-wrap">
+        <span class="bom-item-name">${escHtml(cam.name)}</span>
+        <span class="bom-item-model">${escHtml(cam.model || 'Generic')}</span>
+      </span>
+      <span class="bom-item-price">$${cam.price.toLocaleString()}</span>
+    </div>
+    ${drag ? '' : `<div class="bom-item-details" style="${detailPad}">
+      ${_bomTagHtml('payment', payment, bulk, cam.id)}
+      ${_bomTagHtml('duration', duration, bulk, cam.id)}
+      ${_bomTagHtml('license', cam.license || 'Essential', bulk, cam.id)}
+      ${_bomTagHtml('retention', (cam.retention || 30) + 'd', bulk, cam.id)}
+      ${_bomTagHtml('resolution', cam.resolution || '4K', bulk, cam.id, cam.model || 'Generic')}
+    </div>`}
+  </div>`;
+}
+
 function renderBOMPane() {
   const pane = document.getElementById('bomPane');
   const cams = state.cameras;
+  const cores = state.cores;
 
-  if (cams.length === 0) {
+  // Empty state
+  if (cams.length === 0 && cores.length === 0) {
     pane.innerHTML = `
       <div class="bom-empty-pane">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
           <rect x="9" y="3" width="6" height="4" rx="1"/>
         </svg>
-        <p>Add cameras to the canvas<br>to generate a Bill of Materials.</p>
+        <p>Add cores and cameras to the canvas<br>to generate a Bill of Materials.</p>
       </div>`;
     return;
   }
 
+  // Assigned camera IDs
+  const assignedCamIds = new Set();
+  cores.forEach(core => (core.cameraIds || []).forEach(id => assignedCamIds.add(id)));
+  const unassignedCams = cams.filter(c => !assignedCamIds.has(c.id));
+
+  // Totals
   const camTotal = cams.reduce((s, c) => s + c.price, 0);
+  const coreTotal = cores.reduce((s, c) => s + c.price, 0);
+  const grandTotal = camTotal + coreTotal;
 
-  // Licensing (Standard per camera)
-  const licQty = cams.length;
-  const licUnit = LICENSE_PRICE.Standard;
-  const licTotal = licQty * licUnit;
+  const chevronSvg = '<svg class="bom-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
+  const bulk = _bulkEdit.active;
+  const drag = _dragMode.active;
+  const bp = _bulkEdit.pendingChanges;
 
-  const grandTotal = camTotal + licTotal;
+  // Render core groups
+  let groupsHtml = '';
+  cores.forEach(core => {
+    const coreCams = (core.cameraIds || []).map(id => cams.find(c => c.id === id)).filter(Boolean);
+    const collapsed = _bomCollapseState[core.id] ? 'collapsed' : '';
+    const coreKey = 'core-' + core.id;
+    const coreChecked = _bulkEdit.selected.has(coreKey);
+    const coreCbHtml = bulk ? `<input type="checkbox" class="bom-cb" ${coreChecked ? 'checked' : ''} onclick="bulkToggleItem('${coreKey}',event)">` : '';
 
-  // Storage & network
-  const totalBW = cams.reduce((s, c) => s + calcBandwidth(c), 0);
-  const totalGB = cams.reduce((s, c) => s + parseFloat(calcStorage(c)) * c.retention, 0);
-  const totalTB = (totalGB / 1024).toFixed(2);
-  const nvrRec = calcNVR(totalGB);
-  // Retention label (use most common retention across cameras)
-  const retentionMode = cams.reduce((acc, c) => { acc[c.retention] = (acc[c.retention]||0)+1; return acc; }, {});
-  const commonRetention = Object.entries(retentionMode).sort((a,b)=>b[1]-a[1])[0][0];
+    const coreDuration = core.payment === 'Yearly' ? core.duration + ' yr' : '—';
+    const corePaymentDisplay = (bulk && bp.payment) ? bp.payment : core.payment;
+    const coreDurationDisplay = (bulk && bp.duration) ? bp.duration : coreDuration;
+    const payStyle = (bulk && bp.payment) ? 'color:#7c3aed;font-weight:600' : '';
+    const durStyle = (bulk && bp.duration) ? 'color:#7c3aed;font-weight:600' : '';
+    const coreTagClick = bulk ? 'bulkEditField' : 'bomEditCoreTag(' + core.id + ',';
+    const coreDetPad = bulk ? 'padding-left:40px' : '';
 
-  const camLines = cams.map((c, idx) => `
-    <div class="bom-line bom-line-clickable" onclick="selectCamera(${c.id})" title="Select camera">
-      <span style="width:8px;height:8px;border-radius:50%;background:${c.color};flex-shrink:0;display:inline-block"></span>
-      <span class="bom-line-name" title="${escHtml(c.name)}">${escHtml(c.name)}</span>
-      <span class="bom-line-unit" style="font-size:10px;color:#d0d5dd">${escHtml(c.model || 'Generic')}</span>
-      <span class="bom-line-total">$${c.price.toLocaleString()}</span>
-    </div>`).join('');
+    groupsHtml += `
+      <div class="bom-group ${collapsed}" data-bom-group="${core.id}">
+        <div class="bom-group-hdr bom-group-hdr-core" style="--core-color:${core.color}" ${drag ? 'ondragover="event.preventDefault();this.classList.add(\'drop-target\')" ondragleave="this.classList.remove(\'drop-target\')" ondrop="this.classList.remove(\'drop-target\');bomDropOnGroup(' + core.id + ',0,event)"' : (bulk ? '' : 'onclick="selectCore(' + core.id + ')"')}>
+          ${coreCbHtml}
+          <span onclick="toggleBomGroup('${core.id}',event)">${chevronSvg}</span>
+          <span class="bom-group-icon">${BOM_CORE_ICON}</span>
+          <span class="bom-group-name-wrap">
+            <span class="bom-group-name">${escHtml(core.name)}</span>
+            <span class="bom-group-type">${escHtml(core.type)}</span>
+          </span>
+          <span class="bom-group-count-badge">${coreCams.length}</span>
+          <span class="bom-group-price-wrap">
+            <span class="bom-group-price">$${core.price.toLocaleString()}</span>
+            <span class="bom-group-price-sep">|</span>
+            <span class="bom-group-total">Total: $${(core.price + coreCams.reduce((s, c) => s + c.price, 0)).toLocaleString()}</span>
+          </span>
+        </div>
+        <div class="bom-group-children">
+          ${drag ? '' : '<div class="bom-group-core-details" style="' + coreDetPad + '"><span class="bom-detail-tag" style="' + payStyle + '" title="Payment" onclick="' + (bulk ? "bulkEditField(\'payment\',this,event)" : "bomEditCoreTag("+core.id+",\'payment\',this,event)") + '">' + corePaymentDisplay + '</span>' + (coreDurationDisplay === '—' && !durStyle ? '<span class="bom-detail-tag" style="cursor:default;color:#98a2b3" title="Duration">—</span>' : '<span class="bom-detail-tag" style="' + durStyle + '" title="Duration" onclick="' + (bulk ? "bulkEditField(\'duration\',this,event)" : "bomEditCoreTag("+core.id+",\'duration\',this,event)") + '">' + coreDurationDisplay + '</span>') + '</div>'}
+          ${coreCams.map((cam, i) => renderBomCamItem(cam, core.id, i)).join('')}
+          ${_dragMode.active ? '<div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(' + core.id + ',' + coreCams.length + ',event)"></div>' : ''}
+        </div>
+      </div>`;
+  });
+
+  // Unassigned cameras group
+  if (unassignedCams.length > 0 || _dragMode.active) {
+    const collapsed = _bomCollapseState['unassigned'] ? 'collapsed' : '';
+    groupsHtml += `
+      <div class="bom-group ${collapsed}" data-bom-group="unassigned">
+        <div class="bom-group-hdr bom-group-hdr-unassigned" ${drag ? 'ondragover="event.preventDefault();this.classList.add(\'drop-target\')" ondragleave="this.classList.remove(\'drop-target\')" ondrop="this.classList.remove(\'drop-target\');bomDropOnGroup(null,0,event)"' : ''} onclick="toggleBomGroup('unassigned',event)">
+          ${chevronSvg}
+          <span class="bom-group-icon">${BOM_CAM_ICON}</span>
+          <span class="bom-group-name-wrap">
+            <span class="bom-group-name">Unassigned Cameras</span>
+          </span>
+          <span class="bom-group-count-badge">${unassignedCams.length}</span>
+          <span class="bom-group-price-wrap">
+            <span class="bom-group-total">Total: $${unassignedCams.reduce((s, c) => s + c.price, 0).toLocaleString()}</span>
+          </span>
+        </div>
+        <div class="bom-group-children">
+          ${unassignedCams.map((cam, i) => renderBomCamItem(cam, null, i)).join('')}
+          ${_dragMode.active ? '<div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(null,' + unassignedCams.length + ',event)"></div>' : ''}
+        </div>
+      </div>`;
+  }
+
+  // Success message
+  const successHtml = _bulkEdit.showSuccess ? `
+    <div class="bom-success">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Changes applied to ${_bulkEdit.selected.size} device${_bulkEdit.selected.size !== 1 ? 's' : ''} successfully.
+    </div>` : (_dragMode.showSuccess ? `
+    <div class="bom-success">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Camera moved successfully.
+    </div>` : '');
+
+  // Toolbar
+  const toolbarHtml = (cams.length + cores.length > 0) ? `
+    <div class="bom-toolbar">
+      <span style="font-size:11px;font-weight:600;color:#98a2b3;text-transform:uppercase;letter-spacing:0.5px">Devices</span>
+      <div style="display:flex;gap:6px">
+        <button class="bom-bulk-btn ${drag ? 'active' : ''}" onclick="toggleDragMode()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+          Reassign
+        </button>
+        <button class="bom-bulk-btn ${bulk ? 'active' : ''}" onclick="toggleBulkEdit()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Bulk Edit
+        </button>
+      </div>
+    </div>` : '';
+
+  // Bulk bar
+  const totalItems = cams.length + cores.length;
+  const allChecked = _bulkEdit.selected.size === totalItems && totalItems > 0;
+  const pendingCount = Object.keys(_bulkEdit.pendingChanges).length;
+  const bulkBarHtml = bulk ? `
+    <div class="bom-bulk-bar">
+      <span class="bom-bulk-bar-hint">Edit a value on any device to apply it to all selected.</span>
+      <div class="bom-bulk-actions">
+        <button class="btn" style="padding:4px 10px;font-size:11px" onclick="bulkCancel()">Cancel</button>
+        <button class="btn btn-primary" style="padding:4px 10px;font-size:11px;${pendingCount ? '' : 'opacity:0.4;pointer-events:none'}" onclick="bulkApply()">Apply</button>
+      </div>
+    </div>
+    <div class="bom-bulk-select-all">
+      <label><input type="checkbox" class="bom-cb" ${allChecked ? 'checked' : ''} onchange="bulkToggleAll(this.checked)"> Select all devices</label>
+    </div>` : '';
+
+  // Drag bar
+  const hasMoves = _dragMode.moveCount > 0;
+  const dragBarHtml = drag ? `
+    <div class="bom-bulk-bar">
+      <span class="bom-bulk-bar-hint">Drag cameras to reorder or move between cores.</span>
+      <div class="bom-bulk-actions">
+        <button class="btn" style="padding:4px 10px;font-size:11px" onclick="dragCancel()">Cancel</button>
+        <button class="btn btn-primary" style="padding:4px 10px;font-size:11px;${hasMoves ? '' : 'opacity:0.4;pointer-events:none'}" onclick="dragApply()">Apply</button>
+      </div>
+    </div>` : '';
 
   pane.innerHTML = `
-    <div class="bom-section">
-      <div class="bom-section-hdr">
-        <span class="bom-section-icon">📷</span>
-        <span class="bom-section-title">Cameras</span>
-        <span class="bom-section-sub">$${camTotal.toLocaleString()}</span>
-      </div>
-      ${camLines}
-    </div>
-    <div class="bom-section">
-      <div class="bom-section-hdr">
-        <span class="bom-section-icon">🔑</span>
-        <span class="bom-section-title">Licensing</span>
-        <span class="bom-section-sub">$${licTotal.toLocaleString()}</span>
-      </div>
-      <div class="bom-line">
-        <span class="bom-line-name">Lumana Standard License</span>
-        <span class="bom-line-qty">×${licQty}</span>
-        <span class="bom-line-unit">$${licUnit.toLocaleString()}/yr</span>
-        <span class="bom-line-total">$${licTotal.toLocaleString()}/yr</span>
-      </div>
-    </div>
-    <div class="bom-section">
-      <div class="bom-section-hdr">
-        <span class="bom-section-icon">💾</span>
-        <span class="bom-section-title">Storage & Network</span>
-        <span class="bom-section-sub">${totalTB} TB</span>
-      </div>
-      <div class="bom-line">
-        <span class="bom-line-name">Total Bandwidth</span>
-        <span class="bom-line-total">${totalBW} Mbps</span>
-      </div>
-      <div class="bom-line">
-        <span class="bom-line-name">Storage Required (${commonRetention}d retention)</span>
-        <span class="bom-line-total">${totalTB} TB</span>
-      </div>
-      <div class="bom-line">
-        <span class="bom-line-name">NVR Recommendation</span>
-        <span class="bom-line-total" style="color:#7c3aed;font-weight:700">${nvrRec}</span>
-      </div>
+    ${successHtml}
+    ${toolbarHtml}
+    ${bulkBarHtml}
+    ${dragBarHtml}
+    <div class="bom-section ${drag ? 'bom-drag-mode' : ''}" style="border-bottom:none;padding-bottom:0">
+      ${groupsHtml}
     </div>
     <div class="bom-grand">
       <span class="bom-grand-label">Grand Total</span>
       <span class="bom-grand-val">$${grandTotal.toLocaleString()}</span>
-    </div>
-`;
+    </div>`;
 }
 
 function exportCSV() {
   const cams = state.cameras;
-  const groups = {};
+  const cores = state.cores;
+  const rows = [['Item', 'Type/Model', 'Resolution', 'Retention', 'License', 'Payment', 'Duration', 'Qty', 'Unit Price', 'Total']];
+
+  // Cores section
+  if (cores.length) {
+    rows.push(['--- Cores ---','','','','','','','','','']);
+    cores.forEach(core => {
+      rows.push([core.name, core.type, '', '', '', core.payment, core.payment === 'Yearly' ? core.duration + ' yr' : '', 1, core.price, core.price]);
+    });
+  }
+
+  // Cameras section (grouped by typeId)
+  const camGroups = {};
   cams.forEach(c => {
-    if (!groups[c.typeId]) groups[c.typeId] = { name: c.name, model: c.model, price: c.price, qty: 0 };
-    groups[c.typeId].qty++;
+    if (!camGroups[c.typeId]) camGroups[c.typeId] = { name: c.name, model: c.model, resolution: c.resolution, retention: c.retention, license: c.license, price: c.price, qty: 0 };
+    camGroups[c.typeId].qty++;
   });
-  const rows = [['Item', 'Model', 'Qty', 'Unit Price', 'Total']];
-  Object.values(groups).forEach(i => {
-    rows.push([i.name, i.model || i.name, i.qty, i.price, i.price * i.qty]);
-  });
-  rows.push(['Lumana Standard License', '', cams.length, LICENSE_PRICE.Standard, cams.length * LICENSE_PRICE.Standard]);
-  const grandTotal = Object.values(groups).reduce((s,i) => s + i.price*i.qty, 0) + cams.length * LICENSE_PRICE.Standard;
+  if (cams.length) {
+    rows.push(['--- Cameras ---','','','','','','','','','']);
+    Object.values(camGroups).forEach(i => {
+      rows.push([i.name, i.model || 'Generic', i.resolution || '4K', (i.retention || 30) + 'd', i.license || 'Essential', '', '', i.qty, i.price, i.price * i.qty]);
+    });
+  }
+
+  rows.push(['Lumana Standard License', '', '', '', '', '', '', cams.length, LICENSE_PRICE.Standard, cams.length * LICENSE_PRICE.Standard]);
+
+  const camTotal = Object.values(camGroups).reduce((s,i) => s + i.price*i.qty, 0);
+  const coreTotal = cores.reduce((s,c) => s + c.price, 0);
+  const grandTotal = camTotal + coreTotal + cams.length * LICENSE_PRICE.Standard;
+
   // Storage & Network
   const totalBW = cams.reduce((s,c) => s + calcBandwidth(c), 0);
   const totalGB = cams.reduce((s,c) => s + parseFloat(calcStorage(c)) * c.retention, 0);
-  rows.push(['--- Storage & Network ---','','','','']);
-  rows.push(['Total Bandwidth','','','', totalBW + ' Mbps']);
-  rows.push(['Storage Required','','','', (totalGB/1024).toFixed(2) + ' TB']);
-  rows.push(['NVR Recommendation','','','', calcNVR(totalGB)]);
-  rows.push(['', '', '', 'Grand Total', grandTotal]);
+  rows.push(['--- Storage & Network ---','','','','','','','','','']);
+  rows.push(['Total Bandwidth','','','','','','','','', totalBW + ' Mbps']);
+  rows.push(['Storage Required','','','','','','','','', (totalGB/1024).toFixed(2) + ' TB']);
+  rows.push(['NVR Recommendation','','','','','','','','', calcNVR(totalGB)]);
+  rows.push(['', '', '', '', '', '', '', '', 'Grand Total', grandTotal]);
 
   const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a = document.createElement('a');
@@ -2885,28 +3540,36 @@ function exportCSV() {
 
 function updateProjectTotal() {
   const cams = state.cameras;
+  const cores = state.cores;
   const groups = {};
   cams.forEach(c => {
     if (!groups[c.typeId]) groups[c.typeId] = { price: c.price, qty: 0 };
     groups[c.typeId].qty++;
   });
   const camTotal = Object.values(groups).reduce((s,i) => s + i.price * i.qty, 0);
+  const coreTotal = cores.reduce((s, c) => s + c.price, 0);
   const licTotal = cams.length * LICENSE_PRICE.Standard;
-  const grand = camTotal + licTotal;
+  const grand = camTotal + coreTotal + licTotal;
 
   document.getElementById('rpTotalVal').textContent = '$' + grand.toLocaleString();
-  const avgPrice = cams.length ? Math.round(camTotal / cams.length) : 0;
-  document.getElementById('rpTotalMeta').textContent =
-    cams.length + ' camera' + (cams.length !== 1 ? 's' : '') + ' · $' + avgPrice.toLocaleString() + ' avg';
+  let metaParts = [];
+  if (cams.length) metaParts.push(cams.length + ' camera' + (cams.length !== 1 ? 's' : ''));
+  if (cores.length) metaParts.push(cores.length + ' core' + (cores.length !== 1 ? 's' : ''));
+  document.getElementById('rpTotalMeta').textContent = metaParts.length ? metaParts.join(', ') : 'No devices';
 
-  // Progress bar: scale 0–100 based on $0–$50k
-  const pct = Math.min(100, (grand / 50000) * 100);
-  document.getElementById('rpTotalFill').style.width = pct + '%';
+  // Progress bar: dynamic scale (if element exists)
+  const rpFill = document.getElementById('rpTotalFill');
+  if (rpFill) {
+    const scale = Math.max(50000, grand * 1.2);
+    const pct = Math.min(100, (grand / scale) * 100);
+    rpFill.style.width = pct + '%';
+  }
 
-  // BOM tab badge + BOM header badge
-  document.getElementById('bomTabBadge').textContent = cams.length;
+  // BOM tab badge + BOM header badge (total devices)
+  const totalDevices = cams.length + cores.length;
+  document.getElementById('bomTabBadge').textContent = totalDevices;
   const bomHdrBadge = document.getElementById('rpBomHeaderBadge');
-  if (bomHdrBadge) bomHdrBadge.textContent = cams.length;
+  if (bomHdrBadge) bomHdrBadge.textContent = totalDevices;
 
   // If BOM pane is open (via tab or via no-selection mode), refresh it
   if (_activeTab === 'bom' || (!state.selectedId && document.getElementById('bomPane').style.display !== 'none')) renderBOMPane();
@@ -2958,25 +3621,26 @@ function applyScale() {
 // UNDO / REDO
 // ═══════════════════════════════════════════════
 function saveUndo() {
-  state.undoStack.push(JSON.stringify({ cameras: state.cameras, userWalls: state.userWalls }));
+  state.undoStack.push(JSON.stringify({ cameras: state.cameras, userWalls: state.userWalls, cores: state.cores }));
   if (state.undoStack.length > 40) state.undoStack.shift();
   state.redoStack = [];
 }
 function undo() {
   if (!state.undoStack.length) return;
-  state.redoStack.push(JSON.stringify({ cameras: state.cameras, userWalls: state.userWalls }));
+  state.redoStack.push(JSON.stringify({ cameras: state.cameras, userWalls: state.userWalls, cores: state.cores }));
   const prev = JSON.parse(state.undoStack.pop());
   restoreState(prev);
 }
 function redo() {
   if (!state.redoStack.length) return;
-  state.undoStack.push(JSON.stringify({ cameras: state.cameras, userWalls: state.userWalls }));
+  state.undoStack.push(JSON.stringify({ cameras: state.cameras, userWalls: state.userWalls, cores: state.cores }));
   const next = JSON.parse(state.redoStack.pop());
   restoreState(next);
 }
 function restoreState(s) {
   state.cameras = s.cameras;
   state.userWalls = s.userWalls;
+  state.cores = s.cores || [];
   rebuildCanvas();
   selectCamera(null);
   updateUI();
@@ -2986,6 +3650,7 @@ function rebuildCanvas() {
   if (labelLayer) labelLayer.destroyChildren();
   state.userWalls.forEach(w => drawUserWall(w));
   state.cameras.forEach(cam => { renderCamera(cam); drawFov(cam); });
+  state.cores.forEach(core => { renderCoreOnCanvas(core); });
   fovLayer.draw(); cameraLayer.draw(); wallLayer.draw();
   if (labelLayer) {
     const sel = state.cameras.find(c => c.id === state.selectedId);
@@ -3132,7 +3797,8 @@ function applyZoom(factor) {
   syncMapToStage();
 }
 function updateZoomDisplay() {
-  document.getElementById('zoom-display').textContent = Math.round(stage.scaleX()*100) + '%';
+  const el = document.getElementById('zoom-display');
+  if (el) el.textContent = Math.round(stage.scaleX()*100) + '%';
 }
 
 // ═══════════════════════════════════════════════
@@ -3195,6 +3861,7 @@ function renderLeftPanel() {
       </div>`;
     });
   }
+
   body.innerHTML = html;
 }
 
@@ -3205,8 +3872,7 @@ function openModelPicker(editCamId) {
   mpState.selectedBrand = 'All';
   mpState.selectedModelId = null;
   mpState.ffFilter = null;
-  mpState.ndaaOnly = false;
-  mpState.excludeEol = true;
+  mpState.ffChipsExpanded = false;
   mpState.resMinStep = 0;
   mpState.resMaxStep = 6;
   mpState.irMax = 500;
@@ -3220,18 +3886,21 @@ function openModelPicker(editCamId) {
   document.getElementById('mpIrVal').textContent = '0m – 500m';
   document.getElementById('mpHaovSlider').value = 360;
   document.getElementById('mpHaovVal').textContent = '1° – 360°';
-  document.getElementById('mpEolAll').classList.remove('active');
-  document.getElementById('mpEolExclude').classList.add('active');
-  document.getElementById('mpToggleNdaa').classList.remove('active');
   _updateResFill();
+  // Collapse filters by default
+  document.getElementById('mpSlidersRow').style.display = 'none';
+  document.getElementById('mpShowFiltersBtn').classList.remove('active');
+  document.getElementById('mpShowFiltersBtn').innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor"/><circle cx="16" cy="12" r="2" fill="currentColor"/><circle cx="10" cy="18" r="2" fill="currentColor"/></svg> Show filters';
   const placeBtn = document.getElementById('mpPlaceBtn');
-  placeBtn.style.opacity = '0.4';
-  placeBtn.style.pointerEvents = 'none';
+  // Auto-select Generic model
+  mpState.selectedModelId = 'generic-cam';
+  placeBtn.style.opacity = '1';
+  placeBtn.style.pointerEvents = 'auto';
   placeBtn.textContent = mpState.editCamId ? 'Select Model' : 'Place Camera';
   renderMpFfChips();
   renderMpBrands();
   renderMpModels();
-  renderMpInfo(null);
+  renderMpInfo('generic-cam');
   document.getElementById('mpOverlay').classList.add('show');
   document.getElementById('mpModal').classList.add('show');
   setTimeout(() => document.getElementById('mpSearchInput').focus(), 100);
@@ -3257,6 +3926,18 @@ function closeModelPicker() {
   document.getElementById('mpModal').classList.remove('show');
 }
 
+function toggleMpFiltersPanel() {
+  const row = document.getElementById('mpSlidersRow');
+  const btn = document.getElementById('mpShowFiltersBtn');
+  const visible = row.style.display !== 'none';
+  row.style.display = visible ? 'none' : 'flex';
+  btn.classList.toggle('active', !visible);
+  btn.innerHTML = visible
+    ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor"/><circle cx="16" cy="12" r="2" fill="currentColor"/><circle cx="10" cy="18" r="2" fill="currentColor"/></svg> Show filters'
+    : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor"/><circle cx="16" cy="12" r="2" fill="currentColor"/><circle cx="10" cy="18" r="2" fill="currentColor"/></svg> Hide filters';
+  if (!visible) setTimeout(() => _updateResFill(), 50);
+}
+
 function getMpFilteredModels() {
   const q = (document.getElementById('mpSearchInput').value || '').toLowerCase();
   const resMinMp = RES_STEPS[mpState.resMinStep] || 0;
@@ -3264,8 +3945,6 @@ function getMpFilteredModels() {
   return CAMERA_DB.filter(m => {
     if (mpState.selectedBrand !== 'All' && m.brand !== mpState.selectedBrand) return false;
     if (mpState.ffFilter && m.formFactor !== mpState.ffFilter) return false;
-    if (mpState.ndaaOnly && !m.ndaa) return false;
-    if (mpState.excludeEol && m.eol) return false;
     const mp = parseResMp(m.resolution);
     if (resMinMp > 0 && mp < resMinMp) return false;
     if (resMaxMp < 999 && mp > resMaxMp) return false;
@@ -3277,28 +3956,49 @@ function getMpFilteredModels() {
 }
 
 function renderMpFfChips() {
-  const ffs = ['dome','bullet','fisheye','multi','ptz'];
+  const primaryFfs = ['dome','bullet'];
+  const expandedFfs = ['fisheye','multi','ptz','other'];
+  const expanded = mpState.ffChipsExpanded;
+  const ffIcon = function(ff) {
+    return ff === 'dome'    ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="13" rx="9" ry="5"/><path d="M3 13V9a9 4 0 0118 0v4"/></svg>` :
+           ff === 'bullet'  ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="14" height="8" rx="2"/><circle cx="19" cy="12" r="3"/></svg>` :
+           ff === 'fisheye' ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>` :
+           ff === 'multi'   ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>` :
+           ff === 'ptz'     ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/></svg>` :
+                              `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.07-7.07l-2.83 2.83M9.76 14.24l-2.83 2.83m12.14 0l-2.83-2.83M9.76 9.76L6.93 6.93"/></svg>`;
+  };
   let html = `<div class="ff-chip ${!mpState.ffFilter ? 'active' : ''}" onclick="setMpFf(null)">All</div>`;
-  ffs.forEach(ff => {
-    const label = FF_LABELS[ff] || ff;
-    const icon = ff === 'dome'    ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="13" rx="9" ry="5"/><path d="M3 13V9a9 4 0 0118 0v4"/></svg>` :
-                 ff === 'bullet'  ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="14" height="8" rx="2"/><circle cx="19" cy="12" r="3"/></svg>` :
-                 ff === 'fisheye' ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>` :
-                 ff === 'multi'   ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>` :
-                                    `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/></svg>`;
-    html += `<div class="ff-chip ${mpState.ffFilter === ff ? 'active' : ''}" onclick="setMpFf('${ff}')">${icon} ${label}</div>`;
+  primaryFfs.forEach(ff => {
+    html += `<div class="ff-chip ${mpState.ffFilter === ff ? 'active' : ''}" onclick="setMpFf('${ff}')">${ffIcon(ff)} ${FF_LABELS[ff]}</div>`;
   });
+  if (expanded) {
+    expandedFfs.forEach(ff => {
+      html += `<div class="ff-chip ${mpState.ffFilter === ff ? 'active' : ''}" onclick="setMpFf('${ff}')">${ffIcon(ff)} ${FF_LABELS[ff]}</div>`;
+    });
+    html += `<div style="width:100%;height:1px;background:#eaecf0;margin:4px 0"></div>`;
+    html += `<div class="ff-chip" onclick="toggleMpFfExpand()" style="color:#7c3aed;border-color:#c4b5fd">Hide options <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align:middle"><polyline points="18 15 12 9 6 15"/></svg></div>`;
+  } else {
+    html += `<div style="width:100%;height:1px;background:#eaecf0;margin:4px 0"></div>`;
+    html += `<div class="ff-chip" onclick="toggleMpFfExpand()" style="color:#667085">All options <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align:middle"><polyline points="6 9 12 15 18 9"/></svg></div>`;
+  }
   document.getElementById('mpFfChips').innerHTML = html;
+}
+
+function toggleMpFfExpand() {
+  mpState.ffChipsExpanded = !mpState.ffChipsExpanded;
+  renderMpFfChips();
 }
 
 function renderMpBrands() {
   const models = getMpFilteredModels();
   const brandCounts = {};
   models.forEach(m => { brandCounts[m.brand] = (brandCounts[m.brand] || 0) + 1; });
-  const allBrandCounts = {};
-  CAMERA_DB.forEach(m => { allBrandCounts[m.brand] = (allBrandCounts[m.brand] || 0) + 1; });
   let html = `<div class="brand-row ${mpState.selectedBrand === 'All' ? 'active' : ''}" onclick="selectMpBrand('All')">All Brands <span style="color:#98a2b3;font-size:12px;margin-left:auto">${models.length}</span></div>`;
-  ALL_BRANDS.slice(1).forEach(b => {
+  // Generic first, separated
+  const genCnt = brandCounts['Generic'] || 0;
+  html += `<div class="brand-row ${mpState.selectedBrand === 'Generic' ? 'active' : ''}" style="display:flex;justify-content:space-between;align-items:center;${genCnt===0?'opacity:0.4':''}" onclick="selectMpBrand('Generic')"><span>Generic</span><span style="color:#98a2b3;font-size:12px">${genCnt}</span></div>`;
+  html += `<div style="height:1px;background:#eaecf0;margin:4px 0"></div>`;
+  ALL_BRANDS.slice(1).filter(b => b !== 'Generic').forEach(b => {
     const cnt = brandCounts[b] || 0;
     const muted = cnt === 0;
     html += `<div class="brand-row ${mpState.selectedBrand === b ? 'active' : ''}" style="display:flex;justify-content:space-between;align-items:center;${muted?'opacity:0.4':''}" onclick="selectMpBrand('${b}')"><span>${b}</span><span style="color:#98a2b3;font-size:12px">${cnt}</span></div>`;
@@ -3308,23 +4008,32 @@ function renderMpBrands() {
 
 function renderMpModels() {
   const models = getMpFilteredModels();
-  document.getElementById('mpModelsHdr').textContent = mpState.selectedBrand === 'All' ? `All Models` : mpState.selectedBrand;
+  document.getElementById('mpModelsHdr').textContent = 'Models';
   document.getElementById('mpCount').innerHTML = `<strong>${models.length}</strong> model${models.length !== 1 ? 's' : ''}`;
   if (!models.length) {
     document.getElementById('mpModelList').innerHTML = `<div style="padding:24px 16px;text-align:center;color:#98a2b3;font-size:12px">No models match your filters</div>`;
     return;
   }
   let html = '';
-  models.forEach(m => {
+  // Generic models first, then separator, then rest
+  const genericModels = models.filter(m => m.isGeneric);
+  const otherModels = models.filter(m => !m.isGeneric);
+  genericModels.forEach(m => {
+    const active = m.id === mpState.selectedModelId;
+    const label = m.brand === 'Generic' ? 'Generic' : m.brand + ' Generic';
+    html += `<div class="model-row ${active ? 'active' : ''}" onclick="selectMpModel('${m.id}')">
+      <div class="model-form-icon">${ICONS[m.iconType] || ICONS.dome}</div>
+      <span class="model-name">${label}</span>
+    </div>`;
+  });
+  if (genericModels.length && otherModels.length) {
+    html += `<div style="height:1px;background:#eaecf0;margin:2px 0"></div>`;
+  }
+  otherModels.forEach(m => {
     const active = m.id === mpState.selectedModelId;
     html += `<div class="model-row ${active ? 'active' : ''}" onclick="selectMpModel('${m.id}')">
       <div class="model-form-icon">${ICONS[m.iconType] || ICONS.dome}</div>
       <span class="model-name">${m.name}</span>
-      <div class="model-tags">
-        ${m.ndaa ? '<span class="tag tag-ndaa">NDAA</span>' : ''}
-        ${m.eol  ? '<span class="eol-badge">EOL</span>' : ''}
-      </div>
-      <span class="model-price">$${m.price.toLocaleString()}</span>
     </div>`;
   });
   document.getElementById('mpModelList').innerHTML = html;
@@ -3336,18 +4045,25 @@ function renderMpInfo(modelId) {
     panel.innerHTML = `<div class="mp-info-empty">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
       <div class="mp-info-empty-title">Select a Camera</div>
-      <div class="mp-info-empty-sub">Choose a model from the list to see specs, pricing, and DORI range data.</div>
+      <div class="mp-info-empty-sub">Choose a model from the list to see specs and DORI range data.</div>
     </div>`;
     return;
   }
   const m = CAMERA_DB.find(x => x.id === modelId);
   if (!m) return;
+  if (m.isGeneric) {
+    const label = m.brand === 'Generic' ? 'Generic Camera' : m.brand + ' Generic';
+    panel.innerHTML = `
+      <div class="mp-info-name">${label}</div>
+      <div class="mp-info-brand">${m.brand}</div>
+    `;
+    return;
+  }
   const fovSvg = renderFovPreview(m);
   panel.innerHTML = `
     <div class="mp-info-name">${m.name}</div>
     <div class="mp-info-brand">${m.brand} · ${FF_LABELS[m.formFactor] || m.formFactor}</div>
     <div class="mp-info-badges">
-      ${m.ndaa ? '<span class="mp-badge mp-badge-ndaa">✓ NDAA Compliant</span>' : ''}
       <span class="mp-badge mp-badge-form">${FF_LABELS[m.formFactor] || m.formFactor}</span>
       <span class="mp-badge mp-badge-res">${m.resolution}</span>
     </div>
@@ -3360,7 +4076,6 @@ function renderMpInfo(modelId) {
       <div class="mp-spec"><div class="mp-spec-label">Identification</div><div class="mp-spec-val">${m.idR} ft</div></div>
       <div class="mp-spec"><div class="mp-spec-label">Form Factor</div><div class="mp-spec-val">${FF_LABELS[m.formFactor] || m.formFactor}</div></div>
     </div>
-    <div class="mp-price">$${m.price.toLocaleString()}</div>
     <p style="font-size:12px;color:#667085;line-height:1.6">DORI ranges at 1080p threshold. Detection: person visible. Recognition: face features distinguishable. Identification: individual identifiable.</p>
   `;
 }
@@ -3420,13 +4135,6 @@ function setMpFf(ff) {
   renderMpModels();
 }
 
-function toggleMpNdaa() {
-  mpState.ndaaOnly = !mpState.ndaaOnly;
-  document.getElementById('mpToggleNdaa').classList.toggle('active', mpState.ndaaOnly);
-  renderMpBrands();
-  renderMpModels();
-}
-
 function _updateResFill() {
   const minS = +document.getElementById('mpResMin').value;
   const maxS = +document.getElementById('mpResMax').value;
@@ -3458,13 +4166,6 @@ function applyMpFilters() {
   mpState.haovMax = haovVal;
   document.getElementById('mpHaovVal').textContent = haovVal >= 360 ? '1° – 360°' : '1° – ' + haovVal + '°';
 
-  renderMpBrands();
-  renderMpModels();
-}
-function setMpEol(exclude) {
-  mpState.excludeEol = exclude;
-  document.getElementById('mpEolAll').classList.toggle('active', !exclude);
-  document.getElementById('mpEolExclude').classList.toggle('active', exclude);
   renderMpBrands();
   renderMpModels();
 }
@@ -3534,6 +4235,441 @@ function placeFromPicker() {
   }
 }
 
+// ── Right panel header delegation (camera or core) ──
+function rpBackClick() {
+  if (state.selectedCoreId !== null) { selectCore(null); }
+  else { selectCamera(null); }
+}
+function rpDuplicateClick() {
+  if (state.selectedCoreId !== null) {
+    const core = state.cores.find(c => c.id === state.selectedCoreId);
+    if (core) {
+      const nc = addCore(core.typeId, core.x + 30, core.y + 30, true);
+      if (nc) { nc.name = core.name + ' copy'; nc.color = core.color; nc.payment = core.payment; nc.duration = core.duration; renderCoreOnCanvas(nc); renderCoreProperties(nc.id); }
+    }
+  } else { duplicateCamera(state.selectedId); }
+}
+function rpDeleteClick() {
+  if (state.selectedCoreId !== null) { deleteCore(state.selectedCoreId); }
+  else { deleteCamera(state.selectedId); }
+}
+
+function deselectCores() {
+  state.cores.forEach(c => {
+    const g = cameraLayer.findOne('#core-' + c.id);
+    if (g) { const ring = g.findOne('#core-sel-ring'); if (ring) ring.visible(false); }
+  });
+  state.selectedCoreId = null;
+  if (cameraLayer) cameraLayer.draw();
+}
+
+// ═══════════════════════════════════════════════
+// CORE TYPE PICKER & PLACEMENT
+// ═══════════════════════════════════════════════
+function selectCoreChip(el) {
+  document.querySelectorAll('#coreChips .core-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+function openCoreTypePicker() {
+  document.querySelectorAll('#coreChips .core-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+  document.getElementById('corePickerOverlay').classList.add('show');
+}
+function closeCoreTypePicker() {
+  document.getElementById('corePickerOverlay').classList.remove('show');
+}
+function placeCore() {
+  const active = document.querySelector('#coreChips .core-chip.active');
+  const typeId = active ? active.dataset.val : 'core-10';
+  closeCoreTypePicker();
+  state.placingCoreType = typeId;
+  setTool('place-core');
+  // Show placement hint
+  const def = CORE_TYPES[typeId];
+  const tip = document.createElement('span');
+  tip.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:#1d2939;color:#fff;font-size:12px;padding:6px 14px;border-radius:6px;pointer-events:none;z-index:999';
+  tip.textContent = `Click canvas to place ${def.name}`;
+  document.body.appendChild(tip);
+  setTimeout(() => tip.remove(), 3000);
+}
+
+function addCore(typeId, x, y, skipNameInput) {
+  const def = CORE_TYPES[typeId];
+  if (!def) return;
+  saveUndo();
+  const core = {
+    id: state.nextCoreId++,
+    typeId,
+    x, y,
+    name: def.name,
+    type: def.name,
+    color: def.color,
+    price: def.price,
+    channels: def.channels,
+    payment: 'Upfront',
+    duration: 1,
+    cameraIds: [],
+  };
+  state.cores.push(core);
+  renderCoreOnCanvas(core);
+  selectCore(core.id);
+  updateUI();
+  if (!skipNameInput) showCoreNameInput(core);
+  return core;
+}
+
+function renderCoreOnCanvas(core) {
+  const existing = cameraLayer.findOne('#core-' + core.id);
+  if (existing) existing.destroy();
+
+  const group = new Konva.Group({ x: core.x, y: core.y, id: 'core-' + core.id, draggable: true });
+
+  // Core body — rounded rect
+  const body = new Konva.Rect({ x: -16, y: -16, width: 32, height: 32, fill: core.color, cornerRadius: 6, shadowColor: 'rgba(0,0,0,0.4)', shadowBlur: 8, shadowOffset: { x: 0, y: 2 }, shadowOpacity: 1 });
+  group.add(body);
+
+  // Inner rect icon (white)
+  const inner = new Konva.Rect({ x: -8, y: -8, width: 16, height: 16, fill: 'transparent', stroke: '#fff', strokeWidth: 1.5, cornerRadius: 2, opacity: 0.9 });
+  group.add(inner);
+
+  // Selection ring
+  const selRing = new Konva.Rect({ x: -19, y: -19, width: 38, height: 38, stroke: '#fff', strokeWidth: 2, fill: 'transparent', cornerRadius: 8, id: 'core-sel-ring', visible: false, listening: false });
+  group.add(selRing);
+
+  // Drag
+  group.on('dragmove', () => {
+    core.x = group.x(); core.y = group.y();
+    renderCoreLabel(core);
+  });
+  group.on('dragend', () => { saveUndo(); });
+
+  // Click / select
+  group.on('click tap', e => {
+    e.cancelBubble = true;
+    selectCore(core.id);
+  });
+
+  cameraLayer.add(group);
+  cameraLayer.draw();
+  renderCoreLabel(core);
+}
+
+function renderCoreLabel(core) {
+  if (!labelLayer) return;
+  const existing = labelLayer.findOne('#core-lbl-' + core.id);
+  if (existing) existing.destroy();
+
+  const text = new Konva.Text({
+    x: core.x, y: core.y + 22,
+    text: core.name,
+    fontSize: 11,
+    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+    fontStyle: '600',
+    fill: '#344054',
+    id: 'core-lbl-' + core.id,
+    listening: false,
+  });
+  text.offsetX(text.width() / 2);
+  labelLayer.add(text);
+  labelLayer.draw();
+}
+
+function selectCore(id) {
+  // Deselect cameras first
+  selectCamera(null);
+  // Deselect all cores
+  state.cores.forEach(c => {
+    const g = cameraLayer.findOne('#core-' + c.id);
+    if (g) g.findOne('#core-sel-ring').visible(false);
+  });
+  state.selectedCoreId = id;
+  if (id !== null) {
+    const g = cameraLayer.findOne('#core-' + id);
+    if (g) g.findOne('#core-sel-ring').visible(true);
+    cameraLayer.draw();
+    const core = state.cores.find(c => c.id === id);
+    if (core) {
+      renderCoreLabel(core);
+      renderCoreProperties(id);
+    }
+  } else {
+    renderPropertiesEmpty();
+  }
+}
+
+function renderCoreProperties(id) {
+  const core = state.cores.find(c => c.id === id);
+  if (!core) return;
+
+  // Panel header state: core selected
+  document.getElementById('rpCamHeader').style.display = 'flex';
+  document.getElementById('rpBomHeader').style.display = 'none';
+  document.querySelector('.rp-total').style.display = 'none';
+  document.querySelector('.rp-tabs').style.display = 'none';
+  document.getElementById('propsPane').style.display = '';
+  document.getElementById('bomPane').style.display = 'none';
+
+  document.getElementById('propsEmpty').style.display = 'none';
+  document.getElementById('propsContent').style.display = 'block';
+  document.getElementById('propsTitle').textContent = core.name;
+  document.getElementById('propsSub').textContent = core.type;
+  const propsPrice = document.getElementById('propsPrice');
+  propsPrice.className = 'props-price show';
+  propsPrice.textContent = '$' + core.price.toLocaleString();
+  const propsIcon = document.getElementById('propsIcon');
+  propsIcon.className = 'props-hdr-icon show';
+  propsIcon.style.background = core.color || '#667085';
+  propsIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1" opacity="0.4"/></svg>`;
+
+  const durationHtml = core.payment === 'Yearly' ? `
+      <div class="prop-row" id="coreDurationRow">
+        <span class="prop-label">Duration</span>
+        <div class="prop-ctrl">
+          <select class="prop-select" style="width:120px" onchange="updateCoreProp(${id},'duration',+this.value)">
+            ${[1, 3, 5, 10].map(d => `<option value="${d}" ${core.duration === d ? 'selected' : ''}>${d} year${d > 1 ? 's' : ''}</option>`).join('')}
+          </select>
+        </div>
+      </div>` : '';
+
+  const c = document.getElementById('propsContent');
+  c.innerHTML = `
+    <div class="props-section">
+      <div class="props-section-title">Core Config</div>
+      <div class="prop-row">
+        <span class="prop-label">Name</span>
+        <div class="prop-ctrl"><input class="prop-input" value="${escHtml(core.name)}" oninput="updateCoreProp(${id},'name',this.value)"></div>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Type</span>
+        <div class="prop-ctrl">
+          <select class="prop-select" style="width:auto" onchange="updateCoreType(${id},this.value)">
+            ${Object.values(CORE_TYPES).map(t => `<option value="${t.id}" ${core.typeId === t.id ? 'selected' : ''}>${t.name}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Color</span>
+        <div class="prop-ctrl">
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            ${['#059669','#2563eb','#7c3aed','#dc2626','#d97706','#db2777','#0891b2','#374151'].map(col => `
+              <div onclick="updateCoreColor(${id},'${col}')" title="${col}" style="width:20px;height:20px;border-radius:4px;background:${col};cursor:pointer;border:2px solid ${core.color === col ? '#fff' : 'transparent'};outline:2px solid ${core.color === col ? col : 'transparent'};box-sizing:border-box;transition:all 0.1s"></div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Payment</span>
+        <div class="prop-ctrl">
+          <select class="prop-select" style="width:120px" onchange="updateCorePayment(${id},this.value)">
+            <option value="Upfront" ${core.payment === 'Upfront' ? 'selected' : ''}>Upfront</option>
+            <option value="Yearly" ${core.payment === 'Yearly' ? 'selected' : ''}>Yearly</option>
+          </select>
+        </div>
+      </div>
+      ${durationHtml}
+    </div>
+    <div class="props-section">
+      <div class="props-section-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>Cameras</span>
+        <span style="font-size:11px;font-weight:400;color:#98a2b3;text-transform:none;letter-spacing:0">${(core.cameraIds || []).length} / ${core.channels} available</span>
+      </div>
+      ${(()=>{
+        const ids = core.cameraIds || [];
+        if (!ids.length) return '<div style="font-size:12px;color:#98a2b3;padding:4px 0 8px">No cameras assigned yet.</div>';
+        return ids.map(camId => {
+          const cam = state.cameras.find(c => c.id === camId);
+          if (!cam) return '';
+          const iconType = cam.iconType || 'default';
+          const camIcon = ICONS[iconType] || BOM_CAM_ICON;
+          return '<div class="core-cam-row">' +
+            '<span class="core-cam-dot" style="background:' + cam.color + '"></span>' +
+            '<div class="core-cam-info" onclick="selectCamera(' + camId + ')" title="Select camera" style="cursor:pointer">' +
+              '<span class="core-cam-name">' + escHtml(cam.name) + '</span>' +
+              '<span class="core-cam-meta">' + escHtml(cam.model || 'Generic') + ' · ' + escHtml(cam.resolution || '4K') + '</span>' +
+            '</div>' +
+            '<button class="core-cam-remove" onclick="removeCameraFromCore(' + id + ',' + camId + ')" title="Remove">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+            '</button>' +
+          '</div>';
+        }).join('');
+      })()}
+      <div style="padding-top:8px">
+        ${(()=>{
+          const ids = core.cameraIds || [];
+          const available = state.cameras.filter(c => !ids.includes(c.id));
+          if (!available.length) return '<div style="font-size:11px;color:#98a2b3">All cameras are assigned.</div>';
+          return '<button class="btn" style="padding:5px 12px;font-size:12px;width:100%" onclick="openAddCamerasModal(' + id + ')">Add cameras</button>';
+        })()}
+      </div>
+    </div>
+  `;
+}
+
+function openAddCamerasModal(coreId) {
+  const core = state.cores.find(c => c.id === coreId);
+  if (!core) return;
+  const ids = core.cameraIds || [];
+  const available = state.cameras.filter(c => !ids.includes(c.id));
+  if (!available.length) return;
+
+  // Remove existing modal if any
+  let existing = document.getElementById('addCamerasModal');
+  if (existing) existing.remove();
+
+  const listHtml = available.map(cam => {
+    const meta = (cam.model || 'Generic') + ' · ' + (cam.resolution || '4K');
+    return '<label class="core-add-cam-item" onclick="event.stopPropagation()">' +
+      '<input type="checkbox" class="bom-cb" value="' + cam.id + '">' +
+      '<div class="core-add-cam-item-info">' +
+        '<div class="core-add-cam-item-name">' + escHtml(cam.name) + '</div>' +
+        '<div class="core-add-cam-item-meta">' + escHtml(meta) + '</div>' +
+      '</div>' +
+    '</label>';
+  }).join('');
+
+  const modal = document.createElement('div');
+  modal.id = 'addCamerasModal';
+  modal.className = 'core-add-cam-modal show';
+  modal.onclick = function(e) { if (e.target === modal) closeAddCamerasModal(); };
+  modal.innerHTML = `
+    <div class="core-add-cam-panel">
+      <div class="core-add-cam-hdr">Add cameras to ${escHtml(core.name)}</div>
+      <div class="core-add-cam-list">${listHtml}</div>
+      <div class="core-add-cam-footer">
+        <button class="btn" style="padding:5px 12px;font-size:12px" onclick="closeAddCamerasModal()">Cancel</button>
+        <button class="btn btn-primary" style="padding:5px 12px;font-size:12px" onclick="confirmAddCameras(${coreId})">Add cameras</button>
+      </div>
+    </div>`;
+
+  document.getElementById('rightPanel').appendChild(modal);
+}
+
+function closeAddCamerasModal() {
+  const modal = document.getElementById('addCamerasModal');
+  if (modal) modal.remove();
+}
+
+function confirmAddCameras(coreId) {
+  const core = state.cores.find(c => c.id === coreId);
+  if (!core) return;
+  if (!core.cameraIds) core.cameraIds = [];
+  const modal = document.getElementById('addCamerasModal');
+  if (!modal) return;
+  const checked = modal.querySelectorAll('.bom-cb:checked');
+  if (!checked.length) { closeAddCamerasModal(); return; }
+  saveUndo();
+  checked.forEach(cb => {
+    const camId = parseInt(cb.value);
+    if (!core.cameraIds.includes(camId) && core.cameraIds.length < core.channels) {
+      core.cameraIds.push(camId);
+    }
+  });
+  closeAddCamerasModal();
+  renderCoreProperties(coreId);
+  renderBOMPane();
+  updateProjectTotal();
+}
+
+function removeCameraFromCore(coreId, camId) {
+  const core = state.cores.find(c => c.id === coreId);
+  if (!core) return;
+  core.cameraIds = (core.cameraIds || []).filter(id => id !== camId);
+  renderCoreProperties(coreId);
+}
+
+function updateCoreProp(id, key, val) {
+  const core = state.cores.find(c => c.id === id);
+  if (!core) return;
+  core[key] = val;
+  if (key === 'name') {
+    renderCoreLabel(core);
+    document.getElementById('propsTitle').textContent = core.name;
+  }
+}
+
+function updateCoreType(id, typeId) {
+  const core = state.cores.find(c => c.id === id);
+  if (!core) return;
+  const def = CORE_TYPES[typeId];
+  if (!def) return;
+  saveUndo();
+  core.typeId = typeId;
+  core.type = def.name;
+  core.price = def.price;
+  core.channels = def.channels;
+  core.color = def.color;
+  renderCoreOnCanvas(core);
+  renderCoreProperties(id);
+  updateUI();
+}
+
+function updateCoreColor(id, color) {
+  const core = state.cores.find(c => c.id === id);
+  if (!core) return;
+  saveUndo();
+  core.color = color;
+  renderCoreOnCanvas(core);
+  renderCoreProperties(id);
+}
+
+function updateCorePayment(id, val) {
+  const core = state.cores.find(c => c.id === id);
+  if (!core) return;
+  core.payment = val;
+  if (val === 'Upfront') core.duration = 1;
+  renderCoreProperties(id);
+}
+
+function deleteCore(id) {
+  saveUndo();
+  state.cores = state.cores.filter(c => c.id !== id);
+  const g = cameraLayer.findOne('#core-' + id);
+  if (g) g.destroy();
+  const lbl = labelLayer ? labelLayer.findOne('#core-lbl-' + id) : null;
+  if (lbl) lbl.destroy();
+  cameraLayer.draw();
+  if (labelLayer) labelLayer.draw();
+  state.selectedCoreId = null;
+  renderPropertiesEmpty();
+  updateUI();
+}
+
+function showCoreNameInput(core) {
+  const rect = stage.container().getBoundingClientRect();
+  const screenX = rect.left + stage.x() + core.x * stage.scaleX();
+  const screenY = rect.top + stage.y() + core.y * stage.scaleY() + 26 * stage.scaleY();
+
+  const overlay = document.getElementById('camNameOverlay');
+  const input = document.getElementById('camNameField');
+
+  overlay.style.left = screenX + 'px';
+  overlay.style.top = screenY + 'px';
+  overlay.classList.add('show');
+  input.value = '';
+  input.placeholder = 'Core name';
+
+  let committed = false;
+  const commit = () => {
+    if (committed) return;
+    committed = true;
+    overlay.classList.remove('show');
+    input.placeholder = 'Camera name';
+    const name = input.value.trim();
+    if (name) {
+      core.name = name;
+      renderCoreLabel(core);
+      if (state.selectedCoreId === core.id) renderCoreProperties(core.id);
+    }
+    input.removeEventListener('keydown', onKey);
+  };
+  const onKey = (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); commit(); }
+    if (e.key === 'Escape') { committed = true; overlay.classList.remove('show'); input.placeholder = 'Camera name'; input.removeEventListener('keydown', onKey); }
+  };
+  input.addEventListener('keydown', onKey);
+  input.addEventListener('blur', () => setTimeout(commit, 120), { once: true });
+  setTimeout(() => input.focus(), 60);
+}
+
 // ─── Drop onto canvas ───────────────────────────
 function onCanvasDrop(e) {
   e.preventDefault();
@@ -3598,7 +4734,7 @@ async function exportPDF() {
     const PW   = 210, PH = 297, M = 14;
     const PURPLE = [124, 58, 237], DARK = [29, 41, 57], GRAY = [102, 112, 133], LIGHT = [234, 236, 240];
 
-    const projectName = document.querySelector('.topbar-breadcrumb .current')?.textContent || 'Site Plan';
+    const projectName = document.querySelector('.topbar-breadcrumb .current')?.textContent || 'Plan';
     const dateStr     = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
     const cams        = state.cameras;
 
@@ -3659,7 +4795,7 @@ async function exportPDF() {
 
     // Report title
     doc.setFont('helvetica','bold'); doc.setFontSize(24); doc.setTextColor(255,255,255);
-    doc.text('Site Plan Report', M, 44);
+    doc.text('Plan Report', M, 44);
 
     // Project name + date
     doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(255,255,255);
@@ -3838,7 +4974,7 @@ async function exportPDF() {
 function planSnapshot() {
   return {
     version: 2,
-    projectName: document.querySelector('.topbar-breadcrumb .current')?.textContent || 'Site Plan',
+    projectName: document.querySelector('.topbar-breadcrumb .current')?.textContent || 'Plan',
     savedAt: new Date().toISOString(),
     scalePPM: state.scalePPM,
     scaleCalibrated: state.scaleCalibrated,
@@ -3984,9 +5120,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const bcSite = document.getElementById('bc-site');
   const bcLoc = document.getElementById('bc-location');
   const bcPlan = document.getElementById('bc-plan');
-  if (bcSite) { bcSite.href = `site-planner-location.html?siteId=${siteId}`; bcSite.textContent = 'Site: ' + (bcSiteNames[siteId] || 'Site'); }
+  if (bcSite) { bcSite.href = `site-planner-location.html?siteId=${siteId}`; bcSite.textContent = 'Project: ' + (bcSiteNames[siteId] || 'Project'); }
   if (bcLoc) { bcLoc.href = `site-planner-location.html?siteId=${siteId}&locationId=${locationId}`; bcLoc.textContent = 'Location: ' + (bcLocNames[locationId] || 'Location'); }
   if (bcPlan) { bcPlan.href = `site-planner-location.html?siteId=${siteId}&locationId=${locationId}&planId=${planId}`; bcPlan.textContent = 'Plan: ' + (bcPlanNames[planId] || 'Plan'); }
+
+  /* Always default to Floor plan & Map */
+  setMapMode('both');
 
   /* New plan arrival handling */
   if (params.get('newPlan') === '1') {
@@ -3996,17 +5135,6 @@ window.addEventListener('DOMContentLoaded', () => {
       banner.classList.remove('show');
     });
     setTimeout(() => banner.classList.remove('show'), 6000);
-
-    if (params.get('floorPlan') === '1') {
-      /* Arriving after floor plan wizard → show Floor plan and Map */
-      setMapMode('both');
-      renderPanel();
-    } else {
-      /* No floor plan → show Map only */
-      state.floorPlanFile = null;
-      setMapMode('map');
-      renderPanel();
-    }
   }
 });
 </script>
@@ -4015,7 +5143,7 @@ window.addEventListener('DOMContentLoaded', () => {
 <div class="settings-overlay" id="settingsOverlay">
   <div class="settings-modal">
     <div class="settings-header">
-      <span class="settings-title">Project Options</span>
+      <span class="settings-title">Plan options</span>
       <button class="settings-close" id="settingsClose" title="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
