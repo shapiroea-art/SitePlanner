@@ -142,36 +142,36 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .props-hdr-icon.show { display: flex; }
 .props-hdr-text { flex: 1; min-width: 0; }
 .props-title-row { display: flex; align-items: baseline; gap: 8px; }
-.props-title { font-size: 14px; font-weight: 600; color: #344054; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
-.props-price { font-size: 14px; font-weight: 700; color: #101828; white-space: nowrap; flex-shrink: 0; display: none; }
+.props-title { font-size: 16px; font-weight: 600; color: #344054; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+.props-price { font-size: 16px; font-weight: 700; color: #101828; white-space: nowrap; flex-shrink: 0; display: none; }
 .props-price.show { display: block; }
-.props-sub { font-size: 12px; color: #98a2b3; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.props-sub { font-size: 13px; color: #98a2b3; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .props-body { flex: 1; overflow-y: auto; }
 .props-empty { display: flex; flex-direction: column; align-items: center; padding: 48px 20px; text-align: center; }
 .props-empty svg { width: 32px; height: 32px; color: #d0d5dd; margin-bottom: 12px; }
 .props-empty-txt { font-size: 13px; color: #98a2b3; line-height: 1.6; }
 .props-section { padding: 12px 20px 14px; border-bottom: 1px solid #f2f4f7; }
-.props-section-title { font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px; }
+.props-section-title { font-size: 12px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px; }
 .prop-row { display: flex; align-items: center; margin-bottom: 10px; }
 .prop-row:last-child { margin-bottom: 0; }
-.prop-label { font-size: 13px; color: #667085; width: 110px; flex-shrink: 0; }
+.prop-label { font-size: 14px; color: #667085; width: 110px; flex-shrink: 0; }
 .prop-ctrl { flex: 1; }
-.prop-input { width: 100%; padding: 5px 10px; border: 1px solid #d0d5dd; border-radius: 5px; font-size: 13px; color: #344054; outline: none; }
+.prop-input { width: 100%; padding: 5px 10px; border: 1px solid #d0d5dd; border-radius: 5px; font-size: 14px; color: #344054; outline: none; }
 .prop-input:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.1); }
 .prop-input-wrap { position: relative; display: flex; align-items: center; flex: 1; }
 .prop-input-wrap input { padding-right: 28px; width: 100%; }
-.prop-input-unit { position: absolute; right: 8px; font-size: 11px; color: #98a2b3; pointer-events: none; }
+.prop-input-unit { position: absolute; right: 8px; font-size: 12px; color: #98a2b3; pointer-events: none; }
 .prop-input:disabled, .prop-select:disabled { background: #f9fafb; border-color: #eaecf0; color: #344054; cursor: default; -webkit-text-fill-color: #344054; }
-.prop-select { width: 100%; padding: 5px 8px; border: 1px solid #d0d5dd; border-radius: 5px; font-size: 13px; color: #344054; outline: none; background: #fff; cursor: pointer; }
-.prop-core-link { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 500; color: #7c3aed; cursor: pointer; white-space: nowrap; }
+.prop-select { width: 100%; padding: 5px 8px; border: 1px solid #d0d5dd; border-radius: 5px; font-size: 14px; color: #344054; outline: none; background: #fff; cursor: pointer; }
+.prop-core-link { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; font-weight: 500; color: #7c3aed; cursor: pointer; white-space: nowrap; }
 .prop-core-link:hover { color: #6d28d9; text-decoration: underline; }
 .prop-range-row { display: flex; align-items: center; gap: 8px; }
 .prop-range-row input[type=range] { flex: 1; accent-color: #7c3aed; }
-.prop-range-val { font-size: 12px; color: #667085; min-width: 38px; text-align: right; }
+.prop-range-val { font-size: 13px; color: #667085; min-width: 38px; text-align: right; }
 .dori-zones { display: flex; gap: 5px; }
-.dori-z { flex: 1; padding: 8px 4px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; text-align: center; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; opacity: 0.45; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.dori-z { flex: 1; padding: 8px 4px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; text-align: center; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; opacity: 0.45; display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .dori-z.on { opacity: 1; }
-.dori-z-val { font-size: 11px; font-weight: 700; }
+.dori-z-val { font-size: 12px; font-weight: 700; }
 /* Neutral single-hue toggles — intensity mirrors cone opacity (ID darkest, DET lightest) */
 .dori-id  { background: rgba(52,64,84,0.18); color: #344054; }
 .dori-id.on  { background: rgba(52,64,84,0.22); border-color: #667085; color: #1d2939; }
@@ -252,7 +252,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-group-name { font-size: 16px; font-weight: 600; color: #344054; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
 .bom-group-type { font-size: 16px; font-weight: 400; color: #98a2b3; white-space: nowrap; margin-left: 4px; }
 .bom-group-name-wrap { flex: 1; display: flex; align-items: baseline; min-width: 0; overflow: hidden; }
-.bom-group-count-badge { font-size: 11px; font-weight: 600; color: #667085; background: #eaecf0; border-radius: 10px; padding: 1px 8px; white-space: nowrap; flex-shrink: 0; }
+.bom-group-count-badge { font-size: 11px; font-weight: 600; color: #667085; background: #eaecf0; border-radius: 10px; padding: 1px 8px; white-space: nowrap; flex-shrink: 0; margin-left: 6px; }
 .bom-group-price-wrap { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; flex-shrink: 0; min-width: 140px; justify-content: flex-end; }
 .bom-group-price { font-size: 16px; font-weight: 700; color: #344054; white-space: nowrap; }
 .bom-group-price-sep { font-size: 14px; color: #d0d5dd; }
@@ -646,11 +646,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 /* ── Core camera list rows ── */
 .core-cam-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #f2f4f7; }
 .core-cam-row:last-of-type { border-bottom: none; }
-.core-cam-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.core-cam-icon { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+.core-cam-icon svg { width: 14px; height: 14px; }
 .core-cam-info { flex: 1; min-width: 0; overflow: hidden; }
-.core-cam-name { font-size: 13px; color: #344054; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+.core-cam-name { font-size: 14px; color: #344054; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
 .core-cam-name:hover { color: #7c3aed; text-decoration: underline; }
-.core-cam-meta { font-size: 11px; color: #98a2b3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.core-cam-meta { font-size: 12px; color: #98a2b3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .core-cam-remove { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: #d0d5dd; cursor: pointer; border-radius: 4px; flex-shrink: 0; padding: 0; }
 .core-cam-remove:hover { background: #fef2f2; color: #ef4444; }
 .core-add-cam-modal { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16,24,40,0.25); z-index: 50; display: none; }
@@ -1826,15 +1827,46 @@ function raySegIntersect(ox, oy, dx, dy, x1, y1, x2, y2) {
 function addDemoCameras() {
   const W = stage.width(), H = stage.height();
   const cx = W/2 - 40, cy = H/2;
-  // Office A — dome facing lobby
-  addCamera('indoor-dome',  cx - 140, cy - 60,  true);
-  // Office B — bullet facing entry
-  addCamera('bullet',       cx + 100, cy - 50,  true);
-  // Lobby — dome watching entrance
-  addCamera('outdoor-dome', cx - 20,  cy + 170, true);
+
+  // ── 15 Cameras ──
+  // Office A
+  addCamera('indoor-dome',  cx - 170, cy - 90,  true);
+  addCamera('ax-p3245',     cx - 100, cy - 30,  true);
+  addCamera('hw-qno8080',   cx - 150, cy + 40,  true);
+  // Office B
+  addCamera('bullet',       cx + 50,  cy - 90,  true);
+  addCamera('ax-p1448',     cx + 130, cy - 30,  true);
+  addCamera('bs-flex5100',  cx + 90,  cy + 40,  true);
+  // Server Room
+  addCamera('indoor-dome',  cx + 250, cy - 70,  true);
+  addCamera('fisheye',      cx + 280, cy + 20,  true);
+  // Open Area / Conference
+  addCamera('outdoor-dome', cx - 120, cy + 130, true);
+  addCamera('hw-xnv8080',   cx + 20,  cy + 140, true);
+  addCamera('av-h5a-b2',    cx + 140, cy + 150, true);
+  addCamera('da-hdw3849',   cx - 40,  cy + 200, true);
+  addCamera('hk-2cd2t87',   cx + 80,  cy + 210, true);
+  addCamera('ax-m3106',     cx + 220, cy + 160, true);
+  addCamera('multisensor',  cx - 180, cy + 200, true);
+
+  // ── 2 Cores ──
+  const core1 = addCore('1u-core-64', cx - 60, cy - 130, true);
+  const core2 = addCore('core-10',    cx + 200, cy + 120, true);
+
+  // Name cores and assign cameras
+  if (core1) {
+    core1.name = 'Office Core';
+    core1.cameraIds = state.cameras.slice(0, 8).map(c => c.id);
+    renderCoreLabel(core1);
+  }
+  if (core2) {
+    core2.name = 'Lobby Core';
+    core2.cameraIds = state.cameras.slice(8, 13).map(c => c.id);
+    renderCoreLabel(core2);
+  }
 
   // Deselect after demo
-  setTimeout(() => { selectCamera(null); }, 50);
+  setTimeout(() => { selectCamera(null); deselectCores(); }, 50);
 }
 
 // ═══════════════════════════════════════════════
@@ -3391,8 +3423,8 @@ function renderBOMPane() {
           <span class="bom-group-name-wrap">
             <span class="bom-group-name" onclick="selectCore(${core.id});event.stopPropagation()" title="View core details">${escHtml(core.name)}</span>
             <span class="bom-group-type">${escHtml(core.type)}</span>
+            <span class="bom-group-count-badge">${coreCams.length}</span>
           </span>
-          <span class="bom-group-count-badge">${coreCams.length}</span>
           <span class="bom-group-price-wrap">
             <span class="bom-group-price">$${core.price.toLocaleString()}</span>
             <span class="bom-group-price-sep">|</span>
@@ -3417,8 +3449,8 @@ function renderBOMPane() {
           <span class="bom-group-icon">${BOM_CAM_ICON}</span>
           <span class="bom-group-name-wrap">
             <span class="bom-group-name">Unassigned Cameras</span>
+            <span class="bom-group-count-badge">${unassignedCams.length}</span>
           </span>
-          <span class="bom-group-count-badge">${unassignedCams.length}</span>
           <span class="bom-group-price-wrap">
             <span class="bom-group-total">Total: $${unassignedCams.reduce((s, c) => s + c.price, 0).toLocaleString()}</span>
           </span>
@@ -4489,8 +4521,9 @@ function renderCoreProperties(id) {
           if (!cam) return '';
           const typeName = _typeLabels[cam.iconType] || 'Camera';
           const modelName = cam.model || 'Generic';
+          const camIcon = ICONS[cam.iconType] || ICONS.dome;
           return '<div class="core-cam-row">' +
-            '<span class="core-cam-dot" style="background:' + cam.color + '"></span>' +
+            '<span class="core-cam-icon" style="background:' + cam.color + '">' + camIcon + '</span>' +
             '<div class="core-cam-info" onclick="selectCamera(' + camId + ')" title="Select camera" style="cursor:pointer">' +
               '<span class="core-cam-name">' + escHtml(cam.name) + '</span>' +
               '<span class="core-cam-meta">' + escHtml(typeName) + ' · ' + escHtml(modelName) + '</span>' +
