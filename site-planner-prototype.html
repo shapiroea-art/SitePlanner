@@ -3281,30 +3281,6 @@ function bomEditCoreTag(coreId, field, el, evt) {
   sel.addEventListener('blur', commit, { once: true });
 }
 
-function bomEditCoreName(coreId, el, evt) {
-  evt.stopPropagation();
-  const core = state.cores.find(c => c.id === coreId);
-  if (!core) return;
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.value = core.name;
-  input.style.cssText = 'font-size:16px;font-weight:600;color:#344054;border:1px solid #d0d5dd;border-radius:4px;padding:1px 6px;background:#fff;font-family:inherit;outline:none;width:100%;max-width:180px';
-  el.textContent = '';
-  el.appendChild(input);
-  input.focus();
-  input.select();
-  const commit = () => {
-    const v = input.value.trim() || core.name;
-    input.remove();
-    core.name = v;
-    // Update canvas label
-    renderCoreLabel(core);
-    renderBOMPane();
-    updateProjectTotal();
-  };
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } if (e.key === 'Escape') { input.value = core.name; input.blur(); } });
-  input.addEventListener('blur', commit, { once: true });
-}
 
 function _bomTagHtml(field, value, bulk, camId, model) {
   const p = _bulkEdit.pendingChanges;
@@ -3413,7 +3389,7 @@ function renderBOMPane() {
           <span onclick="toggleBomGroup('${core.id}',event)">${chevronSvg}</span>
           <span class="bom-group-icon">${BOM_CORE_ICON}</span>
           <span class="bom-group-name-wrap">
-            <span class="bom-group-name" onclick="bomEditCoreName(${core.id},this,event)" title="Click to rename">${escHtml(core.name)}</span>
+            <span class="bom-group-name" onclick="selectCore(${core.id});event.stopPropagation()" title="View core details">${escHtml(core.name)}</span>
             <span class="bom-group-type">${escHtml(core.type)}</span>
           </span>
           <span class="bom-group-count-badge">${coreCams.length}</span>
