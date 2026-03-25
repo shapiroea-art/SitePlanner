@@ -266,6 +266,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-tag select { font-size: 11px; color: #344054; border: 1px solid #d0d5dd; border-radius: 4px; padding: 1px 3px; background: #fff; font-family: inherit; outline: none; cursor: pointer; width: auto; }
 .bom-tag select:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
 .bom-tags { display: grid; grid-template-columns: 58px 40px 68px 40px 44px; gap: 4px; flex-shrink: 0; align-items: center; }
+.addon-tags { display: grid; grid-template-columns: 100px 70px; gap: 4px; flex-shrink: 0; align-items: center; }
+.addon-tags input { font-size: 11px; color: #344054; border: 1px solid #d0d5dd; border-radius: 4px; padding: 1px 4px; background: #fff; font-family: inherit; outline: none; width: 100%; box-sizing: border-box; }
+.addon-tags input:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
 
 /* ── BOM Drag Reorder ── */
 .bom-drag-mode .bom-item { cursor: grab; border: 1px dashed transparent; border-radius: 6px; transition: border-color 0.15s, background 0.15s; }
@@ -1112,9 +1115,38 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
           <option value="alerts-bucket">Alerts bucket</option>
         </select>
       </div>
-      <div id="addonCapacityField" style="display:none">
-        <div class="addon-picker-label">Capacity</div>
-        <input type="text" class="addon-picker-input" id="addonCapacityInput" placeholder="e.g. 1 TB" oninput="updateAddonPlaceBtn()">
+      <div id="addonExtraFields" style="display:none">
+        <div class="addon-picker-label">Storage size</div>
+        <div style="position:relative;display:flex;align-items:center">
+          <input type="text" class="addon-picker-input" id="addonCapacityInput" placeholder="e.g. 100" style="padding-right:30px" oninput="updateAddonPlaceBtn()">
+          <span style="position:absolute;right:10px;font-size:12px;color:#98a2b3;pointer-events:none">Gb</span>
+        </div>
+      </div>
+      <div id="addonRetentionField" style="display:none">
+        <div class="addon-picker-label">Retention</div>
+        <select class="addon-picker-select" id="addonRetentionSelect">
+          <option value="30">30 days</option>
+          <option value="60">60 days</option>
+          <option value="90">90 days</option>
+          <option value="180">180 days</option>
+          <option value="365">365 days</option>
+        </select>
+      </div>
+      <div id="addonPaymentField" style="display:none">
+        <div class="addon-picker-label">Payment</div>
+        <select class="addon-picker-select" id="addonPaymentSelect" onchange="onAddonPaymentChange()">
+          <option value="Upfront">Upfront</option>
+          <option value="Yearly">Yearly</option>
+        </select>
+      </div>
+      <div id="addonDurationField" style="display:none">
+        <div class="addon-picker-label">Duration</div>
+        <select class="addon-picker-select" id="addonDurationSelect">
+          <option value="1">1 year</option>
+          <option value="3">3 years</option>
+          <option value="5">5 years</option>
+          <option value="10">10 years</option>
+        </select>
       </div>
       <div id="addonCameraField" style="display:none">
         <div class="addon-picker-label">Camera</div>
@@ -1296,6 +1328,9 @@ const state = {
   placingAddonType: null,
   placingAddonCapacity: null,
   placingAddonCamId: null,
+  placingAddonRetention: null,
+  placingAddonPayment: null,
+  placingAddonDuration: null,
 };
 
 // ═══════════════════════════════════════════════
@@ -2747,6 +2782,37 @@ function renderProperties(id) {
       </div>
     </div>
     <div class="props-section">
+      <div class="props-section-title" style="display:flex;align-items:center;gap:8px">
+        <span>Assigned add-ons</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:400;color:#98a2b3;text-transform:none;letter-spacing:0">${state.addons.filter(a => a.cameraId === id).length} assigned</span>
+        <button class="btn" style="padding:3px 10px;font-size:11px" onclick="openAddonPickerForCamera(${id})">Add add-on</button>
+      </div>
+      ${(() => {
+        const assigned = state.addons.filter(a => a.cameraId === id);
+        if (!assigned.length) return '<div style="font-size:12px;color:#98a2b3;padding:4px 0 8px">No add-ons assigned.</div>';
+        return assigned.map(addon => {
+          return '<div class="core-cam-row">' +
+            '<span class="bom-item-indent"></span>' +
+            '<span class="core-cam-icon" style="background:' + addon.color + '">' + ADDON_ICON + '</span>' +
+            '<div class="core-cam-info" onclick="selectAddon(' + addon.id + ')" title="Go to add-on" style="cursor:pointer">' +
+              '<span class="core-cam-name">' + escHtml(addon.name) + '</span>' +
+              '<span class="core-cam-meta">' + escHtml(addon.type) + '</span>' +
+            '</div>' +
+            '<span class="addon-tags">' +
+              '<span class="bom-tag"><select onchange="updateAddonTypeFromCam(' + addon.id + ',this.value,' + id + ')">' +
+                Object.values(ADDON_TYPES).map(function(t) { return '<option value="' + t.id + '"' + (addon.typeId === t.id ? ' selected' : '') + '>' + t.name + '</option>'; }).join('') +
+              '</select></span>' +
+              '<span class="bom-tag" style="position:relative"><input value="' + escHtml(addon.capacity) + '" placeholder="Size" style="padding-right:18px" onchange="updateAddonCapacityFromCam(' + addon.id + ',this.value,' + id + ')" onclick="event.stopPropagation()"><span style="position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:9px;color:#98a2b3;pointer-events:none">Gb</span></span>' +
+            '</span>' +
+            '<span style="font-size:13px;font-weight:600;color:#344054;min-width:60px;text-align:right">$' + addon.price.toLocaleString() + '</span>' +
+            '<button class="core-cam-remove" onclick="unassignAddonFromCamera(' + addon.id + ',' + id + ')" title="Remove">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+            '</button>' +
+          '</div>';
+        }).join('');
+      })()}
+    </div>
+    <div class="props-section">
       <div class="props-section-title">Coverage</div>
       ${(()=>{
         const spm = state.scalePPM || 1;
@@ -2834,6 +2900,100 @@ function assignCamToCore(camId, coreIdStr) {
   }
   renderBOMPane();
   updateProjectTotal();
+}
+
+// ── Assign add-on to camera ──
+function openAssignAddonModal(camId) {
+  const cam = state.cameras.find(c => c.id === camId);
+  if (!cam) return;
+  let existing = document.getElementById('assignAddonModal');
+  if (existing) existing.remove();
+
+  const available = state.addons.filter(a => a.cameraId === null || a.cameraId === undefined);
+  let listHtml = '';
+  if (available.length) {
+    listHtml = available.map(addon => {
+      return '<label class="core-add-cam-item" onclick="event.stopPropagation()">' +
+        '<input type="checkbox" class="bom-cb" value="' + addon.id + '">' +
+        '<div class="core-add-cam-item-info">' +
+          '<div class="core-add-cam-item-name">' + escHtml(addon.name) + '</div>' +
+          '<div class="core-add-cam-item-meta">' + escHtml(addon.type) + (addon.capacity ? ' · ' + escHtml(addon.capacity) + ' Gb' : '') + '</div>' +
+        '</div>' +
+      '</label>';
+    }).join('');
+  } else {
+    listHtml = '<div class="core-add-cam-empty">No unassigned add-ons available.</div>';
+  }
+
+  const modal = document.createElement('div');
+  modal.id = 'assignAddonModal';
+  modal.className = 'core-add-cam-modal show';
+  modal.onclick = function(e) { if (e.target === modal) closeAssignAddonModal(); };
+  modal.innerHTML = `
+    <div class="core-add-cam-panel">
+      <div class="core-add-cam-hdr">Assign add-on to ${escHtml(cam.name)}</div>
+      <div class="core-add-cam-list">${listHtml}</div>
+      <div class="core-add-cam-footer" style="justify-content:space-between">
+        <button class="btn" style="padding:5px 12px;font-size:12px;color:#7c3aed;border-color:#c4b5fd" onclick="createAndAssignAddon(${camId})">+ Create new</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn" style="padding:5px 12px;font-size:12px" onclick="closeAssignAddonModal()">Cancel</button>
+          <button class="btn btn-primary" style="padding:5px 12px;font-size:12px" onclick="confirmAssignAddon(${camId})">Assign</button>
+        </div>
+      </div>
+    </div>`;
+  document.querySelector('.properties').appendChild(modal);
+}
+
+function closeAssignAddonModal() {
+  const m = document.getElementById('assignAddonModal');
+  if (m) m.remove();
+}
+
+function confirmAssignAddon(camId) {
+  const modal = document.getElementById('assignAddonModal');
+  if (!modal) return;
+  const checked = modal.querySelectorAll('.bom-cb:checked');
+  checked.forEach(cb => {
+    const addonId = parseInt(cb.value);
+    const addon = state.addons.find(a => a.id === addonId);
+    if (addon) addon.cameraId = camId;
+  });
+  closeAssignAddonModal();
+  renderProperties(camId);
+  updateUI();
+}
+
+function unassignAddonFromCamera(addonId, camId) {
+  const addon = state.addons.find(a => a.id === addonId);
+  if (addon) addon.cameraId = null;
+  renderProperties(camId);
+  updateUI();
+}
+
+function updateAddonTypeFromCam(addonId, typeId, camId) {
+  const addon = state.addons.find(a => a.id === addonId);
+  if (!addon) return;
+  const def = ADDON_TYPES[typeId];
+  if (!def) return;
+  addon.typeId = typeId;
+  addon.type = def.name;
+  addon.price = def.price;
+  addon.color = def.color;
+  renderAddonOnCanvas(addon);
+  renderProperties(camId);
+  updateUI();
+}
+
+function updateAddonCapacityFromCam(addonId, value, camId) {
+  const addon = state.addons.find(a => a.id === addonId);
+  if (!addon) return;
+  addon.capacity = value;
+  updateUI();
+}
+
+function createAndAssignAddon(camId) {
+  closeAssignAddonModal();
+  openAddonPicker(camId);
 }
 
 function updateCamProp(id, key, val) {
@@ -4278,17 +4438,28 @@ function toggleDeviceDropdown(e) {
 function closeDeviceDropdown() {
   document.getElementById('deviceDropdown').classList.remove('show');
 }
-function openAddonPicker() {
+function openAddonPicker(preselectedCamId) {
   document.getElementById('addonTypeSelect').value = '';
   document.getElementById('addonCapacityInput').value = '';
   document.getElementById('addonCamSearch').value = '';
-  document.getElementById('addonCapacityField').style.display = 'none';
+  document.getElementById('addonExtraFields').style.display = 'none';
+  document.getElementById('addonRetentionField').style.display = 'none';
+  document.getElementById('addonPaymentField').style.display = 'none';
+  document.getElementById('addonDurationField').style.display = 'none';
   document.getElementById('addonCameraField').style.display = 'none';
   document.getElementById('addonCamList').classList.remove('show');
   const placeBtn = document.getElementById('addonPlaceBtn');
   placeBtn.style.opacity = '0.4';
   placeBtn.style.pointerEvents = 'none';
   addonState.selectedCamId = null;
+  // Pre-select camera if provided (from "Create & assign" in camera panel)
+  if (preselectedCamId) {
+    const cam = state.cameras.find(c => c.id === preselectedCamId);
+    if (cam) {
+      addonState.selectedCamId = preselectedCamId;
+      document.getElementById('addonCamSearch').value = cam.name;
+    }
+  }
   document.getElementById('addonPickerOverlay').classList.add('show');
   document.addEventListener('click', _closeAddonCamList);
 }
@@ -4301,22 +4472,66 @@ function _closeAddonCamList(e) {
 function closeAddonPicker() {
   document.removeEventListener('click', _closeAddonCamList);
   document.getElementById('addonPickerOverlay').classList.remove('show');
+  // Reset camera-panel mode
+  const placeBtn = document.getElementById('addonPlaceBtn');
+  placeBtn.textContent = 'Place add-on';
+  placeBtn.setAttribute('onclick', 'placeAddon()');
+  addonState.assignToCamId = null;
 }
-const addonState = { selectedCamId: null };
+function openAddonPickerForCamera(camId) {
+  openAddonPicker(camId);
+  addonState.assignToCamId = camId;
+  // Change button to "Add add-on" instead of "Place add-on"
+  const placeBtn = document.getElementById('addonPlaceBtn');
+  placeBtn.textContent = 'Add add-on';
+  placeBtn.setAttribute('onclick', 'placeAddonForCamera()');
+  // Hide camera field since we already know which camera
+  document.getElementById('addonCameraField').style.display = 'none';
+}
+function placeAddonForCamera() {
+  const type = document.getElementById('addonTypeSelect').value;
+  const capacity = document.getElementById('addonCapacityInput').value.trim();
+  if (!type || !capacity) return;
+  const camId = addonState.assignToCamId;
+  const cam = state.cameras.find(c => c.id === camId);
+  if (!cam) return;
+  closeAddonPicker();
+  // Place add-on near the camera with a small offset
+  const offsetX = 50 + Math.random() * 30;
+  const offsetY = 50 + Math.random() * 30;
+  const addon = addAddon(type, cam.x + offsetX, cam.y + offsetY, capacity, camId, true);
+  if (addon) {
+    // Select the camera back to show updated assigned list
+    selectCamera(camId);
+  }
+}
+const addonState = { selectedCamId: null, assignToCamId: null };
 function onAddonTypeChange() {
   const type = document.getElementById('addonTypeSelect').value;
-  document.getElementById('addonCapacityField').style.display = type ? '' : 'none';
-  document.getElementById('addonCameraField').style.display = type === 'cloud-storage' ? '' : 'none';
+  const show = type ? '' : 'none';
+  document.getElementById('addonExtraFields').style.display = show;
+  document.getElementById('addonRetentionField').style.display = show;
+  document.getElementById('addonPaymentField').style.display = show;
+  // Duration only if type selected AND payment is Yearly
+  const pay = document.getElementById('addonPaymentSelect').value;
+  document.getElementById('addonDurationField').style.display = (type && pay === 'Yearly') ? '' : 'none';
+  // Hide camera field when in camera-panel mode (camera already known)
+  document.getElementById('addonCameraField').style.display = (type === 'cloud-storage' && !addonState.assignToCamId) ? '' : 'none';
   addonState.selectedCamId = null;
   document.getElementById('addonCamSearch').value = '';
   document.getElementById('addonCamList').classList.remove('show');
   updateAddonPlaceBtn();
 }
+function onAddonPaymentChange() {
+  const type = document.getElementById('addonTypeSelect').value;
+  const pay = document.getElementById('addonPaymentSelect').value;
+  document.getElementById('addonDurationField').style.display = (type && pay === 'Yearly') ? '' : 'none';
+}
 function updateAddonPlaceBtn() {
   const type = document.getElementById('addonTypeSelect').value;
   const capacity = document.getElementById('addonCapacityInput').value.trim();
   let enabled = type && capacity;
-  if (type === 'cloud-storage' && !addonState.selectedCamId) enabled = false;
+  if (type === 'cloud-storage' && !addonState.selectedCamId && !addonState.assignToCamId) enabled = false;
   const btn = document.getElementById('addonPlaceBtn');
   btn.style.opacity = enabled ? '1' : '0.4';
   btn.style.pointerEvents = enabled ? 'auto' : 'none';
@@ -4570,8 +4785,8 @@ function renderAddonProperties(id) {
         </div>
       </div>
       <div class="prop-row">
-        <span class="prop-label">Capacity</span>
-        <div class="prop-ctrl"><input class="prop-input" value="${escHtml(addon.capacity)}" oninput="updateAddonProp(${id},'capacity',this.value)"></div>
+        <span class="prop-label">Storage size</span>
+        <div class="prop-ctrl"><div class="prop-input-wrap"><input class="prop-input" value="${escHtml(addon.capacity)}" oninput="updateAddonProp(${id},'capacity',this.value)"><span class="prop-input-unit">Gb</span></div></div>
       </div>
     </div>
     ${cameraHtml}
