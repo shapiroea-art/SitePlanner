@@ -468,14 +468,12 @@ const DEVICES = [
   { planId: 4, category: 'Video Security', model: 'Bullet 4K', qty: 2, accessories: 'Wall mount bracket', price: 650 },
   { planId: 4, category: 'Video Security', model: 'PTZ Pro', qty: 1, accessories: 'Pole mount', price: 1450 },
   { planId: 4, category: 'Access Control', model: 'Card Reader', qty: 1, accessories: 'Mullion mount', price: 280 },
-  { planId: 4, category: 'Connectivity', model: 'Switch 8-Port', qty: 1, accessories: 'Rack ears', price: 350 },
   { planId: 5, category: 'Video Security', model: 'CD52-E', qty: 2, accessories: 'ACC-MNT-CJBOX-1 INJ-POE-PLUS', price: 890 },
   { planId: 5, category: 'Access Control', model: 'Wired Door', qty: 1, accessories: 'AD34', price: 320 },
   { planId: 6, category: 'Video Security', model: 'Dome 8MP', qty: 2, accessories: 'Corner mount', price: 720 },
   { planId: 6, category: 'Intercom', model: 'TD33', qty: 1, accessories: 'No accessories.', price: 190 },
   { planId: 7, category: 'Video Security', model: 'Bullet 4K', qty: 2, accessories: 'Wall mount bracket', price: 650 },
   { planId: 7, category: 'Access Control', model: 'Card Reader', qty: 1, accessories: 'Mullion mount', price: 280 },
-  { planId: 7, category: 'Connectivity', model: 'Switch 8-Port', qty: 1, accessories: 'Rack ears', price: 350 },
   { planId: 8, category: 'Video Security', model: 'PTZ Pro', qty: 1, accessories: 'Pole mount', price: 1450 },
   { planId: 8, category: 'Video Security', model: 'CD52-E', qty: 2, accessories: 'ACC-MNT-CJBOX-1 INJ-POE-PLUS', price: 890 },
   { planId: 8, category: 'Access Control', model: 'Wired Door', qty: 1, accessories: 'AD34', price: 320 },
@@ -549,7 +547,7 @@ const locationCores = CORES.filter(c => visiblePlanIds.includes(c.planId));
 
 /* ── Group devices by category ── */
 const categories = {};
-const categoryOrder = ['Video Security', 'Cores', 'Connectivity'];
+const categoryOrder = ['Video Security', 'Cores'];
 locationDevices.forEach(d => {
   if (!categories[d.category]) categories[d.category] = [];
   categories[d.category].push(d);
@@ -611,8 +609,6 @@ function deviceIconSVG(category) {
       return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>';
     case 'Intercom':
       return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
-    case 'Connectivity':
-      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>';
     default:
       return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>';
   }

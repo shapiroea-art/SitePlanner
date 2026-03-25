@@ -425,16 +425,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bp-addr-btn:hover { background: #6d28d9; }
 
 /* ── Wall Sub-toolbar ── */
-.wall-subtoolbar { height: 34px; flex-shrink: 0; background: #fafafa; border-bottom: 1px solid #eaecf0; display: none; align-items: center; padding: 0 14px; gap: 8px; }
-.wall-subtoolbar.show { display: flex; }
-.wt-label { font-size: 10px; font-weight: 700; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.6px; margin-right: 2px; flex-shrink: 0; }
-.wt-btn { display: flex; align-items: center; gap: 5px; padding: 3px 11px 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #667085; cursor: pointer; border: 1px solid #d0d5dd; background: #fff; transition: all 0.15s; white-space: nowrap; user-select: none; }
-.wt-btn:hover { border-color: #98a2b3; color: #344054; }
-.wt-solid.active { background: #ef4444; border-color: #ef4444; color: #fff; }
-.wt-glass.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
-.wt-fence.active { background: #f59e0b; border-color: #f59e0b; color: #fff; }
-.wt-swatch { width: 18px; height: 2.5px; border-radius: 1px; flex-shrink: 0; }
-.wt-hint { margin-left: auto; font-size: 11px; color: #98a2b3; }
+.wall-draw-hint { height: 34px; flex-shrink: 0; display: none; align-items: center; justify-content: center; background: rgba(124,58,237,0.92); color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 0.2px; }
+.wall-draw-hint.show { display: flex; }
 
 /* ── Wall legend (canvas overlay) ── */
 .wall-legend { position: absolute; bottom: 48px; left: 12px; background: rgba(17,24,39,0.78); border-radius: 7px; padding: 8px 12px; display: none; flex-direction: column; gap: 6px; z-index: 10; backdrop-filter: blur(4px); pointer-events: none; }
@@ -859,23 +851,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       <div class="tool-spacer"></div>
     </div>
 
-    <!-- Wall Type Sub-toolbar (shown when Wall tool active) -->
-    <div class="wall-subtoolbar" id="wallSubtoolbar">
-      <span class="wt-label">Wall type:</span>
-      <div class="wt-btn wt-solid active" id="wt-solid" onclick="setWallType('solid')">
-        <span class="wt-swatch" style="background:#ef4444"></span>
-        Solid
-      </div>
-      <div class="wt-btn wt-glass" id="wt-glass" onclick="setWallType('glass')">
-        <span class="wt-swatch" style="background:repeating-linear-gradient(90deg,#3b82f6 0,#3b82f6 5px,transparent 5px,transparent 9px);height:2px"></span>
-        Glass / Window
-      </div>
-      <div class="wt-btn wt-fence" id="wt-fence" onclick="setWallType('fence')">
-        <span class="wt-swatch" style="background:repeating-linear-gradient(90deg,#f59e0b 0,#f59e0b 3px,transparent 3px,transparent 7px);height:2px"></span>
-        Fence / Barrier
-      </div>
-      <span class="wt-hint">Click to start · click again to finish · ESC to cancel</span>
-    </div>
+    <!-- Wall Drawing Hint (shown when Wall tool active) -->
+    <div class="wall-draw-hint" id="wallSubtoolbar">Click to place points · Double-click or press ESC to finish</div>
 
     <!-- Workspace -->
     <div class="workspace">
@@ -5193,26 +5170,6 @@ window.addEventListener('DOMContentLoaded', () => {
       </button>
     </div>
     <div class="settings-body">
-      <div class="settings-row">
-        <span class="settings-row-label">Show views from:</span>
-        <div class="seg-control" id="segViews">
-          <button class="seg-btn active" data-val="all">All Cameras</button>
-          <button class="seg-btn" data-val="selected">Selected Camera</button>
-          <button class="seg-btn" data-val="none">None</button>
-        </div>
-      </div>
-      <div class="settings-row">
-        <span class="settings-row-label">Show camera blind spots</span>
-        <label class="toggle"><input type="checkbox" id="toggleBlindSpots" checked><span class="toggle-slider"></span></label>
-      </div>
-      <div class="settings-row">
-        <span class="settings-row-label">Show PPF zones <span class="edit-link" id="editPpfBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</span></span>
-        <label class="toggle"><input type="checkbox" id="togglePpfZones" checked><span class="toggle-slider"></span></label>
-      </div>
-      <div class="settings-row">
-        <span class="settings-row-label">Show wall blind spots</span>
-        <label class="toggle"><input type="checkbox" id="toggleWallBlind" checked><span class="toggle-slider"></span></label>
-      </div>
       <div class="settings-row">
         <span class="settings-row-label">Unit of measurement:</span>
         <div class="seg-control" id="segUnits">
