@@ -635,14 +635,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .core-chip.active { background: #7c3aed; color: #fff; border-color: #7c3aed; }
 
 /* ── Core camera list rows ── */
-.core-cam-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #f2f4f7; }
+.core-cam-row { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid #f2f4f7; }
 .core-cam-row:last-of-type { border-bottom: none; }
-.core-cam-icon { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
-.core-cam-icon svg { width: 14px; height: 14px; }
-.core-cam-info { flex: 1; min-width: 0; overflow: hidden; }
-.core-cam-name { font-size: 14px; color: #344054; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+.core-cam-icon { width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+.core-cam-icon svg { width: 12px; height: 12px; }
+.core-cam-info { flex: 1; display: flex; align-items: baseline; gap: 4px; min-width: 60px; overflow: hidden; }
+.core-cam-name { font-size: 13px; color: #344054; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .core-cam-name:hover { color: #7c3aed; text-decoration: underline; }
-.core-cam-meta { font-size: 12px; color: #98a2b3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.core-cam-meta { font-size: 12px; color: #98a2b3; white-space: nowrap; }
 .core-cam-remove { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: #d0d5dd; cursor: pointer; border-radius: 4px; flex-shrink: 0; padding: 0; }
 .core-cam-remove:hover { background: #fef2f2; color: #ef4444; }
 .core-add-cam-modal { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16,24,40,0.25); z-index: 50; display: none; }
@@ -4474,40 +4474,53 @@ function renderCoreProperties(id) {
       ${durationHtml}
     </div>
     <div class="props-section">
-      <div class="props-section-title" style="display:flex;align-items:center;justify-content:space-between">
-        <span>Cameras</span>
-        <span style="font-size:11px;font-weight:400;color:#98a2b3;text-transform:none;letter-spacing:0">${(core.cameraIds || []).length} / ${core.channels} available</span>
+      <div class="props-section-title" style="display:flex;align-items:center;gap:8px">
+        <span>Assigned cameras</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:400;color:#98a2b3;text-transform:none;letter-spacing:0">${(core.cameraIds || []).length} / ${core.channels} available</span>
+        ${(()=>{
+          const ids = core.cameraIds || [];
+          const available = state.cameras.filter(c => !ids.includes(c.id));
+          if (!available.length) return '';
+          return '<button class="btn" style="padding:3px 10px;font-size:11px" onclick="openAddCamerasModal(' + id + ')">Add cameras</button>';
+        })()}
       </div>
       ${(()=>{
         const ids = core.cameraIds || [];
         if (!ids.length) return '<div style="font-size:12px;color:#98a2b3;padding:4px 0 8px">No cameras assigned yet.</div>';
-        const _typeLabels = { dome:'Dome', bullet:'Bullet', fisheye:'Fisheye', ptz:'PTZ', multi:'Multisensor' };
         return ids.map(camId => {
           const cam = state.cameras.find(c => c.id === camId);
           if (!cam) return '';
-          const typeName = _typeLabels[cam.iconType] || 'Camera';
           const modelName = cam.model || 'Generic';
           const camIcon = ICONS[cam.iconType] || ICONS.dome;
+          const dur = cam.payment === 'Yearly' ? (cam.duration || 1) + ' yr' : '—';
+          const durStyle = dur === '—' ? 'cursor:default;color:#98a2b3' : 'cursor:default';
           return '<div class="core-cam-row">' +
+            '<span class="bom-item-indent"></span>' +
             '<span class="core-cam-icon" style="background:' + cam.color + '">' + camIcon + '</span>' +
             '<div class="core-cam-info" onclick="selectCamera(' + camId + ')" title="Select camera" style="cursor:pointer">' +
               '<span class="core-cam-name">' + escHtml(cam.name) + '</span>' +
-              '<span class="core-cam-meta">' + escHtml(typeName) + ' · ' + escHtml(modelName) + '</span>' +
+              '<span class="core-cam-meta">' + escHtml(modelName) + '</span>' +
             '</div>' +
+            '<span class="bom-tags">' +
+              '<span class="bom-tag" style="cursor:default">' + (cam.payment || 'Upfront') + '</span>' +
+              '<span class="bom-tag" style="' + durStyle + '">' + dur + '</span>' +
+              '<span class="bom-tag" style="cursor:default">' + (cam.license || 'Essential') + '</span>' +
+              '<span class="bom-tag" style="cursor:default">' + (cam.retention || 30) + 'd</span>' +
+              '<span class="bom-tag" style="cursor:default">' + (cam.resolution || '4K') + '</span>' +
+            '</span>' +
+            '<span style="font-size:13px;font-weight:600;color:#344054;min-width:60px;text-align:right">$' + cam.price.toLocaleString() + '</span>' +
             '<button class="core-cam-remove" onclick="removeCameraFromCore(' + id + ',' + camId + ')" title="Remove">' +
               '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
             '</button>' +
           '</div>';
         }).join('');
       })()}
-      <div style="padding-top:8px">
-        ${(()=>{
-          const ids = core.cameraIds || [];
-          const available = state.cameras.filter(c => !ids.includes(c.id));
-          if (!available.length) return '<div style="font-size:11px;color:#98a2b3">All cameras are assigned.</div>';
-          return '<button class="btn" style="padding:5px 12px;font-size:12px;width:100%" onclick="openAddCamerasModal(' + id + ')">Add cameras</button>';
-        })()}
-      </div>
+      ${(()=>{
+        const ids = core.cameraIds || [];
+        const available = state.cameras.filter(c => !ids.includes(c.id));
+        if (!available.length && ids.length) return '<div style="font-size:11px;color:#98a2b3;padding:4px 0 0">All cameras are assigned.</div>';
+        return '';
+      })()}
     </div>
   `;
 }
