@@ -124,7 +124,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .cc-btn svg { width: 14px; height: 14px; }
 
 /* ── Properties ── */
-.properties { width: 536px; flex-shrink: 0; background: #fff; border-left: 1px solid #eaecf0; display: flex; flex-direction: column; position: relative; overflow: visible; transition: width 0.2s ease; }
+.properties { width: 700px; flex-shrink: 0; background: #fff; border-left: 1px solid #eaecf0; display: flex; flex-direction: column; position: relative; overflow: visible; transition: width 0.2s ease; }
 .properties.collapsed { width: 0; border-left: none; }
 .properties.collapsed .rp-total,
 .properties.collapsed .rp-tabs,
@@ -249,19 +249,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-group.collapsed .bom-group-children { display: none; }
 .bom-group-hdr-core { border-left: 4px solid var(--core-color, #667085); background: #f9fafb; }
 .bom-group-hdr-unassigned { border-left: 4px dashed #d0d5dd; background: #f9fafb; }
-.bom-group-name { font-size: 16px; font-weight: 600; color: #344054; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
-.bom-group-type { font-size: 16px; font-weight: 400; color: #98a2b3; white-space: nowrap; margin-left: 4px; }
-.bom-group-name-wrap { flex: 1; display: flex; align-items: baseline; min-width: 0; overflow: hidden; }
+.bom-group-name { font-size: 14px; font-weight: 600; color: #344054; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.bom-group-type { font-size: 13px; font-weight: 400; color: #98a2b3; white-space: nowrap; margin-left: 4px; }
+.bom-group-name-wrap { flex: 1; display: flex; align-items: baseline; min-width: 80px; overflow: hidden; }
 .bom-group-count-badge { font-size: 11px; font-weight: 600; color: #667085; background: #eaecf0; border-radius: 10px; padding: 1px 8px; white-space: nowrap; flex-shrink: 0; margin-left: 6px; }
-.bom-group-price-wrap { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; flex-shrink: 0; min-width: 140px; justify-content: flex-end; }
-.bom-group-price { font-size: 16px; font-weight: 700; color: #344054; white-space: nowrap; }
+.bom-group-price-wrap { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; flex-shrink: 0; min-width: 72px; justify-content: flex-end; }
+.bom-group-price { font-size: 14px; font-weight: 700; color: #344054; white-space: nowrap; }
 .bom-group-price-sep { font-size: 14px; color: #d0d5dd; }
 .bom-group-total { font-size: 14px; font-weight: 500; color: #667085; white-space: nowrap; }
-.bom-group-children { padding: 0 16px 8px 16px; }
-.bom-group-core-details { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 4px 6px; padding: 0 0 8px 42px; }
+.bom-group-children { padding: 0 16px 8px 16px; position: relative; }
+.bom-group-children::before { content: ''; position: absolute; left: 32px; top: 0; bottom: 8px; width: 1px; background: #eaecf0; }
 .bom-group-icon { width: 16px; height: 16px; flex-shrink: 0; color: #667085; display: flex; align-items: center; justify-content: center; }
 .bom-group-icon svg { width: 16px; height: 16px; }
-.bom-item { padding: 8px 4px 8px 24px; border-bottom: 1px solid #f2f4f7; border-radius: 4px; }
+.bom-item { padding: 6px 4px 6px 16px; border-bottom: 1px solid #f2f4f7; border-radius: 4px; }
+.bom-item-indent { width: 28px; flex-shrink: 0; }
 .bom-item:hover { background: #f5f3ff; }
 .bom-item:hover .bom-item-name { color: #7c3aed; }
 .bom-group-hdr:hover .bom-group-name { color: #7c3aed; }
@@ -269,15 +270,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-item-primary { display: flex; align-items: center; gap: 6px; cursor: pointer; }
 .bom-item-icon { width: 16px; height: 16px; flex-shrink: 0; color: #667085; }
 .bom-item-icon svg { width: 16px; height: 16px; }
-.bom-item-name { font-size: 16px; font-weight: 500; color: #344054; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.bom-item-model { font-size: 16px; font-weight: 400; color: #98a2b3; white-space: nowrap; margin-left: 4px; }
-.bom-item-name-wrap { flex: 1; display: flex; align-items: baseline; min-width: 0; overflow: hidden; }
-.bom-item-price { font-size: 16px; font-weight: 600; color: #344054; white-space: nowrap; min-width: 140px; text-align: right; flex-shrink: 0; }
-.bom-item-details { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px 6px; padding-left: 22px; margin-top: 6px; }
-.bom-detail-tag { font-size: 14px; color: #667085; white-space: nowrap; cursor: pointer; padding: 2px 0; border-radius: 3px; transition: color 0.12s; text-align: left; }
-.bom-detail-tag:hover { color: #7c3aed; }
-.bom-detail-tag select { font-size: 14px; color: #344054; border: 1px solid #d0d5dd; border-radius: 4px; padding: 2px 4px; background: #fff; font-family: inherit; outline: none; cursor: pointer; width: 100%; }
-.bom-detail-tag select:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
+.bom-item-name { font-size: 13px; font-weight: 500; color: #344054; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bom-item-model { font-size: 12px; font-weight: 400; color: #98a2b3; white-space: nowrap; margin-left: 4px; }
+.bom-item-name-wrap { flex: 1; display: flex; align-items: baseline; min-width: 80px; overflow: hidden; }
+.bom-item-price { font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; min-width: 72px; text-align: right; flex-shrink: 0; }
+.bom-tag { font-size: 11px; color: #667085; white-space: nowrap; cursor: pointer; padding: 2px 6px; border-radius: 4px; background: #f2f4f7; transition: color 0.12s, background 0.12s; flex-shrink: 0; }
+.bom-tag:hover { color: #7c3aed; background: #f5f3ff; }
+.bom-tag select { font-size: 11px; color: #344054; border: 1px solid #d0d5dd; border-radius: 4px; padding: 1px 3px; background: #fff; font-family: inherit; outline: none; cursor: pointer; width: auto; }
+.bom-tag select:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
+.bom-tags { display: grid; grid-template-columns: 58px 40px 68px 40px 44px; gap: 4px; flex-shrink: 0; align-items: center; }
 
 /* ── BOM Drag Reorder ── */
 .bom-drag-mode .bom-item { cursor: grab; border: 1px dashed transparent; border-radius: 6px; transition: border-color 0.15s, background 0.15s; }
@@ -3029,7 +3030,7 @@ function bulkEditField(field, el, evt) {
   if (!options) return;
   const curVal = el.textContent.trim();
   const sel = document.createElement('select');
-  sel.style.cssText = 'font-size:14px;color:#344054;border:1px solid #d0d5dd;border-radius:4px;padding:2px 4px;background:#fff;font-family:inherit;outline:none;cursor:pointer;width:100%';
+  sel.style.cssText = 'font-size:11px;color:#344054;border:1px solid #d0d5dd;border-radius:4px;padding:1px 3px;background:#fff;font-family:inherit;outline:none;cursor:pointer;width:auto';
   options.forEach(o => {
     const opt = document.createElement('option');
     opt.value = o; opt.textContent = o;
@@ -3214,7 +3215,7 @@ function bomEditTag(camId, field, el, evt) {
   const curVal = el.textContent.trim();
   const sel = document.createElement('select');
   sel.className = '';
-  sel.style.cssText = 'font-size:14px;color:#344054;border:1px solid #d0d5dd;border-radius:4px;padding:2px 4px;background:#fff;font-family:inherit;outline:none;cursor:pointer;width:100%';
+  sel.style.cssText = 'font-size:11px;color:#344054;border:1px solid #d0d5dd;border-radius:4px;padding:1px 3px;background:#fff;font-family:inherit;outline:none;cursor:pointer;width:auto';
   options.forEach(o => {
     const opt = document.createElement('option');
     opt.value = o; opt.textContent = o;
@@ -3252,7 +3253,7 @@ function bomEditCoreTag(coreId, field, el, evt) {
   if (!options) return;
   const curVal = el.textContent.trim();
   const sel = document.createElement('select');
-  sel.style.cssText = 'font-size:14px;color:#344054;border:1px solid #d0d5dd;border-radius:4px;padding:2px 4px;background:#fff;font-family:inherit;outline:none;cursor:pointer;width:100%';
+  sel.style.cssText = 'font-size:11px;color:#344054;border:1px solid #d0d5dd;border-radius:4px;padding:1px 3px;background:#fff;font-family:inherit;outline:none;cursor:pointer;width:auto';
   options.forEach(o => {
     const opt = document.createElement('option');
     opt.value = o; opt.textContent = o;
@@ -3280,16 +3281,16 @@ function _bomTagHtml(field, value, bulk, camId, model) {
   const display = (bulk && p[field]) ? p[field] : value;
   const changed = bulk && p[field];
   if (field === 'duration' && value === '—' && !changed) {
-    return `<span class="bom-detail-tag" style="cursor:default;color:#98a2b3" title="Duration">—</span>`;
+    return `<span class="bom-tag" style="cursor:default;color:#98a2b3" title="Duration">—</span>`;
   }
   if (field === 'resolution' && model && model !== 'Generic' && !changed) {
-    return `<span class="bom-detail-tag" style="cursor:default" title="Resolution">${display}</span>`;
+    return `<span class="bom-tag" style="cursor:default" title="Resolution">${display}</span>`;
   }
   const style = changed ? 'color:#7c3aed;font-weight:600' : '';
   const click = bulk
     ? `onclick="bulkEditField('${field}',this,event)"`
     : `onclick="bomEditTag(${camId},'${field}',this,event)"`;
-  return `<span class="bom-detail-tag" style="${style}" title="${field.charAt(0).toUpperCase()+field.slice(1)}" ${click}>${display}</span>`;
+  return `<span class="bom-tag" style="${style}" title="${field.charAt(0).toUpperCase()+field.slice(1)}" ${click}>${display}</span>`;
 }
 
 function renderBomCamItem(cam, coreId, idx) {
@@ -3301,27 +3302,28 @@ function renderBomCamItem(cam, coreId, idx) {
   const key = 'cam-' + cam.id;
   const checked = _bulkEdit.selected.has(key);
   const cbHtml = bulk ? `<input type="checkbox" class="bom-cb bom-item-cb" ${checked ? 'checked' : ''} onclick="bulkToggleItem('${key}',event)">` : '';
-  const detailPad = bulk ? 'padding-left:40px' : '';
   const dragHandleSvg = `<svg class="bom-drag-handle" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>`;
   const dragAttr = drag ? `draggable="true" ondragstart="bomDragStart(${cam.id},event)" ondragend="bomDragEnd(event)"` : '';
   const dropZone = drag ? `<div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(${coreId},${idx},event)"></div>` : '';
-  return `${dropZone}<div class="bom-item" ${dragAttr}>
-    <div class="bom-item-primary" ${drag ? '' : (bulk ? '' : 'onclick="selectCamera(' + cam.id + ')" title="Select camera"')}>
-      ${drag ? dragHandleSvg : ''}${cbHtml}
-      <span class="bom-item-icon">${icon}</span>
-      <span class="bom-item-name-wrap">
-        <span class="bom-item-name">${escHtml(cam.name)}</span>
-        <span class="bom-item-model">${escHtml(cam.model || 'Generic')}</span>
-      </span>
-      <span class="bom-item-price">$${cam.price.toLocaleString()}</span>
-    </div>
-    ${drag ? '' : `<div class="bom-item-details" style="${detailPad}">
+  const indent = coreId !== null ? '<span class="bom-item-indent"></span>' : '';
+  const tagsHtml = drag ? '' : `<span class="bom-tags">
       ${_bomTagHtml('payment', payment, bulk, cam.id)}
       ${_bomTagHtml('duration', duration, bulk, cam.id)}
       ${_bomTagHtml('license', cam.license || 'Essential', bulk, cam.id)}
       ${_bomTagHtml('retention', (cam.retention || 30) + 'd', bulk, cam.id)}
       ${_bomTagHtml('resolution', cam.resolution || '4K', bulk, cam.id, cam.model || 'Generic')}
-    </div>`}
+    </span>`;
+  return `${dropZone}<div class="bom-item" ${dragAttr}>
+    <div class="bom-item-primary" ${drag ? '' : (bulk ? '' : 'onclick="selectCamera(' + cam.id + ')" title="Select camera"')}>
+      ${indent}${drag ? dragHandleSvg : ''}${cbHtml}
+      <span class="bom-item-icon">${icon}</span>
+      <span class="bom-item-name-wrap">
+        <span class="bom-item-name">${escHtml(cam.name)}</span>
+        <span class="bom-item-model">${escHtml(cam.model || 'Generic')}</span>
+      </span>
+      ${tagsHtml}
+      <span class="bom-item-price">$${cam.price.toLocaleString()}</span>
+    </div>
   </div>`;
 }
 
@@ -3372,8 +3374,12 @@ function renderBOMPane() {
     const coreDurationDisplay = (bulk && bp.duration) ? bp.duration : coreDuration;
     const payStyle = (bulk && bp.payment) ? 'color:#7c3aed;font-weight:600' : '';
     const durStyle = (bulk && bp.duration) ? 'color:#7c3aed;font-weight:600' : '';
-    const coreTagClick = bulk ? 'bulkEditField' : 'bomEditCoreTag(' + core.id + ',';
-    const coreDetPad = bulk ? 'padding-left:40px' : '';
+
+    const corePayTag = drag ? '' : `<span class="bom-tag" style="${payStyle}" title="Payment" onclick="${bulk ? "bulkEditField('payment',this,event);event.stopPropagation()" : "bomEditCoreTag("+core.id+",'payment',this,event);event.stopPropagation()"}">${corePaymentDisplay}</span>`;
+    const coreDurTag = drag ? '' : (coreDurationDisplay === '—' && !durStyle
+      ? '<span class="bom-tag" style="cursor:default;color:#98a2b3" title="Duration">—</span>'
+      : `<span class="bom-tag" style="${durStyle}" title="Duration" onclick="${bulk ? "bulkEditField('duration',this,event);event.stopPropagation()" : "bomEditCoreTag("+core.id+",'duration',this,event);event.stopPropagation()"}">${coreDurationDisplay}</span>`);
+    const coreTagsWrap = drag ? '' : `<span class="bom-tags">${corePayTag}${coreDurTag}<span></span><span></span><span></span></span>`;
 
     groupsHtml += `
       <div class="bom-group ${collapsed}" data-bom-group="${core.id}">
@@ -3386,14 +3392,14 @@ function renderBOMPane() {
             <span class="bom-group-type">${escHtml(core.type)}</span>
             <span class="bom-group-count-badge">${coreCams.length}</span>
           </span>
+          ${coreTagsWrap}
           <span class="bom-group-price-wrap">
             <span class="bom-group-price">$${core.price.toLocaleString()}</span>
             <span class="bom-group-price-sep">|</span>
-            <span class="bom-group-total">Total: $${(core.price + coreCams.reduce((s, c) => s + c.price, 0)).toLocaleString()}</span>
+            <span class="bom-group-total">$${(core.price + coreCams.reduce((s, c) => s + c.price, 0)).toLocaleString()}</span>
           </span>
         </div>
         <div class="bom-group-children">
-          ${drag ? '' : '<div class="bom-group-core-details" style="' + coreDetPad + '"><span class="bom-detail-tag" style="' + payStyle + '" title="Payment" onclick="' + (bulk ? "bulkEditField(\'payment\',this,event)" : "bomEditCoreTag("+core.id+",\'payment\',this,event)") + '">' + corePaymentDisplay + '</span>' + (coreDurationDisplay === '—' && !durStyle ? '<span class="bom-detail-tag" style="cursor:default;color:#98a2b3" title="Duration">—</span>' : '<span class="bom-detail-tag" style="' + durStyle + '" title="Duration" onclick="' + (bulk ? "bulkEditField(\'duration\',this,event)" : "bomEditCoreTag("+core.id+",\'duration\',this,event)") + '">' + coreDurationDisplay + '</span>') + '</div>'}
           ${coreCams.map((cam, i) => renderBomCamItem(cam, core.id, i)).join('')}
           ${_dragMode.active ? '<div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(' + core.id + ',' + coreCams.length + ',event)"></div>' : ''}
         </div>
@@ -3413,7 +3419,7 @@ function renderBOMPane() {
             <span class="bom-group-count-badge">${unassignedCams.length}</span>
           </span>
           <span class="bom-group-price-wrap">
-            <span class="bom-group-total">Total: $${unassignedCams.reduce((s, c) => s + c.price, 0).toLocaleString()}</span>
+            <span class="bom-group-total">$${unassignedCams.reduce((s, c) => s + c.price, 0).toLocaleString()}</span>
           </span>
         </div>
         <div class="bom-group-children">
