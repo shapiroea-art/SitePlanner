@@ -2685,10 +2685,10 @@ function renderProperties(id) {
   const c = document.getElementById('propsContent');
   c.innerHTML = `
     <div class="props-section">
-      <div class="props-section-title">Camera Config</div>
+      <div class="props-section-title">Camera Details</div>
       <div class="prop-row">
         <span class="prop-label">Name</span>
-        <div class="prop-ctrl"><input class="prop-input" value="${escHtml(cam.name)}" oninput="updateCamProp(${id},'name',this.value)"></div>
+        <div class="prop-ctrl"><input class="prop-input" style="width:160px" value="${escHtml(cam.name)}" oninput="updateCamProp(${id},'name',this.value)"></div>
       </div>
       <div class="prop-row">
         <span class="prop-label">Model</span>
@@ -2707,8 +2707,12 @@ function renderProperties(id) {
           </div>
         </div>
       </div>
+    </div>
+    <div class="props-section">
+      <div class="props-section-title">Camera Config</div>
       ${(()=>{
-        const isModel = !!CAMERA_DB.find(m => m.id === cam.typeId);
+        const camDef = CAMERA_DB.find(m => m.id === cam.typeId);
+        const isModel = camDef && !camDef.isGeneric;
         const unit = cam.unit || 'imperial';
         const dist = cam.distance || 30;
         const distDisp = unit === 'metric' ? (dist * 0.3048).toFixed(1) : dist.toFixed(1);
@@ -2716,42 +2720,49 @@ function renderProperties(id) {
         const haov = cam.fovAngle < 360 ? cam.fovAngle : 360;
         const wFt = 2 * dist * Math.tan(haov * Math.PI / 360);
         const wDisp = unit === 'metric' ? (wFt * 0.3048).toFixed(1) : wFt.toFixed(1);
-        const hPx = {'1080p':1920,'4K':3840,'8MP':3264,'12MP':4000}[cam.resolution]||1920;
+        const hPx = _camHPx(cam);
         const ppf = wFt > 0 ? (hPx / wFt).toFixed(1) : '0';
-        const disabledStyle = 'pointer-events:none';
+        const vfov = (2 * Math.atan(Math.tan(haov * Math.PI / 360) * 9/16) * 180 / Math.PI).toFixed(1);
+        const RESOLUTIONS = ['QVGA','VGA','SVGA','720p','1.3MP','2MP','1080MP','3MP','4MP','5MP','6MP','4K','10MP','12MP','16MP','20MP','6K','7K','8K'];
         return `
-      <div class="prop-row" style="${isModel ? disabledStyle : ''}">
+      <div class="prop-row">
         <span class="prop-label">Resolution</span>
         <div class="prop-ctrl" style="display:flex;align-items:center;gap:8px">
-          <select class="prop-select" style="width:auto" onchange="updateCamProp(${id},'resolution',this.value)" ${isModel ? 'disabled' : ''}>
-            ${['1080p','4K','8MP','12MP'].map(r=>`<option ${cam.resolution===r?'selected':''}>${r}</option>`).join('')}
-          </select>
-          <span class="prop-label" style="width:auto;flex-shrink:0">HAoV</span>
-          <div style="${(isModel || cam.fovAngle>=360) ? disabledStyle : ''}">
-            <div class="prop-input-wrap" style="width:68px">
-              <input type="number" id="cam-haov-${id}" class="prop-input" style="text-align:right" value="${haov}" min="1" max="${cam.fovAngle<360?179:360}" step="1" ${(isModel || cam.fovAngle>=360)?'disabled':''} onchange="updateCamHaov(${id},+this.value)">
-              <span class="prop-input-unit">°</span>
-            </div>
+          <div style="width:160px;flex-shrink:0">
+            <select class="prop-select" style="width:100%" onchange="updateCamProp(${id},'resolution',this.value);_refreshCamFields(${id})" ${isModel ? 'disabled' : ''}>
+              ${RESOLUTIONS.map(r=>`<option ${cam.resolution===r?'selected':''}>${r}</option>`).join('')}
+            </select>
+          </div>
+          <span class="prop-label" style="width:auto;flex-shrink:0">PPF</span>
+          <div class="prop-input-wrap" style="flex:0 0 160px;width:160px">
+            <input type="number" id="cam-ppf-${id}" class="prop-input" style="text-align:right" value="${ppf}" min="0.1" max="1000" step="0.1" onchange="updateCamPPF(${id},+this.value)">
+            <span class="prop-input-unit">px/ft</span>
+          </div>
+        </div>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">HFOV</span>
+        <div class="prop-ctrl" style="display:flex;align-items:center;gap:8px">
+          <div class="prop-input-wrap" style="flex:0 0 160px;width:160px">
+            <input type="number" id="cam-haov-${id}" class="prop-input" style="text-align:right" value="${haov}" min="1" max="${cam.fovAngle<360?179:360}" step="1" ${(isModel || cam.fovAngle>=360)?'disabled':''} onchange="updateCamHaov(${id},+this.value)">
+            <span class="prop-input-unit">°</span>
+          </div>
+          <span class="prop-label" style="width:auto;flex-shrink:0">VFOV</span>
+          <div class="prop-input-wrap" style="flex:0 0 160px;width:160px">
+            <input type="number" id="cam-vfov-${id}" class="prop-input" style="text-align:right;background:#fff;color:#344054" value="${vfov}" readonly>
+            <span class="prop-input-unit">°</span>
           </div>
         </div>
       </div>
       <div class="prop-row">
         <span class="prop-label">Distance</span>
-        <div class="prop-ctrl" style="display:flex;align-items:center;gap:6px">
-          <div class="prop-input-wrap">
+        <div class="prop-ctrl" style="display:flex;align-items:center;gap:8px">
+          <div class="prop-input-wrap" style="flex:0 0 160px;width:160px">
             <input type="number" id="cam-dist-${id}" class="prop-input" style="text-align:right" value="${distDisp}" min="0.5" max="500" step="0.5" onchange="updateCamDistance(${id},+this.value)">
             <span class="prop-input-unit">${unitLabel}</span>
           </div>
-          <span class="prop-label" style="width:auto;flex-shrink:0">W</span>
-          <div class="prop-input-wrap">
-            <input type="number" id="cam-width-${id}" class="prop-input" style="text-align:right" value="${wDisp}" min="0.1" max="1000" step="0.1" onchange="updateCamWidth(${id},+this.value)">
-            <span class="prop-input-unit">${unitLabel}</span>
-          </div>
-          <span class="prop-label" style="width:auto;flex-shrink:0">PPF</span>
-          <div class="prop-input-wrap">
-            <input type="number" id="cam-ppf-${id}" class="prop-input" style="text-align:right" value="${ppf}" min="0.1" max="1000" step="0.1" onchange="updateCamPPF(${id},+this.value)">
-            <span class="prop-input-unit">px/ft</span>
-          </div>
+          <span class="prop-label" style="width:auto;flex-shrink:0">Width</span>
+          <span id="cam-width-${id}" style="font-size:14px;color:#344054;width:160px;text-align:right">${wDisp} ${unitLabel}</span>
         </div>
       </div>`;
       })()}
@@ -2760,37 +2771,37 @@ function renderProperties(id) {
       <div class="props-section-title">License & Recording</div>
       <div class="prop-row">
         <span class="prop-label">License</span>
-        <div class="prop-ctrl">
-          <select class="prop-select" style="width:120px" onchange="updateCamProp(${id},'license',this.value)">
-            ${['Essential','Enterprise'].map(l=>`<option ${cam.license===l?'selected':''}>${l}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <div class="prop-row">
-        <span class="prop-label">Retention</span>
-        <div class="prop-ctrl">
-          <select class="prop-select" style="width:120px" onchange="updateCamProp(${id},'retention',+this.value)">
-            ${[30,60,90,180,365].map(r=>`<option value="${r}" ${cam.retention===r?'selected':''}>${r} days</option>`).join('')}
-          </select>
+        <div class="prop-ctrl" style="display:flex;align-items:center;gap:8px">
+          <div style="width:160px;flex-shrink:0">
+            <select class="prop-select" style="width:100%" onchange="updateCamProp(${id},'license',this.value)">
+              ${['Essential','Enterprise'].map(l=>`<option ${cam.license===l?'selected':''}>${l}</option>`).join('')}
+            </select>
+          </div>
+          <span class="prop-label" style="width:auto;flex-shrink:0">Retention</span>
+          <div style="width:160px;flex-shrink:0">
+            <select class="prop-select" style="width:100%" onchange="updateCamProp(${id},'retention',+this.value)">
+              ${[30,60,90,180,365].map(r=>`<option value="${r}" ${cam.retention===r?'selected':''}>${r} days</option>`).join('')}
+            </select>
+          </div>
         </div>
       </div>
       <div class="prop-row">
         <span class="prop-label">Payment</span>
-        <div class="prop-ctrl">
-          <select class="prop-select" style="width:120px" onchange="updateCamPayment(${id},this.value)">
-            <option value="Upfront" ${(cam.payment||'Upfront')==='Upfront'?'selected':''}>Upfront</option>
-            <option value="Yearly" ${cam.payment==='Yearly'?'selected':''}>Yearly</option>
-          </select>
+        <div class="prop-ctrl" style="display:flex;align-items:center;gap:8px">
+          <div style="width:160px;flex-shrink:0">
+            <select class="prop-select" style="width:100%" onchange="updateCamPayment(${id},this.value)">
+              <option value="Upfront" ${(cam.payment||'Upfront')==='Upfront'?'selected':''}>Upfront</option>
+              <option value="Yearly" ${cam.payment==='Yearly'?'selected':''}>Yearly</option>
+            </select>
+          </div>
+          <span class="prop-label" style="width:auto;flex-shrink:0">Duration</span>
+          <div style="width:160px;flex-shrink:0">
+            <select class="prop-select" style="width:100%" onchange="updateCamProp(${id},'duration',+this.value)">
+              ${[1,3,5,10].map(d=>`<option value="${d}" ${(cam.duration||1)===d?'selected':''}>${d} yr</option>`).join('')}
+            </select>
+          </div>
         </div>
       </div>
-      ${cam.payment === 'Yearly' ? `<div class="prop-row">
-        <span class="prop-label">Duration</span>
-        <div class="prop-ctrl">
-          <select class="prop-select" style="width:120px" onchange="updateCamProp(${id},'duration',+this.value)">
-            ${[1,3,5,10].map(d=>`<option value="${d}" ${(cam.duration||1)===d?'selected':''}>${d} year${d>1?'s':''}</option>`).join('')}
-          </select>
-        </div>
-      </div>` : ''}
     </div>
     <div class="props-section">
       <div class="props-section-title">Core Assignment</div>
@@ -3039,7 +3050,6 @@ function updateCamPayment(id, val) {
   const cam = state.cameras.find(c => c.id === id);
   if (!cam) return;
   cam.payment = val;
-  if (val === 'Upfront') cam.duration = 1;
   selectCamera(id);
 }
 
@@ -3059,7 +3069,7 @@ function updateCamColor(id, color) {
 // distance stored in feet internally; unit pref in cam.unit
 // ═══════════════════════════════════════════════
 function _camHPx(cam) {
-  return {'1080p':1920,'4K':3840,'8MP':3264,'12MP':4000}[cam.resolution] || 1920;
+  return {'QVGA':320,'VGA':640,'SVGA':800,'720p':1280,'1.3MP':1280,'2MP':1600,'1080MP':1920,'3MP':2048,'4MP':2560,'5MP':2592,'6MP':3072,'4K':3840,'10MP':3648,'12MP':4000,'16MP':4608,'20MP':5472,'6K':6016,'7K':7168,'8K':7680}[cam.resolution] || 1920;
 }
 function _camWFt(cam) {
   return 2 * (cam.distance||30) * Math.tan((cam.fovAngle < 360 ? cam.fovAngle : 360) * Math.PI / 360);
@@ -3073,14 +3083,19 @@ function _refreshCamFields(id) {
   const ppf  = wFt > 0 ? (_camHPx(cam) / wFt).toFixed(1) : '0';
   const distDisp  = unit === 'metric' ? (dist * 0.3048).toFixed(1) : dist.toFixed(1);
   const widthDisp = unit === 'metric' ? (wFt  * 0.3048).toFixed(1) : wFt.toFixed(1);
+  const haov = cam.fovAngle < 360 ? cam.fovAngle : 360;
+  const vfov = (2 * Math.atan(Math.tan(haov * Math.PI / 360) * 9/16) * 180 / Math.PI).toFixed(1);
   const distEl  = document.getElementById('cam-dist-'  + id);
   const widthEl = document.getElementById('cam-width-' + id);
   const ppfEl   = document.getElementById('cam-ppf-'   + id);
   const haovEl  = document.getElementById('cam-haov-'  + id);
+  const vfovEl  = document.getElementById('cam-vfov-'  + id);
+  const unitLabel = unit === 'metric' ? 'm' : 'ft';
   if (distEl)  distEl.value  = distDisp;
-  if (widthEl) widthEl.value = widthDisp;
+  if (widthEl) widthEl.textContent = widthDisp + ' ' + unitLabel;
   if (ppfEl)   ppfEl.value   = ppf;
-  if (haovEl)  haovEl.value  = cam.fovAngle < 360 ? cam.fovAngle : 360;
+  if (haovEl)  haovEl.value  = haov;
+  if (vfovEl)  vfovEl.value  = vfov;
 }
 function updateCamUnit(id, unit) {
   const cam = state.cameras.find(c => c.id === id);
@@ -3164,12 +3179,12 @@ function calcDeadZone(cam) {
   return dz.toFixed(1) + 'ft radius';
 }
 function calcStorage(cam) {
-  const bps = { '1080p': 4, '4K': 16, '8MP': 10, '12MP': 14 };
+  const bps = { '1080MP': 4, '4K': 16, '8MP': 10, '12MP': 14 };
   const mbps = bps[cam.resolution] || 8;
   return ((mbps * 3600 * 24) / 8 / 1024).toFixed(2);
 }
 function calcBandwidth(cam) {
-  const bps = { '1080p': 4, '4K': 16, '8MP': 10, '12MP': 14 };
+  const bps = { '1080MP': 4, '4K': 16, '8MP': 10, '12MP': 14 };
   return bps[cam.resolution] || 8;
 }
 function calcNVR(totalGB) {
@@ -3230,7 +3245,7 @@ const _bulkEdit = {
 // ── Quick Switches ──
 function quickSwitchPayment(value) {
   saveUndo();
-  state.cameras.forEach(c => { c.payment = value; if (value === 'Upfront') c.duration = 1; });
+  state.cameras.forEach(c => { c.payment = value; });
   state.cores.forEach(c => { c.payment = value; if (value === 'Upfront') c.duration = 1; });
   renderBOMPane();
   updateProjectTotal();
@@ -3272,12 +3287,13 @@ function bulkToggleAll(checked) {
 
 function bulkEditField(field, el, evt) {
   evt.stopPropagation();
+  const RESOLUTIONS = ['QVGA','VGA','SVGA','720p','1.3MP','2MP','1080MP','3MP','4MP','5MP','6MP','4K','10MP','12MP','16MP','20MP','6K','7K','8K'];
   const opts = {
     payment: ['Upfront','Yearly'],
     duration: ['1 yr','3 yr','5 yr','10 yr'],
     license: ['Essential','Enterprise'],
     retention: ['30d','60d','90d','180d','365d'],
-    resolution: ['1080p','4K','8MP','12MP'],
+    resolution: RESOLUTIONS,
   };
   const options = opts[field];
   if (!options) return;
@@ -3313,8 +3329,8 @@ function bulkApply() {
     if (type === 'cam') {
       const cam = state.cameras.find(c => c.id === id);
       if (!cam) return;
-      if (changes.payment) { cam.payment = changes.payment; if (changes.payment === 'Upfront') cam.duration = 1; }
-      if (changes.duration) { const d = parseInt(changes.duration); cam.duration = d; cam.payment = 'Yearly'; }
+      if (changes.payment) { cam.payment = changes.payment; }
+      if (changes.duration) { const d = parseInt(changes.duration); cam.duration = d; }
       if (changes.license) cam.license = changes.license;
       if (changes.retention) cam.retention = parseInt(changes.retention);
       if (changes.resolution) cam.resolution = changes.resolution;
@@ -3423,14 +3439,14 @@ function bomEditTag(camId, field, el, evt) {
   evt.stopPropagation();
   const cam = state.cameras.find(c => c.id === camId);
   if (!cam) return;
-  if (field === 'duration' && cam.payment === 'Upfront') return;
   if (field === 'resolution' && (cam.model || 'Generic') !== 'Generic') return;
+  const RESOLUTIONS = ['QVGA','VGA','SVGA','720p','1.3MP','2MP','1080MP','3MP','4MP','5MP','6MP','4K','10MP','12MP','16MP','20MP','6K','7K','8K'];
   const opts = {
     payment: ['Upfront','Yearly'],
     duration: ['1 yr','3 yr','5 yr','10 yr'],
     license: ['Essential','Enterprise'],
     retention: ['30d','60d','90d','180d','365d'],
-    resolution: ['1080p','4K','8MP','12MP'],
+    resolution: RESOLUTIONS,
   };
   const options = opts[field];
   if (!options) return;
@@ -3450,7 +3466,7 @@ function bomEditTag(camId, field, el, evt) {
   const commit = () => {
     const v = sel.value;
     sel.remove();
-    if (field === 'payment') { cam.payment = v; if (v === 'Upfront') cam.duration = 1; }
+    if (field === 'payment') { cam.payment = v; }
     else if (field === 'duration') { cam.duration = parseInt(v); }
     else if (field === 'license') { cam.license = v; }
     else if (field === 'retention') { cam.retention = parseInt(v); }
@@ -3502,9 +3518,6 @@ function _bomTagHtml(field, value, bulk, camId, model) {
   const p = _bulkEdit.pendingChanges;
   const display = (bulk && p[field]) ? p[field] : value;
   const changed = bulk && p[field];
-  if (field === 'duration' && value === '—' && !changed) {
-    return `<span class="bom-tag" style="cursor:default;color:#98a2b3" title="Duration">—</span>`;
-  }
   if (field === 'resolution' && model && model !== 'Generic' && !changed) {
     return `<span class="bom-tag" style="cursor:default" title="Resolution">${display}</span>`;
   }
@@ -3518,7 +3531,7 @@ function _bomTagHtml(field, value, bulk, camId, model) {
 function renderBomCamItem(cam, coreId, idx) {
   const icon = ICONS[cam.iconType] || BOM_CAM_ICON;
   const payment = cam.payment || 'Upfront';
-  const duration = cam.payment === 'Yearly' ? (cam.duration || 1) + ' yr' : '—';
+  const duration = (cam.duration || 1) + ' yr';
   const bulk = _bulkEdit.active;
   const key = 'cam-' + cam.id;
   const checked = _bulkEdit.selected.has(key);
@@ -3777,8 +3790,9 @@ function renderBOMPane() {
           'Unlimited cloud backup for video clips',
           'Unlimited users',
           'Automatic software updates',
-          'Dedicated onboarding, training, and U.S.-based support',
-          '100% Warranty'
+          '24/7 Support',
+          'Includes dedicated onboarding and training ($10,000 value)',
+          '3-year warranty on hardware, increased to contact term, up to 10 years'
         ].map(item => `<div class="bom-included-item"><svg class="bom-included-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${item}</div>`).join('')}
       </div>
     </div>`;
