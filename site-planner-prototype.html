@@ -223,7 +223,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-grand-label { font-size: 12px; font-weight: 600; color: #344054; }
 .bom-grand-val { font-size: 18px; font-weight: 800; color: #7c3aed; }
 /* ── What's Included marketing block ── */
-.bom-included { margin: 12px; padding: 14px 16px; background: #fff; border: 1px solid #d8b4fe; border-radius: 10px; }
+.bom-included { margin: 12px; padding: 14px 16px; background: #faf8ff; border: 1px solid #d8b4fe; border-radius: 10px; }
 .bom-included-headline { font-size: 12px; font-weight: 700; color: #344054; margin-bottom: 10px; }
 .bom-included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
 .bom-included-feat { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
@@ -653,15 +653,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .addon-picker-input { width: 100%; padding: 9px 12px; border: 1px solid #d0d5dd; border-radius: 8px; font-size: 14px; color: #344054; background: #fff; outline: none; font-family: inherit; box-sizing: border-box; }
 .addon-picker-input:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
 .addon-picker-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 24px 20px; border-top: 1px solid #eaecf0; }
-.addon-cam-search-wrap { position: relative; }
-.addon-cam-search { width: 100%; padding: 9px 12px; border: 1px solid #d0d5dd; border-radius: 8px; font-size: 14px; color: #344054; background: #fff; outline: none; font-family: inherit; box-sizing: border-box; }
-.addon-cam-search:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
-.addon-cam-list { position: absolute; top: 100%; left: 0; right: 0; max-height: 180px; overflow-y: auto; background: #fff; border: 1px solid #e4e7ec; border-radius: 8px; box-shadow: 0 8px 24px rgba(16,24,40,0.12); z-index: 10; margin-top: 4px; display: none; }
-.addon-cam-list.show { display: block; }
-.addon-cam-option { padding: 8px 12px; font-size: 13px; color: #344054; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-.addon-cam-option:hover { background: #f9fafb; }
-.addon-cam-option.selected { background: #ede9fe; color: #7c3aed; }
-.addon-cam-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.addon-cam-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #f3f0ff; border: 1px solid #e9d5ff; border-radius: 5px; font-size: 11px; font-weight: 500; color: #6d28d9; }
+.addon-cam-tag-x { cursor: pointer; color: #98a2b3; font-size: 13px; line-height: 1; margin-left: 2px; }
+.addon-cam-tag-x:hover { color: #d92d20; }
 
 /* ── Core camera list rows ── */
 .core-cam-row { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid #f2f4f7; }
@@ -1185,11 +1179,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         </select>
       </div>
       <div id="addonCameraField" style="display:none">
-        <div class="addon-picker-label">Camera</div>
-        <div class="addon-cam-search-wrap">
-          <input type="text" class="addon-cam-search" id="addonCamSearch" placeholder="Search cameras…" oninput="filterAddonCameras()" onfocus="document.getElementById('addonCamList').classList.add('show')">
-          <div class="addon-cam-list" id="addonCamList"></div>
-        </div>
+        <div class="addon-picker-label">Cameras</div>
+        <div id="addonCamTags" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
+        <button type="button" class="btn" style="width:100%;padding:8px 12px;font-size:13px;border:1px solid #d0d5dd;border-radius:8px;background:#fff;color:#344054;cursor:pointer;text-align:left" onclick="openAddonCamModal()">
+          <span style="color:#98a2b3">Select cameras…</span>
+        </button>
       </div>
     </div>
     <div class="addon-picker-footer">
@@ -4826,7 +4820,7 @@ function toggleDeviceDropdown(e) {
 function closeDeviceDropdown() {
   document.getElementById('deviceDropdown').classList.remove('show');
 }
-const addonState = { selectedCamId: null, assignToCamId: null, scope: 'camera' };
+const addonState = { selectedCamIds: [], assignToCamId: null, scope: 'camera' };
 
 function _populateAddonTypeSelect(scope) {
   const sel = document.getElementById('addonTypeSelect');
@@ -4846,7 +4840,7 @@ function setAddonScope(scope) {
   document.getElementById('addonPaymentField').style.display = 'none';
   document.getElementById('addonDurationField').style.display = 'none';
   document.getElementById('addonCameraField').style.display = 'none';
-  addonState.selectedCamId = null;
+  addonState.selectedCamIds = [];
   const placeBtn = document.getElementById('addonPlaceBtn');
   placeBtn.style.opacity = '0.4';
   placeBtn.style.pointerEvents = 'none';
@@ -4854,34 +4848,19 @@ function setAddonScope(scope) {
 
 function openAddonPicker(preselectedCamId) {
   addonState.scope = 'camera';
-  addonState.selectedCamId = null;
+  addonState.selectedCamIds = [];
   addonState.assignToCamId = null;
   // Show scope toggle
   document.getElementById('addonScopeToggle').style.display = '';
   setAddonScope('camera');
-  document.getElementById('addonCamSearch').value = '';
-  document.getElementById('addonCamList').classList.remove('show');
   // Pre-select camera if provided
   if (preselectedCamId) {
-    const cam = state.cameras.find(c => c.id === preselectedCamId);
-    if (cam) {
-      addonState.selectedCamId = preselectedCamId;
-      document.getElementById('addonCamSearch').value = cam.name;
-    }
+    addonState.selectedCamIds = [preselectedCamId];
   }
   document.getElementById('addonPickerOverlay').classList.add('show');
-  document.addEventListener('click', _closeAddonCamList);
-}
-
-function _closeAddonCamList(e) {
-  const wrap = document.getElementById('addonCameraField');
-  if (wrap && !wrap.contains(e.target)) {
-    document.getElementById('addonCamList').classList.remove('show');
-  }
 }
 
 function closeAddonPicker() {
-  document.removeEventListener('click', _closeAddonCamList);
   document.getElementById('addonPickerOverlay').classList.remove('show');
   addonState.assignToCamId = null;
 }
@@ -4907,18 +4886,12 @@ function onAddonTypeChange() {
   document.getElementById('addonPaymentField').style.display = 'none';
   document.getElementById('addonDurationField').style.display = 'none';
   document.getElementById('addonCameraField').style.display = 'none';
-  addonState.selectedCamId = addonState.assignToCamId || null;
-  document.getElementById('addonCamSearch').value = '';
-  document.getElementById('addonCamList').classList.remove('show');
+  addonState.selectedCamIds = addonState.assignToCamId ? [addonState.assignToCamId] : [];
 
   if (def) {
     if (def.fields.includes('camera') && !addonState.assignToCamId) {
       document.getElementById('addonCameraField').style.display = '';
-      // Pre-fill camera if already set
-      if (addonState.selectedCamId) {
-        const cam = state.cameras.find(c => c.id === addonState.selectedCamId);
-        if (cam) document.getElementById('addonCamSearch').value = cam.name;
-      }
+      renderAddonCamTags();
     }
     if (def.fields.includes('retention')) {
       const retSel = document.getElementById('addonRetentionSelect');
@@ -4947,34 +4920,100 @@ function updateAddonPlaceBtn() {
   const type = document.getElementById('addonTypeSelect').value;
   const def = type ? ADDON_TYPES[type] : null;
   let enabled = !!def;
-  if (def && def.fields.includes('camera') && !addonState.selectedCamId && !addonState.assignToCamId) enabled = false;
+  if (def && def.fields.includes('camera') && !addonState.selectedCamIds.length && !addonState.assignToCamId) enabled = false;
   const btn = document.getElementById('addonPlaceBtn');
   btn.style.opacity = enabled ? '1' : '0.4';
   btn.style.pointerEvents = enabled ? 'auto' : 'none';
 }
 
-function filterAddonCameras() {
-  const q = document.getElementById('addonCamSearch').value.toLowerCase();
-  const list = document.getElementById('addonCamList');
-  let html = '';
-  state.cameras.forEach(cam => {
-    if (q && !cam.name.toLowerCase().includes(q)) return;
-    const sel = addonState.selectedCamId === cam.id ? ' selected' : '';
-    html += `<div class="addon-cam-option${sel}" onclick="selectAddonCamera(${cam.id},'${escHtml(cam.name)}',event)">
-      <span class="addon-cam-dot" style="background:${cam.color}"></span>
-      ${escHtml(cam.name)}
+function openAddonCamModal() {
+  let existing = document.getElementById('addonCamModal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'addonCamModal';
+  modal.className = 'core-add-cam-modal show';
+  modal.style.zIndex = '60';
+  modal.onclick = function(e) { if (e.target === modal) closeAddonCamModal(); };
+  modal.innerHTML = `
+    <div class="core-add-cam-panel">
+      <div class="core-add-cam-hdr">Select cameras</div>
+      <div style="padding:8px 12px;border-bottom:1px solid #eaecf0">
+        <input id="addonCamModalSearch" type="text" placeholder="Search cameras..." style="width:100%;padding:6px 10px;border:1px solid #d0d5dd;border-radius:6px;font-size:12px;font-family:inherit;outline:none;box-sizing:border-box" oninput="filterAddonCamModal()">
+      </div>
+      <div class="core-add-cam-list" id="addonCamModalList"></div>
+      <div class="core-add-cam-footer">
+        <button class="btn" style="padding:5px 12px;font-size:12px" onclick="closeAddonCamModal()">Cancel</button>
+        <button class="btn btn-primary" style="padding:5px 12px;font-size:12px" onclick="confirmAddonCamModal()">Done</button>
+      </div>
     </div>`;
-  });
-  if (!html) html = '<div style="padding:12px;font-size:13px;color:#98a2b3;text-align:center">No cameras found</div>';
-  list.innerHTML = html;
-  list.classList.add('show');
+  modal._cameras = state.cameras;
+  document.querySelector('.addon-picker-overlay').appendChild(modal);
+  filterAddonCamModal();
+  modal.querySelector('#addonCamModalSearch').focus();
 }
 
-function selectAddonCamera(camId, camName, e) {
-  e.stopPropagation();
-  addonState.selectedCamId = camId;
-  document.getElementById('addonCamSearch').value = camName;
-  document.getElementById('addonCamList').classList.remove('show');
+function filterAddonCamModal() {
+  const modal = document.getElementById('addonCamModal');
+  if (!modal) return;
+  const input = modal.querySelector('#addonCamModalSearch');
+  const list = modal.querySelector('#addonCamModalList');
+  const q = (input ? input.value : '').toLowerCase().trim();
+  const cameras = modal._cameras || [];
+  const typeLabels = { dome:'Dome', bullet:'Bullet', fisheye:'Fisheye', ptz:'PTZ', multi:'Multisensor' };
+
+  const filtered = cameras.filter(cam => {
+    if (!q) return true;
+    return (cam.name || '').toLowerCase().includes(q) || (cam.model || '').toLowerCase().includes(q);
+  });
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="core-add-cam-empty">No cameras match your search.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(cam => {
+    const typeName = typeLabels[cam.iconType] || 'Camera';
+    const modelName = cam.model || 'Generic';
+    const isChecked = addonState.selectedCamIds.includes(cam.id) ? 'checked' : '';
+    return '<label class="core-add-cam-item" onclick="event.stopPropagation()">' +
+      '<input type="checkbox" class="bom-cb" value="' + cam.id + '" ' + isChecked + '>' +
+      '<div class="core-add-cam-item-info">' +
+        '<div class="core-add-cam-item-name">' + escHtml(cam.name) + '</div>' +
+        '<div class="core-add-cam-item-meta">' + escHtml(typeName) + ' · ' + escHtml(modelName) + '</div>' +
+      '</div>' +
+    '</label>';
+  }).join('');
+}
+
+function closeAddonCamModal() {
+  const modal = document.getElementById('addonCamModal');
+  if (modal) modal.remove();
+}
+
+function confirmAddonCamModal() {
+  const modal = document.getElementById('addonCamModal');
+  if (!modal) return;
+  const checked = modal.querySelectorAll('.bom-cb:checked');
+  addonState.selectedCamIds = Array.from(checked).map(cb => parseInt(cb.value));
+  closeAddonCamModal();
+  renderAddonCamTags();
+  updateAddonPlaceBtn();
+}
+
+function renderAddonCamTags() {
+  const container = document.getElementById('addonCamTags');
+  if (!container) return;
+  container.innerHTML = addonState.selectedCamIds.map(id => {
+    const cam = state.cameras.find(c => c.id === id);
+    if (!cam) return '';
+    return `<span class="addon-cam-tag">${escHtml(cam.name)}<span class="addon-cam-tag-x" onclick="removeAddonCam(${id})">&times;</span></span>`;
+  }).join('');
+}
+
+function removeAddonCam(camId) {
+  addonState.selectedCamIds = addonState.selectedCamIds.filter(id => id !== camId);
+  renderAddonCamTags();
   updateAddonPlaceBtn();
 }
 
@@ -4982,17 +5021,21 @@ function placeAddon() {
   const type = document.getElementById('addonTypeSelect').value;
   const def = type ? ADDON_TYPES[type] : null;
   if (!def) return;
-  if (def.fields.includes('camera') && !addonState.selectedCamId) return;
-  const opts = {};
-  if (def.fields.includes('camera')) opts.cameraId = addonState.selectedCamId || null;
-  if (def.fields.includes('retention')) opts.retention = +document.getElementById('addonRetentionSelect').value;
-  if (def.fields.includes('payment')) opts.payment = document.getElementById('addonPaymentSelect').value;
-  if (def.fields.includes('duration')) opts.duration = +document.getElementById('addonDurationSelect').value;
+  if (def.fields.includes('camera') && !addonState.selectedCamIds.length) return;
+  const baseOpts = {};
+  if (def.fields.includes('retention')) baseOpts.retention = +document.getElementById('addonRetentionSelect').value;
+  if (def.fields.includes('payment')) baseOpts.payment = document.getElementById('addonPaymentSelect').value;
+  if (def.fields.includes('duration')) baseOpts.duration = +document.getElementById('addonDurationSelect').value;
   closeAddonPicker();
-  const addon = addAddon(type, opts);
-  if (addon) {
-    selectAddon(addon.id);
+  let lastAddon = null;
+  if (def.fields.includes('camera')) {
+    addonState.selectedCamIds.forEach(camId => {
+      lastAddon = addAddon(type, { ...baseOpts, cameraId: camId });
+    });
+  } else {
+    lastAddon = addAddon(type, baseOpts);
   }
+  if (lastAddon) selectAddon(lastAddon.id);
 }
 
 function placeAddonForCamera() {
@@ -5524,19 +5567,6 @@ function openAddCamerasModal(coreId) {
   let existing = document.getElementById('addCamerasModal');
   if (existing) existing.remove();
 
-  const typeLabels = { dome:'Dome', bullet:'Bullet', fisheye:'Fisheye', ptz:'PTZ', multi:'Multisensor' };
-  const listHtml = available.map(cam => {
-    const typeName = typeLabels[cam.iconType] || 'Camera';
-    const modelName = cam.model || 'Generic';
-    return '<label class="core-add-cam-item" onclick="event.stopPropagation()">' +
-      '<input type="checkbox" class="bom-cb" value="' + cam.id + '">' +
-      '<div class="core-add-cam-item-info">' +
-        '<div class="core-add-cam-item-name">' + escHtml(cam.name) + '</div>' +
-        '<div class="core-add-cam-item-meta">' + escHtml(typeName) + ' · ' + escHtml(modelName) + '</div>' +
-      '</div>' +
-    '</label>';
-  }).join('');
-
   const modal = document.createElement('div');
   modal.id = 'addCamerasModal';
   modal.className = 'core-add-cam-modal show';
@@ -5544,14 +5574,59 @@ function openAddCamerasModal(coreId) {
   modal.innerHTML = `
     <div class="core-add-cam-panel">
       <div class="core-add-cam-hdr">Add cameras to ${escHtml(core.name)}</div>
-      <div class="core-add-cam-list">${listHtml}</div>
+      <div style="padding:8px 12px;border-bottom:1px solid #eaecf0">
+        <input id="addCamSearchInput" type="text" placeholder="Search cameras..." style="width:100%;padding:6px 10px;border:1px solid #d0d5dd;border-radius:6px;font-size:12px;font-family:inherit;outline:none;box-sizing:border-box" oninput="filterAddCamerasList()">
+      </div>
+      <div class="core-add-cam-list" id="addCamsList"></div>
       <div class="core-add-cam-footer">
         <button class="btn" style="padding:5px 12px;font-size:12px" onclick="closeAddCamerasModal()">Cancel</button>
         <button class="btn btn-primary" style="padding:5px 12px;font-size:12px" onclick="confirmAddCameras(${coreId})">Add cameras</button>
       </div>
     </div>`;
 
+  modal._available = available;
   document.querySelector('.properties').appendChild(modal);
+  filterAddCamerasList();
+  modal.querySelector('#addCamSearchInput').focus();
+}
+
+function filterAddCamerasList() {
+  const modal = document.getElementById('addCamerasModal');
+  if (!modal) return;
+  const input = modal.querySelector('#addCamSearchInput');
+  const list = modal.querySelector('#addCamsList');
+  const q = (input ? input.value : '').toLowerCase().trim();
+  const available = modal._available || [];
+  const typeLabels = { dome:'Dome', bullet:'Bullet', fisheye:'Fisheye', ptz:'PTZ', multi:'Multisensor' };
+
+  // Remember checked state
+  const checked = new Set();
+  list.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => checked.add(cb.value));
+
+  const filtered = available.filter(cam => {
+    if (!q) return true;
+    const name = (cam.name || '').toLowerCase();
+    const model = (cam.model || '').toLowerCase();
+    return name.includes(q) || model.includes(q);
+  });
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="core-add-cam-empty">No cameras match your search.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(cam => {
+    const typeName = typeLabels[cam.iconType] || 'Camera';
+    const modelName = cam.model || 'Generic';
+    const isChecked = checked.has(String(cam.id)) ? 'checked' : '';
+    return '<label class="core-add-cam-item" onclick="event.stopPropagation()">' +
+      '<input type="checkbox" class="bom-cb" value="' + cam.id + '" ' + isChecked + '>' +
+      '<div class="core-add-cam-item-info">' +
+        '<div class="core-add-cam-item-name">' + escHtml(cam.name) + '</div>' +
+        '<div class="core-add-cam-item-meta">' + escHtml(typeName) + ' · ' + escHtml(modelName) + '</div>' +
+      '</div>' +
+    '</label>';
+  }).join('');
 }
 
 function closeAddCamerasModal() {
