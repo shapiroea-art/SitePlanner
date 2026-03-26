@@ -1258,6 +1258,13 @@ const CATALOG = [
 const CAMERA_DB = [
   // ── Generic ──
   { id:'generic-cam', brand:'Generic',  name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:false, iconType:'dome',    color:'#98a2b3', isGeneric:true },
+  // ── Lumana ──
+  { id:'lu-generic',  brand:'Lumana',    name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:true,  iconType:'dome',    color:'#7c3aed', isGeneric:true },
+  { id:'lu-dome2',    brand:'Lumana',    name:'Dome 2MP',         formFactor:'dome',    resolution:'2MP',   fov:105, detR:140, recR:70,  idR:32,  price:399,  ndaa:true,  iconType:'dome',    color:'#7c3aed' },
+  { id:'lu-dome4',    brand:'Lumana',    name:'Dome 4MP',         formFactor:'dome',    resolution:'4MP',   fov:102, detR:180, recR:90,  idR:40,  price:549,  ndaa:true,  iconType:'dome',    color:'#7c3aed' },
+  { id:'lu-bullet8',  brand:'Lumana',    name:'Bullet 8MP',       formFactor:'bullet',  resolution:'8MP',   fov:55,  detR:300, recR:150, idR:68,  price:799,  ndaa:true,  iconType:'bullet',  color:'#7c3aed' },
+  { id:'lu-ptz4k',    brand:'Lumana',    name:'PTZ 4K',           formFactor:'ptz',     resolution:'4K',    fov:60,  detR:420, recR:210, idR:96,  price:2499, ndaa:true,  iconType:'dome',    color:'#7c3aed' },
+  { id:'lu-fisheye',  brand:'Lumana',    name:'Fisheye 5MP',      formFactor:'fisheye', resolution:'5MP',   fov:360, detR:90,  recR:45,  idR:20,  price:599,  ndaa:true,  iconType:'fisheye', color:'#7c3aed' },
   // ── Axis ──
   { id:'ax-generic',  brand:'Axis',      name:'Generic',          formFactor:'dome',    resolution:'2MP',   fov:90,  detR:100, recR:50,  idR:22,  price:0,    ndaa:false, iconType:'dome',    color:'#dc6026', isGeneric:true },
   { id:'ax-p3245',   brand:'Axis',      name:'P3245-V',          formFactor:'dome',    resolution:'2MP',   fov:100, detR:140, recR:70,  idR:32,  price:549,  ndaa:false, iconType:'dome',    color:'#dc6026' },
@@ -5123,15 +5130,13 @@ function renderCoreProperties(id) {
   propsIcon.style.background = core.color || '#667085';
   propsIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1" opacity="0.4"/></svg>`;
 
-  const durationHtml = core.payment === 'Yearly' ? `
-      <div class="prop-row" id="coreDurationRow">
-        <span class="prop-label">Duration</span>
-        <div class="prop-ctrl">
-          <select class="prop-select" style="width:120px" onchange="updateCoreProp(${id},'duration',+this.value)">
-            ${[1, 3, 5, 10].map(d => `<option value="${d}" ${core.duration === d ? 'selected' : ''}>${d} year${d > 1 ? 's' : ''}</option>`).join('')}
-          </select>
-        </div>
-      </div>` : '';
+  const durationInlineHtml = core.payment === 'Yearly' ? `
+          <span class="prop-label" style="width:auto;flex-shrink:0">Duration</span>
+          <div style="width:160px;flex-shrink:0">
+            <select class="prop-select" style="width:100%" onchange="updateCoreProp(${id},'duration',+this.value)">
+              ${[1, 3, 5, 10].map(d => `<option value="${d}" ${core.duration === d ? 'selected' : ''}>${d} yr</option>`).join('')}
+            </select>
+          </div>` : '';
 
   const c = document.getElementById('propsContent');
   c.innerHTML = `
@@ -5161,14 +5166,16 @@ function renderCoreProperties(id) {
       </div>
       <div class="prop-row">
         <span class="prop-label">Payment</span>
-        <div class="prop-ctrl">
-          <select class="prop-select" style="width:120px" onchange="updateCorePayment(${id},this.value)">
-            <option value="Upfront" ${core.payment === 'Upfront' ? 'selected' : ''}>Upfront</option>
-            <option value="Yearly" ${core.payment === 'Yearly' ? 'selected' : ''}>Yearly</option>
-          </select>
+        <div class="prop-ctrl" style="display:flex;align-items:center;gap:8px">
+          <div style="width:160px;flex-shrink:0">
+            <select class="prop-select" style="width:100%" onchange="updateCorePayment(${id},this.value)">
+              <option value="Upfront" ${core.payment === 'Upfront' ? 'selected' : ''}>Upfront</option>
+              <option value="Yearly" ${core.payment === 'Yearly' ? 'selected' : ''}>Yearly</option>
+            </select>
+          </div>
+          ${durationInlineHtml}
         </div>
       </div>
-      ${durationHtml}
     </div>
     <div class="props-section">
       <div class="props-section-title" style="display:flex;align-items:center;gap:8px">
