@@ -111,7 +111,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .cc-btn svg { width: 14px; height: 14px; }
 
 /* ── Properties ── */
-.properties { width: 700px; flex-shrink: 0; background: #fff; border-left: 1px solid #eaecf0; display: flex; flex-direction: column; position: relative; overflow: visible; transition: width 0.2s ease; }
+.properties { width: 850px; flex-shrink: 0; background: #fff; border-left: 1px solid #eaecf0; display: flex; flex-direction: column; position: relative; overflow: visible; transition: width 0.2s ease; }
 .properties.collapsed { width: 0; border-left: none; }
 .properties.collapsed .rp-total,
 .properties.collapsed .rp-tabs,
@@ -316,6 +316,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-quick-switch-btn.active { background: #7c3aed; color: #fff; }
 .bom-quick-switch-btn:hover:not(.active):not(.disabled) { background: #f9fafb; }
 .bom-quick-switch-btn.disabled { opacity: 0.35; pointer-events: none; }
+.bom-view-opts-wrap { position: relative; display: inline-flex; }
+.bom-view-opts-dd { position: absolute; top: calc(100% + 5px); right: 0; width: 280px; background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; box-shadow: 0 8px 24px rgba(16,24,40,0.12); z-index: 300; display: none; flex-direction: column; padding: 14px; gap: 14px; }
+.bom-view-opts-dd.show { display: flex; }
+.bom-vo-label { font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.bom-vo-search { width: 100%; padding: 6px 10px; border: 1px solid #d0d5dd; border-radius: 6px; font-size: 12px; font-family: inherit; outline: none; box-sizing: border-box; }
+.bom-vo-search:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.15); }
+.bom-vo-check { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 12px; color: #344054; cursor: pointer; }
 .bom-bulk-bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #faf5ff; border-bottom: 1px solid #e9d5ff; flex-shrink: 0; }
 .bom-bulk-bar-hint { font-size: 12px; color: #6b21a8; flex: 1; line-height: 1.4; }
 .bom-bulk-actions { display: flex; gap: 6px; flex-shrink: 0; }
@@ -3209,6 +3216,15 @@ function toggleBomGroup(key, evt) {
 const BOM_CAM_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`;
 const BOM_CORE_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1" opacity="0.4"/></svg>`;
 
+// ── BOM View Options state ──
+const _bomViewOptions = {
+  search: '',
+  devices: { cameras: true, cores: true, addons: true },
+  groupBy: 'cores',       // 'cores' | 'type'
+  sort: 'default',        // 'default' | 'az' | 'priceLow' | 'priceHigh'
+  open: false,
+};
+
 // ── Bulk edit state ──
 const _bulkEdit = {
   active: false,
@@ -3233,6 +3249,56 @@ function quickSwitchDuration(value) {
   renderBOMPane();
   updateProjectTotal();
   if (state.selectedId) renderProperties(state.selectedId);
+}
+
+// ── BOM View Options functions ──
+function toggleBomViewOpts(e) {
+  e.stopPropagation();
+  _bomViewOptions.open = !_bomViewOptions.open;
+  renderBOMPane();
+  if (_bomViewOptions.open) {
+    setTimeout(() => document.addEventListener('click', closeBomViewOpts, { once: true }), 0);
+    setTimeout(() => {
+      const inp = document.querySelector('.bom-vo-search');
+      if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+    }, 0);
+  }
+}
+function closeBomViewOpts() {
+  _bomViewOptions.open = false;
+  renderBOMPane();
+}
+function bomVoSearch(val) {
+  _bomViewOptions.search = val;
+  renderBOMPane();
+  setTimeout(() => {
+    const inp = document.querySelector('.bom-vo-search');
+    if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+  }, 0);
+}
+function bomVoToggleDevice(type) {
+  _bomViewOptions.devices[type] = !_bomViewOptions.devices[type];
+  renderBOMPane();
+}
+function bomVoGroupBy(val) {
+  _bomViewOptions.groupBy = val;
+  renderBOMPane();
+}
+function bomVoSort(val) {
+  _bomViewOptions.sort = (_bomViewOptions.sort === val) ? 'default' : val;
+  renderBOMPane();
+}
+function _bomSortItems(items) {
+  const s = _bomViewOptions.sort;
+  if (s === 'az') return items.slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  if (s === 'priceLow') return items.slice().sort((a, b) => a.price - b.price);
+  if (s === 'priceHigh') return items.slice().sort((a, b) => b.price - a.price);
+  return items;
+}
+function _bomMatchesSearch(item) {
+  const q = _bomViewOptions.search.toLowerCase().trim();
+  if (!q) return true;
+  return (item.name || '').toLowerCase().includes(q) || (item.type || '').toLowerCase().includes(q);
 }
 
 function toggleBulkEdit() {
@@ -3523,8 +3589,10 @@ function renderBomCamItem(cam, coreId, idx) {
       ${_bomTagHtml('retention', (cam.retention || 30) + 'd', bulk, cam.id)}
       ${_bomTagHtml('resolution', cam.resolution || '4K', bulk, cam.id, cam.model || 'Generic')}
     </span>`;
-  // Per-camera add-ons under this camera
-  const camAddons = state.addons.filter(a => a.cameraId === cam.id && ADDON_TYPES[a.typeId] && ADDON_TYPES[a.typeId].scope === 'camera');
+  // Per-camera add-ons under this camera (respect view options)
+  const camAddons = (_bomViewOptions.devices.addons)
+    ? state.addons.filter(a => a.cameraId === cam.id && ADDON_TYPES[a.typeId] && ADDON_TYPES[a.typeId].scope === 'camera' && _bomMatchesSearch(a))
+    : [];
   const camAddonsHtml = camAddons.map(a => renderBomAddonItem(a, true)).join('');
 
   return `${dropZone}<div class="bom-item" ${dragAttr}>
@@ -3612,97 +3680,202 @@ function renderBOMPane() {
   const bulk = _bulkEdit.active;
   const bp = _bulkEdit.pendingChanges;
 
+  // ── View options filtering ──
+  const vo = _bomViewOptions;
+  const showCams = vo.devices.cameras;
+  const showCores = vo.devices.cores;
+  const showAddons = vo.devices.addons;
+  const planAddons = state.addons.filter(a => ADDON_TYPES[a.typeId] && ADDON_TYPES[a.typeId].scope === 'plan');
+
   // ── Hardware groups ──
   let hwGroupsHtml = '';
 
-  // Unassigned cameras FIRST
-  if (unassignedCams.length > 0) {
-    const collapsed = _bomCollapseState['unassigned'] ? 'collapsed' : '';
-    hwGroupsHtml += `
-      <div class="bom-group ${collapsed}" data-bom-group="unassigned">
-        <div class="bom-group-hdr bom-group-hdr-unassigned" ondragover="event.preventDefault();this.classList.add('drop-target')" ondragleave="this.classList.remove('drop-target')" ondrop="this.classList.remove('drop-target');bomDropOnGroup(null,0,event)" onclick="toggleBomGroup('unassigned',event)">
-          ${chevronSvg}
-          <span class="bom-group-icon">${BOM_CAM_ICON}</span>
-          <span class="bom-group-name-wrap">
-            <span class="bom-group-name">Unassigned Cameras</span>
-            <span class="bom-group-count-badge">${unassignedCams.length}</span>
-          </span>
-          <span class="bom-group-price-wrap">
-            <span class="bom-group-total">$${unassignedCams.reduce((s, c) => s + c.price, 0).toLocaleString()}</span>
-          </span>
-        </div>
-        <div class="bom-group-children">
-          ${unassignedCams.map((cam, i) => renderBomCamItem(cam, null, i)).join('')}
-          <div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(null,${unassignedCams.length},event)"></div>
-        </div>
-      </div>`;
+  if (vo.groupBy === 'cores') {
+    // ── Group by Cores (default) ──
+
+    // Unassigned cameras FIRST
+    const fUnassigned = showCams ? _bomSortItems(unassignedCams.filter(_bomMatchesSearch)) : [];
+    if (fUnassigned.length > 0) {
+      const collapsed = _bomCollapseState['unassigned'] ? 'collapsed' : '';
+      hwGroupsHtml += `
+        <div class="bom-group ${collapsed}" data-bom-group="unassigned">
+          <div class="bom-group-hdr bom-group-hdr-unassigned" ondragover="event.preventDefault();this.classList.add('drop-target')" ondragleave="this.classList.remove('drop-target')" ondrop="this.classList.remove('drop-target');bomDropOnGroup(null,0,event)" onclick="toggleBomGroup('unassigned',event)">
+            ${chevronSvg}
+            <span class="bom-group-icon">${BOM_CAM_ICON}</span>
+            <span class="bom-group-name-wrap">
+              <span class="bom-group-name">Unassigned Cameras</span>
+              <span class="bom-group-count-badge">${fUnassigned.length}</span>
+            </span>
+            <span class="bom-group-price-wrap">
+              <span class="bom-group-total">$${fUnassigned.reduce((s, c) => s + c.price, 0).toLocaleString()}</span>
+            </span>
+          </div>
+          <div class="bom-group-children">
+            ${fUnassigned.map((cam, i) => renderBomCamItem(cam, null, i)).join('')}
+            <div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(null,${fUnassigned.length},event)"></div>
+          </div>
+        </div>`;
+    }
+
+    // Core groups
+    const fCores = showCores ? cores.filter(_bomMatchesSearch) : [];
+    fCores.forEach(core => {
+      const coreCamsRaw = (core.cameraIds || []).map(id => cams.find(c => c.id === id)).filter(Boolean);
+      const coreCamsFilt = showCams ? _bomSortItems(coreCamsRaw.filter(_bomMatchesSearch)) : [];
+      const collapsed = _bomCollapseState[core.id] ? 'collapsed' : '';
+      const coreKey = 'core-' + core.id;
+      const coreChecked = _bulkEdit.selected.has(coreKey);
+      const coreCbHtml = bulk ? `<input type="checkbox" class="bom-cb" ${coreChecked ? 'checked' : ''} onclick="bulkToggleItem('${coreKey}',event)">` : '';
+
+      const coreDuration = core.payment === 'Yearly' ? core.duration + ' yr' : '—';
+      const corePaymentDisplay = (bulk && bp.payment) ? bp.payment : core.payment;
+      const coreDurationDisplay = (bulk && bp.duration) ? bp.duration : coreDuration;
+      const payStyle = (bulk && bp.payment) ? 'color:#7c3aed;font-weight:600' : '';
+      const durStyle = (bulk && bp.duration) ? 'color:#7c3aed;font-weight:600' : '';
+
+      const corePayTag = `<span class="bom-tag" style="${payStyle}" title="Payment" onclick="${bulk ? "bulkEditField('payment',this,event);event.stopPropagation()" : "bomEditCoreTag("+core.id+",'payment',this,event);event.stopPropagation()"}">${corePaymentDisplay}</span>`;
+      const coreDurTag = coreDurationDisplay === '—' && !durStyle
+        ? '<span class="bom-tag" style="cursor:default;color:#98a2b3" title="Duration">—</span>'
+        : `<span class="bom-tag" style="${durStyle}" title="Duration" onclick="${bulk ? "bulkEditField('duration',this,event);event.stopPropagation()" : "bomEditCoreTag("+core.id+",'duration',this,event);event.stopPropagation()"}">${coreDurationDisplay}</span>`;
+      const coreTagsWrap = `<span class="bom-tags">${corePayTag}${coreDurTag}<span></span><span></span><span></span></span>`;
+
+      hwGroupsHtml += `
+        <div class="bom-group ${collapsed}" data-bom-group="${core.id}">
+          <div class="bom-group-hdr bom-group-hdr-core" style="--core-color:${core.color}" ondragover="event.preventDefault();this.classList.add('drop-target')" ondragleave="this.classList.remove('drop-target')" ondrop="this.classList.remove('drop-target');bomDropOnGroup(${core.id},0,event)" ${bulk ? '' : 'onclick="selectCore(' + core.id + ')"'}>
+            ${coreCbHtml}
+            <span onclick="toggleBomGroup('${core.id}',event)">${chevronSvg}</span>
+            <span class="bom-group-icon">${BOM_CORE_ICON}</span>
+            <span class="bom-group-name-wrap">
+              <span class="bom-group-name" onclick="selectCore(${core.id});event.stopPropagation()" title="View core details">${escHtml(core.name)}</span>
+              <span class="bom-group-type">${escHtml(core.type)}</span>
+              <span class="bom-group-count-badge">${coreCamsFilt.length}</span>
+            </span>
+            ${coreTagsWrap}
+            <span class="bom-group-price-wrap">
+              <span class="bom-group-price">$${core.price.toLocaleString()}</span>
+            </span>
+          </div>
+          <div class="bom-group-children">
+            ${coreCamsFilt.map((cam, i) => renderBomCamItem(cam, core.id, i)).join('')}
+            <div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(${core.id},${coreCamsFilt.length},event)"></div>
+          </div>
+        </div>`;
+    });
+
+    // Per-plan add-ons group
+    const fPlanAddons = showAddons ? _bomSortItems(planAddons.filter(_bomMatchesSearch)) : [];
+    if (fPlanAddons.length > 0) {
+      const planAddonTotal = fPlanAddons.reduce((s, a) => s + a.price, 0);
+      const planCollapsed = _bomCollapseState['plan-addons'] ? 'collapsed' : '';
+      hwGroupsHtml += `
+        <div class="bom-group ${planCollapsed}" data-bom-group="plan-addons">
+          <div class="bom-group-hdr bom-group-hdr-core" style="--core-color:#7c3aed" onclick="toggleBomGroup('plan-addons',event)">
+            ${chevronSvg}
+            <span class="bom-group-icon" style="color:#7c3aed">${ADDON_ICON}</span>
+            <span class="bom-group-name-wrap">
+              <span class="bom-group-name">Add-ons</span>
+              <span class="bom-group-count-badge">${fPlanAddons.length}</span>
+            </span>
+            <span class="bom-group-price-wrap">
+              <span class="bom-group-price">$${planAddonTotal.toLocaleString()}</span>
+            </span>
+          </div>
+          <div class="bom-group-children">
+            ${fPlanAddons.map(a => renderBomAddonItem(a, false)).join('')}
+          </div>
+        </div>`;
+    }
+
+  } else {
+    // ── Group by Device Type ──
+
+    // Cameras group (all cameras flat)
+    const allCamsFilt = showCams ? _bomSortItems(cams.filter(_bomMatchesSearch)) : [];
+    if (allCamsFilt.length > 0) {
+      const collapsed = _bomCollapseState['type-cameras'] ? 'collapsed' : '';
+      hwGroupsHtml += `
+        <div class="bom-group ${collapsed}" data-bom-group="type-cameras">
+          <div class="bom-group-hdr bom-group-hdr-unassigned" onclick="toggleBomGroup('type-cameras',event)">
+            ${chevronSvg}
+            <span class="bom-group-icon">${BOM_CAM_ICON}</span>
+            <span class="bom-group-name-wrap">
+              <span class="bom-group-name">Cameras</span>
+              <span class="bom-group-count-badge">${allCamsFilt.length}</span>
+            </span>
+            <span class="bom-group-price-wrap">
+              <span class="bom-group-total">$${allCamsFilt.reduce((s,c)=>s+c.price,0).toLocaleString()}</span>
+            </span>
+          </div>
+          <div class="bom-group-children">
+            ${allCamsFilt.map((cam, i) => renderBomCamItem(cam, null, i)).join('')}
+          </div>
+        </div>`;
+    }
+
+    // Cores group (flat items)
+    const allCoresFilt = showCores ? _bomSortItems(cores.filter(_bomMatchesSearch)) : [];
+    if (allCoresFilt.length > 0) {
+      const collapsed = _bomCollapseState['type-cores'] ? 'collapsed' : '';
+      hwGroupsHtml += `
+        <div class="bom-group ${collapsed}" data-bom-group="type-cores">
+          <div class="bom-group-hdr bom-group-hdr-unassigned" onclick="toggleBomGroup('type-cores',event)">
+            ${chevronSvg}
+            <span class="bom-group-icon">${BOM_CORE_ICON}</span>
+            <span class="bom-group-name-wrap">
+              <span class="bom-group-name">Cores</span>
+              <span class="bom-group-count-badge">${allCoresFilt.length}</span>
+            </span>
+            <span class="bom-group-price-wrap">
+              <span class="bom-group-total">$${allCoresFilt.reduce((s,c)=>s+c.price,0).toLocaleString()}</span>
+            </span>
+          </div>
+          <div class="bom-group-children">
+            ${allCoresFilt.map(core => {
+              const coreDur = core.payment === 'Yearly' ? core.duration + ' yr' : '—';
+              const coreTagsHtml = `<span class="bom-tags"><span class="bom-tag" title="Payment">${core.payment}</span><span class="bom-tag" title="Duration">${coreDur}</span><span></span><span></span><span></span></span>`;
+              return `<div class="bom-item" onclick="selectCore(${core.id})">
+                <div class="bom-item-primary">
+                  <span class="bom-item-icon" style="color:${core.color}">${BOM_CORE_ICON}</span>
+                  <span class="bom-item-name-wrap">
+                    <span class="bom-item-name">${escHtml(core.name)}</span>
+                    <span class="bom-item-model">${escHtml(core.type)}</span>
+                  </span>
+                  ${coreTagsHtml}
+                  <span class="bom-item-price">$${core.price.toLocaleString()}</span>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+    }
+
+    // Add-ons group (all addons flat)
+    const allAddonsFilt = showAddons ? _bomSortItems(state.addons.filter(_bomMatchesSearch)) : [];
+    if (allAddonsFilt.length > 0) {
+      const collapsed = _bomCollapseState['type-addons'] ? 'collapsed' : '';
+      hwGroupsHtml += `
+        <div class="bom-group ${collapsed}" data-bom-group="type-addons">
+          <div class="bom-group-hdr bom-group-hdr-core" style="--core-color:#7c3aed" onclick="toggleBomGroup('type-addons',event)">
+            ${chevronSvg}
+            <span class="bom-group-icon" style="color:#7c3aed">${ADDON_ICON}</span>
+            <span class="bom-group-name-wrap">
+              <span class="bom-group-name">Add-ons</span>
+              <span class="bom-group-count-badge">${allAddonsFilt.length}</span>
+            </span>
+            <span class="bom-group-price-wrap">
+              <span class="bom-group-price">$${allAddonsFilt.reduce((s,a)=>s+a.price,0).toLocaleString()}</span>
+            </span>
+          </div>
+          <div class="bom-group-children">
+            ${allAddonsFilt.map(a => renderBomAddonItem(a, false)).join('')}
+          </div>
+        </div>`;
+    }
   }
 
-  // Core groups
-  cores.forEach(core => {
-    const coreCams = (core.cameraIds || []).map(id => cams.find(c => c.id === id)).filter(Boolean);
-    const collapsed = _bomCollapseState[core.id] ? 'collapsed' : '';
-    const coreKey = 'core-' + core.id;
-    const coreChecked = _bulkEdit.selected.has(coreKey);
-    const coreCbHtml = bulk ? `<input type="checkbox" class="bom-cb" ${coreChecked ? 'checked' : ''} onclick="bulkToggleItem('${coreKey}',event)">` : '';
-
-    const coreDuration = core.payment === 'Yearly' ? core.duration + ' yr' : '—';
-    const corePaymentDisplay = (bulk && bp.payment) ? bp.payment : core.payment;
-    const coreDurationDisplay = (bulk && bp.duration) ? bp.duration : coreDuration;
-    const payStyle = (bulk && bp.payment) ? 'color:#7c3aed;font-weight:600' : '';
-    const durStyle = (bulk && bp.duration) ? 'color:#7c3aed;font-weight:600' : '';
-
-    const corePayTag = `<span class="bom-tag" style="${payStyle}" title="Payment" onclick="${bulk ? "bulkEditField('payment',this,event);event.stopPropagation()" : "bomEditCoreTag("+core.id+",'payment',this,event);event.stopPropagation()"}">${corePaymentDisplay}</span>`;
-    const coreDurTag = coreDurationDisplay === '—' && !durStyle
-      ? '<span class="bom-tag" style="cursor:default;color:#98a2b3" title="Duration">—</span>'
-      : `<span class="bom-tag" style="${durStyle}" title="Duration" onclick="${bulk ? "bulkEditField('duration',this,event);event.stopPropagation()" : "bomEditCoreTag("+core.id+",'duration',this,event);event.stopPropagation()"}">${coreDurationDisplay}</span>`;
-    const coreTagsWrap = `<span class="bom-tags">${corePayTag}${coreDurTag}<span></span><span></span><span></span></span>`;
-
-    hwGroupsHtml += `
-      <div class="bom-group ${collapsed}" data-bom-group="${core.id}">
-        <div class="bom-group-hdr bom-group-hdr-core" style="--core-color:${core.color}" ondragover="event.preventDefault();this.classList.add('drop-target')" ondragleave="this.classList.remove('drop-target')" ondrop="this.classList.remove('drop-target');bomDropOnGroup(${core.id},0,event)" ${bulk ? '' : 'onclick="selectCore(' + core.id + ')"'}>
-          ${coreCbHtml}
-          <span onclick="toggleBomGroup('${core.id}',event)">${chevronSvg}</span>
-          <span class="bom-group-icon">${BOM_CORE_ICON}</span>
-          <span class="bom-group-name-wrap">
-            <span class="bom-group-name" onclick="selectCore(${core.id});event.stopPropagation()" title="View core details">${escHtml(core.name)}</span>
-            <span class="bom-group-type">${escHtml(core.type)}</span>
-            <span class="bom-group-count-badge">${coreCams.length}</span>
-          </span>
-          ${coreTagsWrap}
-          <span class="bom-group-price-wrap">
-            <span class="bom-group-price">$${core.price.toLocaleString()}</span>
-          </span>
-        </div>
-        <div class="bom-group-children">
-          ${coreCams.map((cam, i) => renderBomCamItem(cam, core.id, i)).join('')}
-          <div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(${core.id},${coreCams.length},event)"></div>
-        </div>
-      </div>`;
-  });
-
-  // Per-plan add-ons group
-  const planAddons = state.addons.filter(a => ADDON_TYPES[a.typeId] && ADDON_TYPES[a.typeId].scope === 'plan');
-  if (planAddons.length > 0) {
-    const planAddonTotal = planAddons.reduce((s, a) => s + a.price, 0);
-    const planCollapsed = _bomCollapseState['plan-addons'] ? 'collapsed' : '';
-    hwGroupsHtml += `
-      <div class="bom-group ${planCollapsed}" data-bom-group="plan-addons">
-        <div class="bom-group-hdr bom-group-hdr-core" style="--core-color:#7c3aed" onclick="toggleBomGroup('plan-addons',event)">
-          ${chevronSvg}
-          <span class="bom-group-icon" style="color:#7c3aed">${ADDON_ICON}</span>
-          <span class="bom-group-name-wrap">
-            <span class="bom-group-name">Add-ons</span>
-            <span class="bom-group-count-badge">${planAddons.length}</span>
-          </span>
-          <span class="bom-group-price-wrap">
-            <span class="bom-group-price">$${planAddonTotal.toLocaleString()}</span>
-          </span>
-        </div>
-        <div class="bom-group-children">
-          ${planAddons.map(a => renderBomAddonItem(a, false)).join('')}
-        </div>
-      </div>`;
+  // No results fallback
+  if (!hwGroupsHtml && vo.search) {
+    hwGroupsHtml = '<div style="padding:24px 16px;text-align:center;color:#98a2b3;font-size:13px">No matching devices</div>';
   }
 
   // ── Hardware category ──
@@ -3786,10 +3959,44 @@ function renderBOMPane() {
           <button class="bom-quick-switch-btn ${activeDuration === 10 ? 'active' : ''} ${durDisabled}" onclick="quickSwitchDuration(10)">10yr</button>
         </div>
       </div>
-      <button class="bom-bulk-btn ${bulk ? 'active' : ''}" onclick="toggleBulkEdit()">
+      <div style="display:flex;align-items:center;gap:6px">
+        <button class="bom-bulk-btn ${bulk ? 'active' : ''}" onclick="toggleBulkEdit()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           Bulk Edit
         </button>
+      <div class="bom-view-opts-wrap">
+        <button class="bom-bulk-btn ${_bomViewOptions.open ? 'active' : ''}" onclick="toggleBomViewOpts(event)">
+          View options
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;transition:transform 0.2s;${_bomViewOptions.open ? 'transform:rotate(180deg)' : ''}"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="bom-view-opts-dd ${_bomViewOptions.open ? 'show' : ''}" id="bomViewOptsDd" onclick="event.stopPropagation()">
+          <div>
+            <div class="bom-vo-label">Filters</div>
+            <input class="bom-vo-search" type="text" placeholder="Search devices..." value="${escHtml(_bomViewOptions.search)}" oninput="bomVoSearch(this.value)">
+            <div style="margin-top:8px;display:flex;flex-direction:column;gap:2px">
+              <label class="bom-vo-check"><input type="checkbox" class="bom-cb" ${_bomViewOptions.devices.cameras ? 'checked' : ''} onchange="bomVoToggleDevice('cameras')"> Cameras</label>
+              <label class="bom-vo-check"><input type="checkbox" class="bom-cb" ${_bomViewOptions.devices.addons ? 'checked' : ''} onchange="bomVoToggleDevice('addons')"> Add-ons</label>
+              <label class="bom-vo-check"><input type="checkbox" class="bom-cb" ${_bomViewOptions.devices.cores ? 'checked' : ''} onchange="bomVoToggleDevice('cores')"> Cores</label>
+            </div>
+          </div>
+          <div>
+            <div class="bom-vo-label">Group by</div>
+            <div class="bom-quick-switch" style="width:100%">
+              <button class="bom-quick-switch-btn ${_bomViewOptions.groupBy === 'cores' ? 'active' : ''}" onclick="bomVoGroupBy('cores')" style="flex:1;text-align:center">Cores</button>
+              <button class="bom-quick-switch-btn ${_bomViewOptions.groupBy === 'type' ? 'active' : ''}" onclick="bomVoGroupBy('type')" style="flex:1;text-align:center">Device type</button>
+            </div>
+          </div>
+          <div>
+            <div class="bom-vo-label">Sort</div>
+            <div class="bom-quick-switch" style="width:100%">
+              <button class="bom-quick-switch-btn ${_bomViewOptions.sort === 'az' ? 'active' : ''}" onclick="bomVoSort('az')" style="flex:1;text-align:center">A → Z</button>
+              <button class="bom-quick-switch-btn ${_bomViewOptions.sort === 'priceLow' ? 'active' : ''}" onclick="bomVoSort('priceLow')" style="flex:1;text-align:center">Price ↑</button>
+              <button class="bom-quick-switch-btn ${_bomViewOptions.sort === 'priceHigh' ? 'active' : ''}" onclick="bomVoSort('priceHigh')" style="flex:1;text-align:center">Price ↓</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
     </div>` : '';
 
   // Bulk bar
@@ -3835,6 +4042,12 @@ function renderBOMPane() {
         ].map(item => `<div class="bom-included-item"><svg class="bom-included-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${item}</div>`).join('')}
       </div>
     </div>`;
+
+  // Restore search focus if view options dropdown is open
+  if (_bomViewOptions.open && _bomViewOptions.search) {
+    const inp = pane.querySelector('.bom-vo-search');
+    if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+  }
 }
 
 function exportCSV() {
