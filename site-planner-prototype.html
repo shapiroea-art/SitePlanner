@@ -222,6 +222,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-grand { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 2px solid #eaecf0; background: #fafafa; }
 .bom-grand-label { font-size: 12px; font-weight: 600; color: #344054; }
 .bom-grand-val { font-size: 18px; font-weight: 800; color: #7c3aed; }
+.bom-included { margin: 12px; padding: 16px 18px; background: linear-gradient(135deg, #faf5ff 0%, #f0ebff 100%); border: 1px solid #e9d5ff; border-radius: 10px; }
+.bom-included-title { font-size: 13px; font-weight: 700; color: #4c1d95; margin-bottom: 10px; letter-spacing: 0.2px; }
+.bom-included-list { display: flex; flex-direction: column; gap: 1px; }
+.bom-included-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #5b21b6; line-height: 1.6; padding: 2px 0; }
+.bom-included-icon { width: 14px; height: 14px; flex-shrink: 0; color: #7c3aed; margin-top: 2px; }
 .bom-category { border: 1px solid #eaecf0; border-radius: 8px; margin: 8px 12px; overflow: hidden; }
 .bom-category-hdr { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f9fafb; cursor: pointer; user-select: none; }
 .bom-category-hdr:hover { background: #f2f4f7; }
@@ -289,13 +294,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .addon-tags input { font-size: 11px; color: #344054; border: 1px solid #d0d5dd; border-radius: 4px; padding: 1px 4px; background: #fff; font-family: inherit; outline: none; width: 100%; box-sizing: border-box; }
 .addon-tags input:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
 
-/* ── BOM Drag Reorder ── */
-.bom-drag-mode .bom-item { cursor: grab; border: 1px dashed transparent; border-radius: 6px; transition: border-color 0.15s, background 0.15s; }
-.bom-drag-mode .bom-item:hover { border-color: #d0d5dd; }
-.bom-drag-mode .bom-item.dragging { opacity: 0.4; }
-.bom-drag-handle { width: 16px; height: 16px; flex-shrink: 0; color: #98a2b3; cursor: grab; margin-right: 2px; }
+/* ── BOM Drag Reorder (hover-to-drag) ── */
+.bom-item .bom-drag-handle { opacity: 0; transition: opacity 0.15s; }
+.bom-item:hover .bom-drag-handle { opacity: 1; }
+.bom-item.dragging { opacity: 0.4; }
+.bom-drag-handle { margin-right: 2px; }
 .bom-drop-zone { height: 0; transition: height 0.15s, background 0.15s; border-radius: 4px; overflow: hidden; }
-.bom-drop-zone.over { height: 32px; background: #f5f3ff; border: 2px dashed #7c3aed; margin: 2px 0; }
+.bom-dragging .bom-drop-zone { height: 6px; background: transparent; margin: 1px 0; }
+.bom-drop-zone.over, .bom-dragging .bom-drop-zone.over { height: 32px; background: #f5f3ff; border: 2px dashed #7c3aed; margin: 2px 0; }
 .bom-group-hdr.drop-target { background: #f5f3ff; }
 
 /* ── BOM Bulk Edit ── */
@@ -304,6 +310,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-bulk-btn:hover { background: #f9fafb; border-color: #98a2b3; }
 .bom-bulk-btn.active { background: #7c3aed; border-color: #7c3aed; color: #fff; }
 .bom-bulk-btn svg { width: 13px; height: 13px; }
+.bom-quick-switch { display: inline-flex; align-items: center; border: 1px solid #d0d5dd; border-radius: 6px; overflow: hidden; }
+.bom-quick-switch-btn { padding: 3px 8px; font-size: 11px; font-weight: 500; color: #667085; cursor: pointer; border: none; background: #fff; font-family: inherit; transition: all 0.12s; white-space: nowrap; }
+.bom-quick-switch-btn:not(:last-child) { border-right: 1px solid #d0d5dd; }
+.bom-quick-switch-btn.active { background: #7c3aed; color: #fff; }
+.bom-quick-switch-btn:hover:not(.active):not(.disabled) { background: #f9fafb; }
+.bom-quick-switch-btn.disabled { opacity: 0.35; pointer-events: none; }
 .bom-bulk-bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #faf5ff; border-bottom: 1px solid #e9d5ff; flex-shrink: 0; }
 .bom-bulk-bar-hint { font-size: 12px; color: #6b21a8; flex: 1; line-height: 1.4; }
 .bom-bulk-actions { display: flex; gap: 6px; flex-shrink: 0; }
@@ -3215,6 +3227,24 @@ const _bulkEdit = {
   showSuccess: false,
 };
 
+// ── Quick Switches ──
+function quickSwitchPayment(value) {
+  saveUndo();
+  state.cameras.forEach(c => { c.payment = value; if (value === 'Upfront') c.duration = 1; });
+  state.cores.forEach(c => { c.payment = value; if (value === 'Upfront') c.duration = 1; });
+  renderBOMPane();
+  updateProjectTotal();
+  if (state.selectedId) renderProperties(state.selectedId);
+}
+function quickSwitchDuration(value) {
+  saveUndo();
+  state.cameras.forEach(c => { c.duration = value; });
+  state.cores.forEach(c => { c.duration = value; });
+  renderBOMPane();
+  updateProjectTotal();
+  if (state.selectedId) renderProperties(state.selectedId);
+}
+
 function toggleBulkEdit() {
   if (_dragMode.active) { _dragMode.active = false; _dragMode.showSuccess = false; }
   _bulkEdit.active = !_bulkEdit.active;
@@ -3317,67 +3347,30 @@ const _dragMode = {
   active: false,
   dragCamId: null,
   showSuccess: false,
-  moveCount: 0,
-  snapshot: null,  // core cameraIds snapshot for cancel
 };
 
-function toggleDragMode() {
-  if (_bulkEdit.active) { bulkCancel(); }
-  _dragMode.active = !_dragMode.active;
-  _dragMode.dragCamId = null;
-  _dragMode.showSuccess = false;
-  _dragMode.moveCount = 0;
-  if (_dragMode.active) {
-    _dragMode.snapshot = state.cores.map(c => ({ id: c.id, cameraIds: [...(c.cameraIds || [])] }));
-  } else {
-    _dragMode.snapshot = null;
-  }
-  renderBOMPane();
-}
-
-function dragApply() {
-  saveUndo();
-  _dragMode.active = false;
-  _dragMode.dragCamId = null;
-  _dragMode.showSuccess = true;
-  const count = _dragMode.moveCount;
-  _dragMode.moveCount = 0;
-  _dragMode.snapshot = null;
-  renderBOMPane();
-  updateProjectTotal();
-  setTimeout(() => { _dragMode.showSuccess = false; renderBOMPane(); }, 3000);
-}
-
-function dragCancel() {
-  // Restore snapshot
-  if (_dragMode.snapshot) {
-    _dragMode.snapshot.forEach(snap => {
-      const core = state.cores.find(c => c.id === snap.id);
-      if (core) core.cameraIds = [...snap.cameraIds];
-    });
-  }
-  _dragMode.active = false;
-  _dragMode.dragCamId = null;
-  _dragMode.showSuccess = false;
-  _dragMode.moveCount = 0;
-  _dragMode.snapshot = null;
-  renderBOMPane();
-}
-
 function bomDragStart(camId, evt) {
+  if (_bulkEdit.active) return;
+  _dragMode.active = true;
   _dragMode.dragCamId = camId;
   evt.dataTransfer.effectAllowed = 'move';
   evt.dataTransfer.setData('text/plain', camId);
   requestAnimationFrame(() => {
     const el = evt.target.closest('.bom-item');
     if (el) el.classList.add('dragging');
+    // Add dragging class to BOM container to show drop zones via CSS
+    const pane = document.getElementById('bomPane');
+    if (pane) pane.classList.add('bom-dragging');
   });
 }
 
 function bomDragEnd(evt) {
   const el = evt.target.closest('.bom-item');
   if (el) el.classList.remove('dragging');
+  _dragMode.active = false;
   _dragMode.dragCamId = null;
+  const pane = document.getElementById('bomPane');
+  if (pane) pane.classList.remove('bom-dragging');
   document.querySelectorAll('.bom-drop-zone.over').forEach(z => z.classList.remove('over'));
   document.querySelectorAll('.bom-group-hdr.drop-target').forEach(h => h.classList.remove('drop-target'));
 }
@@ -3415,9 +3408,15 @@ function bomDropOnGroup(targetCoreId, position, evt) {
     }
   }
 
+  saveUndo();
   _dragMode.dragCamId = null;
-  _dragMode.moveCount++;
+  _dragMode.active = false;
+  _dragMode.showSuccess = true;
+  const pane = document.getElementById('bomPane');
+  if (pane) pane.classList.remove('bom-dragging');
   renderBOMPane();
+  updateProjectTotal();
+  setTimeout(() => { _dragMode.showSuccess = false; renderBOMPane(); }, 3000);
 }
 
 function bomEditTag(camId, field, el, evt) {
@@ -3521,15 +3520,15 @@ function renderBomCamItem(cam, coreId, idx) {
   const payment = cam.payment || 'Upfront';
   const duration = cam.payment === 'Yearly' ? (cam.duration || 1) + ' yr' : '—';
   const bulk = _bulkEdit.active;
-  const drag = _dragMode.active;
   const key = 'cam-' + cam.id;
   const checked = _bulkEdit.selected.has(key);
   const cbHtml = bulk ? `<input type="checkbox" class="bom-cb bom-item-cb" ${checked ? 'checked' : ''} onclick="bulkToggleItem('${key}',event)">` : '';
-  const dragHandleSvg = `<svg class="bom-drag-handle" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>`;
-  const dragAttr = drag ? `draggable="true" ondragstart="bomDragStart(${cam.id},event)" ondragend="bomDragEnd(event)"` : '';
-  const dropZone = drag ? `<div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(${coreId},${idx},event)"></div>` : '';
+  const dragHandleSvg = `<svg class="bom-drag-handle" viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;cursor:grab;color:#98a2b3;flex-shrink:0"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>`;
+  const dragAttr = bulk ? '' : `draggable="true" ondragstart="bomDragStart(${cam.id},event)" ondragend="bomDragEnd(event)"`;
+  // Drop zones shown via CSS only during active drag (bom-dragging class on pane)
+  const dropZone = `<div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(${coreId},${idx},event)"></div>`;
   const indent = coreId !== null ? '<span class="bom-item-indent"></span>' : '';
-  const tagsHtml = drag ? '' : `<span class="bom-tags">
+  const tagsHtml = `<span class="bom-tags">
       ${_bomTagHtml('payment', payment, bulk, cam.id)}
       ${_bomTagHtml('duration', duration, bulk, cam.id)}
       ${_bomTagHtml('license', cam.license || 'Essential', bulk, cam.id)}
@@ -3537,8 +3536,8 @@ function renderBomCamItem(cam, coreId, idx) {
       ${_bomTagHtml('resolution', cam.resolution || '4K', bulk, cam.id, cam.model || 'Generic')}
     </span>`;
   return `${dropZone}<div class="bom-item" ${dragAttr}>
-    <div class="bom-item-primary" ${drag ? '' : (bulk ? '' : 'onclick="selectCamera(' + cam.id + ')" title="Select camera"')}>
-      ${indent}${drag ? dragHandleSvg : ''}${cbHtml}
+    <div class="bom-item-primary" ${bulk ? '' : 'onclick="selectCamera(' + cam.id + ')" title="Select camera"'}>
+      ${indent}${bulk ? '' : dragHandleSvg}${cbHtml}
       <span class="bom-item-icon">${icon}</span>
       <span class="bom-item-name-wrap">
         <span class="bom-item-name">${escHtml(cam.name)}</span>
@@ -3583,18 +3582,17 @@ function renderBOMPane() {
 
   const chevronSvg = '<svg class="bom-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
   const bulk = _bulkEdit.active;
-  const drag = _dragMode.active;
   const bp = _bulkEdit.pendingChanges;
 
   // ── Hardware groups ──
   let hwGroupsHtml = '';
 
   // Unassigned cameras FIRST
-  if (unassignedCams.length > 0 || _dragMode.active) {
+  if (unassignedCams.length > 0) {
     const collapsed = _bomCollapseState['unassigned'] ? 'collapsed' : '';
     hwGroupsHtml += `
       <div class="bom-group ${collapsed}" data-bom-group="unassigned">
-        <div class="bom-group-hdr bom-group-hdr-unassigned" ${drag ? 'ondragover="event.preventDefault();this.classList.add(\'drop-target\')" ondragleave="this.classList.remove(\'drop-target\')" ondrop="this.classList.remove(\'drop-target\');bomDropOnGroup(null,0,event)"' : ''} onclick="toggleBomGroup('unassigned',event)">
+        <div class="bom-group-hdr bom-group-hdr-unassigned" ondragover="event.preventDefault();this.classList.add('drop-target')" ondragleave="this.classList.remove('drop-target')" ondrop="this.classList.remove('drop-target');bomDropOnGroup(null,0,event)" onclick="toggleBomGroup('unassigned',event)">
           ${chevronSvg}
           <span class="bom-group-icon">${BOM_CAM_ICON}</span>
           <span class="bom-group-name-wrap">
@@ -3607,7 +3605,7 @@ function renderBOMPane() {
         </div>
         <div class="bom-group-children">
           ${unassignedCams.map((cam, i) => renderBomCamItem(cam, null, i)).join('')}
-          ${_dragMode.active ? '<div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(null,' + unassignedCams.length + ',event)"></div>' : ''}
+          <div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(null,${unassignedCams.length},event)"></div>
         </div>
       </div>`;
   }
@@ -3626,15 +3624,15 @@ function renderBOMPane() {
     const payStyle = (bulk && bp.payment) ? 'color:#7c3aed;font-weight:600' : '';
     const durStyle = (bulk && bp.duration) ? 'color:#7c3aed;font-weight:600' : '';
 
-    const corePayTag = drag ? '' : `<span class="bom-tag" style="${payStyle}" title="Payment" onclick="${bulk ? "bulkEditField('payment',this,event);event.stopPropagation()" : "bomEditCoreTag("+core.id+",'payment',this,event);event.stopPropagation()"}">${corePaymentDisplay}</span>`;
-    const coreDurTag = drag ? '' : (coreDurationDisplay === '—' && !durStyle
+    const corePayTag = `<span class="bom-tag" style="${payStyle}" title="Payment" onclick="${bulk ? "bulkEditField('payment',this,event);event.stopPropagation()" : "bomEditCoreTag("+core.id+",'payment',this,event);event.stopPropagation()"}">${corePaymentDisplay}</span>`;
+    const coreDurTag = coreDurationDisplay === '—' && !durStyle
       ? '<span class="bom-tag" style="cursor:default;color:#98a2b3" title="Duration">—</span>'
-      : `<span class="bom-tag" style="${durStyle}" title="Duration" onclick="${bulk ? "bulkEditField('duration',this,event);event.stopPropagation()" : "bomEditCoreTag("+core.id+",'duration',this,event);event.stopPropagation()"}">${coreDurationDisplay}</span>`);
-    const coreTagsWrap = drag ? '' : `<span class="bom-tags">${corePayTag}${coreDurTag}<span></span><span></span><span></span></span>`;
+      : `<span class="bom-tag" style="${durStyle}" title="Duration" onclick="${bulk ? "bulkEditField('duration',this,event);event.stopPropagation()" : "bomEditCoreTag("+core.id+",'duration',this,event);event.stopPropagation()"}">${coreDurationDisplay}</span>`;
+    const coreTagsWrap = `<span class="bom-tags">${corePayTag}${coreDurTag}<span></span><span></span><span></span></span>`;
 
     hwGroupsHtml += `
       <div class="bom-group ${collapsed}" data-bom-group="${core.id}">
-        <div class="bom-group-hdr bom-group-hdr-core" style="--core-color:${core.color}" ${drag ? 'ondragover="event.preventDefault();this.classList.add(\'drop-target\')" ondragleave="this.classList.remove(\'drop-target\')" ondrop="this.classList.remove(\'drop-target\');bomDropOnGroup(' + core.id + ',0,event)"' : (bulk ? '' : 'onclick="selectCore(' + core.id + ')"')}>
+        <div class="bom-group-hdr bom-group-hdr-core" style="--core-color:${core.color}" ondragover="event.preventDefault();this.classList.add('drop-target')" ondragleave="this.classList.remove('drop-target')" ondrop="this.classList.remove('drop-target');bomDropOnGroup(${core.id},0,event)" ${bulk ? '' : 'onclick="selectCore(' + core.id + ')"'}>
           ${coreCbHtml}
           <span onclick="toggleBomGroup('${core.id}',event)">${chevronSvg}</span>
           <span class="bom-group-icon">${BOM_CORE_ICON}</span>
@@ -3650,7 +3648,7 @@ function renderBOMPane() {
         </div>
         <div class="bom-group-children">
           ${coreCams.map((cam, i) => renderBomCamItem(cam, core.id, i)).join('')}
-          ${_dragMode.active ? '<div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(' + core.id + ',' + coreCams.length + ',event)"></div>' : ''}
+          <div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(${core.id},${coreCams.length},event)"></div>
         </div>
       </div>`;
   });
@@ -3667,7 +3665,7 @@ function renderBOMPane() {
         <span class="bom-category-total">$${hwTotal.toLocaleString()}</span>
       </div>
       <div class="bom-category-body">
-        <div class="bom-section ${drag ? 'bom-drag-mode' : ''}" style="border-bottom:none;padding-bottom:0">
+        <div class="bom-section" style="border-bottom:none;padding-bottom:0">
           ${hwGroupsHtml}
         </div>
       </div>
@@ -3713,20 +3711,33 @@ function renderBOMPane() {
       Camera moved successfully.
     </div>` : '');
 
-  // Toolbar
+  // Toolbar — detect active payment/duration across all devices
+  const allDevices = [...cams, ...cores];
+  const allPayments = allDevices.map(d => d.payment);
+  const allDurations = allDevices.map(d => d.duration);
+  const activePayment = allPayments.length > 0 && allPayments.every(p => p === allPayments[0]) ? allPayments[0] : null;
+  const activeDuration = allDurations.length > 0 && allDurations.every(d => d === allDurations[0]) ? allDurations[0] : null;
+  const isUpfront = activePayment === 'Upfront';
+  const durDisabled = isUpfront ? 'disabled' : '';
+
   const toolbarHtml = (cams.length + cores.length > 0) ? `
-    <div class="bom-toolbar">
-      <span style="font-size:11px;font-weight:600;color:#98a2b3;text-transform:uppercase;letter-spacing:0.5px">Devices</span>
-      <div style="display:flex;gap:6px">
-        <button class="bom-bulk-btn ${drag ? 'active' : ''}" onclick="toggleDragMode()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
-          Reassign
-        </button>
-        <button class="bom-bulk-btn ${bulk ? 'active' : ''}" onclick="toggleBulkEdit()">
+    <div class="bom-toolbar" style="flex-wrap:wrap;gap:6px">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;flex-wrap:wrap">
+        <div class="bom-quick-switch">
+          <button class="bom-quick-switch-btn ${activePayment === 'Upfront' ? 'active' : ''}" onclick="quickSwitchPayment('Upfront')">Upfront</button>
+          <button class="bom-quick-switch-btn ${activePayment === 'Yearly' ? 'active' : ''}" onclick="quickSwitchPayment('Yearly')">Yearly</button>
+        </div>
+        <div class="bom-quick-switch">
+          <button class="bom-quick-switch-btn ${activeDuration === 1 ? 'active' : ''} ${durDisabled}" onclick="quickSwitchDuration(1)">1yr</button>
+          <button class="bom-quick-switch-btn ${activeDuration === 3 ? 'active' : ''} ${durDisabled}" onclick="quickSwitchDuration(3)">3yr</button>
+          <button class="bom-quick-switch-btn ${activeDuration === 5 ? 'active' : ''} ${durDisabled}" onclick="quickSwitchDuration(5)">5yr</button>
+          <button class="bom-quick-switch-btn ${activeDuration === 10 ? 'active' : ''} ${durDisabled}" onclick="quickSwitchDuration(10)">10yr</button>
+        </div>
+      </div>
+      <button class="bom-bulk-btn ${bulk ? 'active' : ''}" onclick="toggleBulkEdit()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           Bulk Edit
         </button>
-      </div>
     </div>` : '';
 
   // Bulk bar
@@ -3745,27 +3756,31 @@ function renderBOMPane() {
       <label><input type="checkbox" class="bom-cb" ${allChecked ? 'checked' : ''} onchange="bulkToggleAll(this.checked)"> Select all devices</label>
     </div>` : '';
 
-  // Drag bar
-  const hasMoves = _dragMode.moveCount > 0;
-  const dragBarHtml = drag ? `
-    <div class="bom-bulk-bar">
-      <span class="bom-bulk-bar-hint">Drag cameras to reorder or move between cores.</span>
-      <div class="bom-bulk-actions">
-        <button class="btn" style="padding:4px 10px;font-size:11px" onclick="dragCancel()">Cancel</button>
-        <button class="btn btn-primary" style="padding:4px 10px;font-size:11px;${hasMoves ? '' : 'opacity:0.4;pointer-events:none'}" onclick="dragApply()">Apply</button>
-      </div>
-    </div>` : '';
-
   pane.innerHTML = `
     ${successHtml}
     ${toolbarHtml}
     ${bulkBarHtml}
-    ${dragBarHtml}
     ${hardwareHtml}
     ${softwareHtml}
     <div class="bom-grand">
       <span class="bom-grand-label">Grand Total</span>
       <span class="bom-grand-val">$${grandTotal.toLocaleString()}</span>
+    </div>
+    <div class="bom-included">
+      <div class="bom-included-title">What's included</div>
+      <div class="bom-included-list">
+        ${[
+          'Lumana AI engine',
+          'Real time alerts',
+          'Fast investigation',
+          '24/7 local storage',
+          'Unlimited cloud backup for video clips',
+          'Unlimited users',
+          'Automatic software updates',
+          'Dedicated onboarding, training, and U.S.-based support',
+          '100% Warranty'
+        ].map(item => `<div class="bom-included-item"><svg class="bom-included-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${item}</div>`).join('')}
+      </div>
     </div>`;
 }
 
