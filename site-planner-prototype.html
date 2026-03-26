@@ -1189,7 +1189,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
     <div class="addon-picker-footer">
       <button class="btn" onclick="closeAddonPicker()">Cancel</button>
-      <button class="btn btn-primary" id="addonPlaceBtn" onclick="placeAddon()" style="opacity:0.4;pointer-events:none">Place add-on</button>
+      <button class="btn btn-primary" id="addonPlaceBtn" onclick="placeAddon()" style="opacity:0.4;pointer-events:none">Add add-on</button>
     </div>
   </div>
 </div>
@@ -1363,12 +1363,6 @@ const state = {
   addons: [],
   selectedAddonId: null,
   nextAddonId: 1,
-  placingAddonType: null,
-  placingAddonCapacity: null,
-  placingAddonCamId: null,
-  placingAddonRetention: null,
-  placingAddonPayment: null,
-  placingAddonDuration: null,
 };
 
 // ═══════════════════════════════════════════════
@@ -1990,7 +1984,7 @@ function setTool(tool) {
   const keepMap = ca.classList.contains('map-active');
   ca.className = 'canvas-area';
   if (keepMap) ca.classList.add('map-active');
-  if (tool === 'camera' || tool === 'wall' || tool === 'scale' || tool === 'place-core' || tool === 'place-addon') ca.classList.add('cursor-crosshair');
+  if (tool === 'camera' || tool === 'wall' || tool === 'scale' || tool === 'place-core') ca.classList.add('cursor-crosshair');
   if (tool === 'move') ca.classList.add('cursor-grab');
   // Show wall sub-toolbar only when wall tool active
   document.getElementById('wallSubtoolbar').classList.toggle('show', tool === 'wall');
@@ -2029,14 +2023,6 @@ function onStageClick(e) {
     addCore(state.placingCoreType || 'core-10', p.x, p.y);
     setTool('select');
     state.placingCoreType = null;
-  }
-  if (state.tool === 'place-addon' && e.target === stage) {
-    const p = getScaledPos(stage.getPointerPosition());
-    addAddon(state.placingAddonType, p.x, p.y, state.placingAddonCapacity, state.placingAddonCamId);
-    setTool('select');
-    state.placingAddonType = null;
-    state.placingAddonCapacity = null;
-    state.placingAddonCamId = null;
   }
   if (state.tool === 'scale') {
     const p = getScaledPos(stage.getPointerPosition());
@@ -3028,7 +3014,6 @@ function updateAddonTypeFromCam(addonId, typeId, camId) {
   addon.type = def.name;
   addon.price = def.price;
   addon.color = def.color;
-  renderAddonOnCanvas(addon);
   renderProperties(camId);
   updateUI();
 }
@@ -4586,17 +4571,13 @@ function closeAddonPicker() {
   document.getElementById('addonPickerOverlay').classList.remove('show');
   // Reset camera-panel mode
   const placeBtn = document.getElementById('addonPlaceBtn');
-  placeBtn.textContent = 'Place add-on';
+  placeBtn.textContent = 'Add add-on';
   placeBtn.setAttribute('onclick', 'placeAddon()');
   addonState.assignToCamId = null;
 }
 function openAddonPickerForCamera(camId) {
   openAddonPicker(camId);
   addonState.assignToCamId = camId;
-  // Change button to "Add add-on" instead of "Place add-on"
-  const placeBtn = document.getElementById('addonPlaceBtn');
-  placeBtn.textContent = 'Add add-on';
-  placeBtn.setAttribute('onclick', 'placeAddonForCamera()');
   // Hide camera field since we already know which camera
   document.getElementById('addonCameraField').style.display = 'none';
 }
@@ -4605,15 +4586,9 @@ function placeAddonForCamera() {
   const capacity = document.getElementById('addonCapacityInput').value.trim();
   if (!type || !capacity) return;
   const camId = addonState.assignToCamId;
-  const cam = state.cameras.find(c => c.id === camId);
-  if (!cam) return;
   closeAddonPicker();
-  // Place add-on near the camera with a small offset
-  const offsetX = 50 + Math.random() * 30;
-  const offsetY = 50 + Math.random() * 30;
-  const addon = addAddon(type, cam.x + offsetX, cam.y + offsetY, capacity, camId, true);
+  const addon = addAddon(type, capacity, camId);
   if (addon) {
-    // Select the camera back to show updated assigned list
     selectCamera(camId);
   }
 }
@@ -4676,31 +4651,25 @@ function placeAddon() {
   const capacity = document.getElementById('addonCapacityInput').value.trim();
   if (!type || !capacity) return;
   if (type === 'cloud-storage' && !addonState.selectedCamId) return;
+  const camId = addonState.selectedCamId || null;
   closeAddonPicker();
-  state.placingAddonType = type;
-  state.placingAddonCapacity = capacity;
-  state.placingAddonCamId = addonState.selectedCamId || null;
-  setTool('place-addon');
-  const def = ADDON_TYPES[type];
-  const tip = document.createElement('span');
-  tip.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:#1d2939;color:#fff;font-size:12px;padding:6px 14px;border-radius:6px;pointer-events:none;z-index:999';
-  tip.textContent = `Click canvas to place ${def.name}`;
-  document.body.appendChild(tip);
-  setTimeout(() => tip.remove(), 3000);
+  const addon = addAddon(type, capacity, camId);
+  if (addon) {
+    selectAddon(addon.id);
+  }
 }
 
 // ═══════════════════════════════════════════════
 // ADD-ON: CREATE, RENDER, SELECT, PROPERTIES
 // ═══════════════════════════════════════════════
 
-function addAddon(typeId, x, y, capacity, camId, skipNameInput) {
+function addAddon(typeId, capacity, camId) {
   const def = ADDON_TYPES[typeId];
   if (!def) return;
   saveUndo();
   const addon = {
     id: state.nextAddonId++,
     typeId,
-    x, y,
     name: def.name,
     type: def.name,
     color: def.color,
@@ -4709,108 +4678,21 @@ function addAddon(typeId, x, y, capacity, camId, skipNameInput) {
     cameraId: camId || null,
   };
   state.addons.push(addon);
-  renderAddonOnCanvas(addon);
-  selectAddon(addon.id);
   updateUI();
-  if (!skipNameInput) showAddonNameInput(addon);
   return addon;
 }
 
-function renderAddonOnCanvas(addon) {
-  const existing = cameraLayer.findOne('#addon-' + addon.id);
-  if (existing) existing.destroy();
-  const group = new Konva.Group({ x: addon.x, y: addon.y, id: 'addon-' + addon.id, draggable: true });
-  const body = new Konva.Rect({ x: -16, y: -16, width: 32, height: 32, fill: addon.color, cornerRadius: 6, shadowColor: 'rgba(0,0,0,0.4)', shadowBlur: 8, shadowOffset: { x: 0, y: 2 }, shadowOpacity: 1 });
-  group.add(body);
-  group.add(new Konva.Line({ points: [-8, -3, 8, -3], stroke: '#fff', strokeWidth: 1.5, opacity: 0.9, listening: false }));
-  group.add(new Konva.Line({ points: [-8, 4, 8, 4], stroke: '#fff', strokeWidth: 1.5, opacity: 0.9, listening: false }));
-  const selRing = new Konva.Rect({ x: -19, y: -19, width: 38, height: 38, stroke: '#fff', strokeWidth: 2, fill: 'transparent', cornerRadius: 8, id: 'addon-sel-ring', visible: false, listening: false });
-  group.add(selRing);
-  group.on('dragmove', () => { addon.x = group.x(); addon.y = group.y(); renderAddonLabel(addon); });
-  group.on('dragend', () => { saveUndo(); });
-  group.on('click tap', e => { e.cancelBubble = true; selectAddon(addon.id); });
-  cameraLayer.add(group);
-  cameraLayer.draw();
-  renderAddonLabel(addon);
-}
-
-function renderAddonLabel(addon) {
-  if (!labelLayer) return;
-  const existing = labelLayer.findOne('#addon-lbl-' + addon.id);
-  if (existing) existing.destroy();
-  const text = new Konva.Text({
-    x: addon.x, y: addon.y + 22,
-    text: addon.name,
-    fontSize: 11,
-    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-    fontStyle: '600',
-    fill: '#344054',
-    id: 'addon-lbl-' + addon.id,
-    listening: false,
-  });
-  text.offsetX(text.width() / 2);
-  labelLayer.add(text);
-  labelLayer.draw();
-}
-
-function showAddonNameInput(addon) {
-  const rect = stage.container().getBoundingClientRect();
-  const screenX = rect.left + stage.x() + addon.x * stage.scaleX();
-  const screenY = rect.top + stage.y() + addon.y * stage.scaleY() + 26 * stage.scaleY();
-  const overlay = document.getElementById('camNameOverlay');
-  const input = document.getElementById('camNameField');
-  overlay.style.left = screenX + 'px';
-  overlay.style.top = screenY + 'px';
-  overlay.classList.add('show');
-  input.value = '';
-  input.placeholder = 'Add-on name';
-  let committed = false;
-  const commit = () => {
-    if (committed) return;
-    committed = true;
-    overlay.classList.remove('show');
-    input.placeholder = 'Camera name';
-    const name = input.value.trim();
-    if (name) {
-      addon.name = name;
-      renderAddonLabel(addon);
-      if (state.selectedAddonId === addon.id) renderAddonProperties(addon.id);
-    }
-    input.removeEventListener('keydown', onKey);
-  };
-  const onKey = (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); commit(); }
-    if (e.key === 'Escape') { committed = true; overlay.classList.remove('show'); input.placeholder = 'Camera name'; input.removeEventListener('keydown', onKey); }
-  };
-  input.addEventListener('keydown', onKey);
-  input.addEventListener('blur', () => setTimeout(commit, 120), { once: true });
-  setTimeout(() => input.focus(), 60);
-}
-
 function deselectAddons() {
-  state.addons.forEach(a => {
-    const g = cameraLayer.findOne('#addon-' + a.id);
-    if (g) { const ring = g.findOne('#addon-sel-ring'); if (ring) ring.visible(false); }
-  });
   state.selectedAddonId = null;
-  if (cameraLayer) cameraLayer.draw();
 }
 
 function selectAddon(id) {
   selectCamera(null);
   deselectCores();
-  state.addons.forEach(a => {
-    const g = cameraLayer.findOne('#addon-' + a.id);
-    if (g) g.findOne('#addon-sel-ring').visible(false);
-  });
   state.selectedAddonId = id;
   if (id !== null) {
-    const g = cameraLayer.findOne('#addon-' + id);
-    if (g) g.findOne('#addon-sel-ring').visible(true);
-    cameraLayer.draw();
     const addon = state.addons.find(a => a.id === id);
     if (addon) {
-      renderAddonLabel(addon);
       renderAddonProperties(id);
     }
   } else {
@@ -4910,7 +4792,6 @@ function updateAddonProp(id, key, val) {
   if (!addon) return;
   addon[key] = val;
   if (key === 'name') {
-    renderAddonLabel(addon);
     document.getElementById('propsTitle').textContent = addon.name;
   }
 }
@@ -4926,7 +4807,6 @@ function updateAddonType(id, typeId) {
   addon.price = def.price;
   addon.color = def.color;
   if (typeId !== 'cloud-storage') addon.cameraId = null;
-  renderAddonOnCanvas(addon);
   renderAddonProperties(id);
   updateUI();
 }
@@ -4936,7 +4816,6 @@ function updateAddonColor(id, color) {
   if (!addon) return;
   saveUndo();
   addon.color = color;
-  renderAddonOnCanvas(addon);
   renderAddonProperties(id);
 }
 
@@ -4969,12 +4848,6 @@ function assignAddonCamera(addonId, camId) {
 function deleteAddon(id) {
   saveUndo();
   state.addons = state.addons.filter(a => a.id !== id);
-  const g = cameraLayer.findOne('#addon-' + id);
-  if (g) g.destroy();
-  const lbl = labelLayer ? labelLayer.findOne('#addon-lbl-' + id) : null;
-  if (lbl) lbl.destroy();
-  cameraLayer.draw();
-  if (labelLayer) labelLayer.draw();
   state.selectedAddonId = null;
   renderPropertiesEmpty();
   updateUI();
