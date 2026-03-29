@@ -82,18 +82,47 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .view-plan-btn:hover { background: #6d28d9; }
 .view-plan-btn svg { width: 14px; height: 14px; }
 
-/* ── Actions dropdown ── */
-.actions-cell { position: relative; }
-.actions-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: 6px; background: transparent; cursor: pointer; color: #667085; transition: all 0.15s; font-size: 18px; letter-spacing: 2px; line-height: 1; }
-.actions-btn:hover { background: #f2f4f7; border-color: #eaecf0; color: #344054; }
-.dropdown { position: absolute; top: calc(100% + 4px); right: 0; width: 160px; background: #fff; border: 1px solid #e4e7ec; border-radius: 8px; box-shadow: 0 8px 20px rgba(16,24,40,0.1); z-index: 300; display: none; flex-direction: column; overflow: hidden; }
-.dropdown.show { display: flex; }
-.dropdown-item { display: flex; align-items: center; gap: 9px; padding: 9px 13px; font-size: 13px; color: #344054; cursor: pointer; transition: background 0.12s; border: none; background: none; width: 100%; text-align: left; font-family: inherit; }
-.dropdown-item:hover { background: #f9fafb; }
-.dropdown-item svg { width: 15px; height: 15px; color: #667085; flex-shrink: 0; }
-.dropdown-item.danger { color: #d92d20; }
-.dropdown-item.danger svg { color: #d92d20; }
-.dropdown-item.danger:hover { background: #fef3f2; }
+/* ── Icon button ── */
+.btn-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #d0d5dd; border-radius: 6px; background: #fff; cursor: pointer; color: #667085; transition: all 0.15s; }
+.btn-icon:hover { background: #f9fafb; color: #344054; }
+.btn-icon svg { width: 16px; height: 16px; }
+.btn-icon.btn-danger:hover { background: #fef3f2; color: #d92d20; border-color: #fecaca; }
+
+/* ── Project details card ── */
+.proj-details { background: #fff; border: 1px solid #eaecf0; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+.proj-details-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f2f4f7; }
+.proj-details-title { font-size: 14px; font-weight: 600; color: #101828; display: flex; align-items: center; gap: 8px; }
+.proj-details-title svg { width: 16px; height: 16px; color: #7c3aed; }
+.proj-details-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 24px; }
+.proj-details-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; margin-top: 16px; }
+.proj-details-field { }
+.proj-details-label { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+.proj-details-label svg { width: 13px; height: 13px; }
+.proj-details-value { font-size: 13px; color: #344054; font-weight: 500; }
+.proj-details-status { display: inline-flex; align-items: center; gap: 5px; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.proj-details-status.active { background: #ecfdf5; color: #065f46; }
+.proj-details-status.closed { background: #f2f4f7; color: #667085; }
+.proj-details-status-dot { width: 6px; height: 6px; border-radius: 50%; }
+.proj-details-status.active .proj-details-status-dot { background: #10b981; }
+.proj-details-status.closed .proj-details-status-dot { background: #98a2b3; }
+.proj-details-list { list-style: none; }
+.proj-details-list-item { font-size: 13px; color: #344054; padding: 2px 0; }
+.proj-details-list-item span { color: #98a2b3; font-size: 12px; }
+.proj-details-notes { font-size: 13px; color: #344054; margin-top: 16px; padding-top: 12px; border-top: 1px solid #f2f4f7; }
+.proj-details-notes-label { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+.proj-details-notes-label svg { width: 13px; height: 13px; }
+.proj-details-closure { margin-top: 16px; padding-top: 12px; border-top: 1px solid #f2f4f7; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+.closure-badge { display: inline-flex; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.closure-win { background: #ecfdf5; color: #065f46; }
+.closure-loss { background: #fef3f2; color: #d92d20; }
+/* Edit mode */
+.proj-edit-input { width: 100%; padding: 7px 10px; font-size: 13px; border: 1px solid #d0d5dd; border-radius: 6px; color: #101828; outline: none; font-family: inherit; transition: border-color 0.15s; }
+.proj-edit-input:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
+.proj-edit-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.proj-edit-remove { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: none; background: none; color: #98a2b3; cursor: pointer; border-radius: 4px; padding: 0; flex-shrink: 0; }
+.proj-edit-remove:hover { color: #d92d20; background: #fef3f2; }
+.proj-edit-add { border: none; background: none; color: #7c3aed; font-size: 12px; font-weight: 500; cursor: pointer; padding: 2px 0; font-family: inherit; }
+.proj-edit-add:hover { color: #6d28d9; }
 
 /* ── BOM Sections ── */
 .bom-content { padding: 12px 28px 28px; }
@@ -157,6 +186,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .modal-input { width: 100%; padding: 9px 12px; font-size: 14px; border: 1px solid #d0d5dd; border-radius: 8px; color: #101828; outline: none; transition: border-color 0.15s; font-family: inherit; }
 .modal-input:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; }
+
+/* ── Seg control ── */
+.seg-control { display: inline-flex; border: 1px solid #d0d5dd; border-radius: 8px; overflow: hidden; }
+.seg-btn { padding: 7px 16px; font-size: 13px; font-weight: 500; border: none; background: #fff; color: #344054; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+.seg-btn + .seg-btn { border-left: 1px solid #d0d5dd; }
+.seg-btn.active { background: #7c3aed; color: #fff; }
+.seg-btn:hover:not(.active) { background: #f9fafb; }
 .modal-btn { padding: 9px 18px; font-size: 14px; font-weight: 500; border-radius: 8px; cursor: pointer; border: 1px solid #d0d5dd; background: #fff; color: #344054; font-family: inherit; transition: all 0.15s; }
 .modal-btn:hover { background: #f9fafb; }
 .modal-btn-primary { background: #7c3aed; border-color: #7c3aed; color: #fff; }
@@ -433,12 +469,34 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   </div>
 </div>
 
+<!-- Close Project Modal -->
+<div class="modal-overlay" id="closeProjectModal">
+  <div class="modal" style="width:380px">
+    <div class="modal-title">Close project</div>
+    <div class="modal-field">
+      <label class="modal-label">Closure reason</label>
+      <div class="seg-control" id="closeReasonToggle">
+        <button type="button" class="seg-btn active" data-val="Win">Win</button>
+        <button type="button" class="seg-btn" data-val="Loss">Loss</button>
+      </div>
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Notes <span style="font-weight:400;color:#98a2b3">(optional)</span></label>
+      <textarea class="modal-input" id="closeProjectNotes" rows="3" placeholder="Add notes..." style="resize:vertical"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" id="closeProjectCancel">Cancel</button>
+      <button class="modal-btn modal-btn-primary" id="closeProjectConfirm">Close project</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ── Demo Data ── */
 const SITES = [
-  { id: 1, name: 'HQ Campus' },
-  { id: 2, name: 'Warehouse District' },
-  { id: 3, name: 'Downtown Office' },
+  { id: 1, name: 'HQ Campus', status: 'active', createdDate: '2025-11-15', owner: 'Olivia Rhye', closureReason: null, closureNotes: '', unit: 'imperial', contacts: [{ name: 'David Cohen', phone: '+1 555-0123' }], sharedWith: [{ name: 'Alex Kim', email: 'alex@company.com' }, { name: 'Sarah Lee', email: 'sarah@company.com' }], notes: 'Initial deployment phase for main campus' },
+  { id: 2, name: 'Warehouse District', status: 'active', createdDate: '2026-01-22', owner: 'Olivia Rhye', closureReason: null, closureNotes: '', unit: 'metric', contacts: [], sharedWith: [], notes: '' },
+  { id: 3, name: 'Downtown Office', status: 'active', createdDate: '2026-03-05', owner: 'Olivia Rhye', closureReason: null, closureNotes: '', unit: 'imperial', contacts: [{ name: 'Mark Taylor', phone: '+1 555-0456' }], sharedWith: [{ name: 'James Wong', email: 'james@company.com' }], notes: 'High-priority security upgrade' },
 ];
 const LOCATIONS = [
   { id: 1, siteId: 1, name: 'Main Building', address: 'San Francisco, CA' },
@@ -663,34 +721,20 @@ function buildMain() {
       ${addressText ? `<div class="header-row">
         <span class="header-address">${addressText}</span>
         <div class="header-right">
-          <div class="actions-cell">
-            <button class="actions-btn" id="headerActionsBtn" title="Actions">&middot;&middot;&middot;</button>
-            <div class="dropdown" id="headerDropdown">
-              <button class="dropdown-item" data-action="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
-              <button class="dropdown-item" data-action="share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
-              <button class="dropdown-item" data-action="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
-              <button class="dropdown-item danger" data-action="delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Delete</button>
-            </div>
-          </div>
           ${!showAllLocations && !showPlan ? `<button class="btn btn-primary" id="createPlanFromLocBtn"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Create plan</button>` : ''}
         </div>
       </div>` : `<div class="header-row" style="margin-top:4px">
         <span></span>
         <div class="header-right">
-          <div class="actions-cell">
-            <button class="actions-btn" id="headerActionsBtn" title="Actions">&middot;&middot;&middot;</button>
-            <div class="dropdown" id="headerDropdown">
-              <button class="dropdown-item" data-action="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
-              <button class="dropdown-item" data-action="share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
-              <button class="dropdown-item" data-action="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
-              <button class="dropdown-item danger" data-action="delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Delete</button>
-            </div>
-          </div>
           ${!showAllLocations && !showPlan ? `<button class="btn btn-primary" id="createPlanFromLocBtn"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Create plan</button>` : ''}
         </div>
       </div>`}
     </div>
   `;
+
+  if (showAllLocations) {
+    html += '<div id="projectDetailsBlock"></div>';
+  }
 
   html += '<div class="bom-content">';
 
@@ -861,19 +905,21 @@ function buildBreadcrumb() {
   }
   bc.innerHTML = html;
 
-  /* Show "Create location" button only on All locations view */
+  /* Top bar action buttons */
   const topbarActions = document.getElementById('topbarActions');
-  if (showAllLocations) {
-    topbarActions.innerHTML = `<button class="btn btn-primary" id="newLocationBtn"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Create location</button>`;
-  } else {
-    topbarActions.innerHTML = '';
-  }
+  const shareBtn = `<button class="btn" onclick="alert('Share link copied to clipboard (placeholder).')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>`;
+  const exportBtn = `<button class="btn" onclick="alert('Project exported (placeholder).')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>`;
+  const closeBtn = site.status === 'active' ? `<button class="btn" onclick="openCloseProjectModal()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>Close</button>` : '';
+  const deleteBtn = `<button class="btn-icon btn-danger" onclick="deleteProject()" title="Delete project"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>`;
+  const createLocBtn = showAllLocations ? `<button class="btn btn-primary" id="newLocationBtn"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Create location</button>` : '';
+  topbarActions.innerHTML = shareBtn + exportBtn + closeBtn + createLocBtn + deleteBtn;
 }
 
 /* ── Init ── */
 buildBreadcrumb();
 buildSidebar();
 buildMain();
+renderProjectDetails();
 
 /* ── Create Plan button (location view) ── */
 const createPlanFromLocBtn = document.getElementById('createPlanFromLocBtn');
@@ -913,31 +959,268 @@ if (showPlan) {
   }
 }
 
-/* ── Dropdown toggle ── */
-document.addEventListener('click', function(e) {
-  const actionsBtn = e.target.closest('.actions-btn');
-  if (actionsBtn) {
-    e.stopPropagation();
-    const dd = document.getElementById('headerDropdown');
-    if (dd) {
-      const wasOpen = dd.classList.contains('show');
-      dd.classList.toggle('show', !wasOpen);
-    }
-    return;
+/* ── Top bar actions ── */
+function deleteProject() {
+  if (confirm('Delete "' + site.name + '"? This cannot be undone.')) {
+    window.location.href = 'site-planner-sites.html';
   }
-  const item = e.target.closest('.dropdown-item');
-  if (item) {
-    const action = item.dataset.action;
-    const dd = document.getElementById('headerDropdown');
-    if (dd) dd.classList.remove('show');
-    if (action === 'edit') alert('Edit location');
-    else if (action === 'share') alert('Share location');
-    else if (action === 'export') alert('Export location');
-    else if (action === 'delete') alert('Delete location');
-    return;
-  }
-  document.querySelectorAll('.dropdown.show').forEach(d => d.classList.remove('show'));
+}
+
+/* ── Close project modal ── */
+function openCloseProjectModal() {
+  document.getElementById('closeProjectNotes').value = '';
+  const toggle = document.getElementById('closeReasonToggle');
+  toggle.querySelectorAll('.seg-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+  document.getElementById('closeProjectModal').classList.add('show');
+}
+document.getElementById('closeReasonToggle').querySelectorAll('.seg-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.getElementById('closeReasonToggle').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
 });
+document.getElementById('closeProjectCancel').addEventListener('click', function() {
+  document.getElementById('closeProjectModal').classList.remove('show');
+});
+document.getElementById('closeProjectModal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('show');
+});
+document.getElementById('closeProjectConfirm').addEventListener('click', function() {
+  const reason = document.getElementById('closeReasonToggle').querySelector('.seg-btn.active').dataset.val;
+  site.status = 'closed';
+  site.closureReason = reason;
+  site.closureNotes = document.getElementById('closeProjectNotes').value.trim();
+  document.getElementById('closeProjectModal').classList.remove('show');
+  buildBreadcrumb();
+  renderProjectDetails();
+});
+
+/* ── Project Details ── */
+let _projectEditMode = false;
+
+function formatDateDisplay(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function renderProjectDetails() {
+  const el = document.getElementById('projectDetailsBlock');
+  if (!el) return;
+
+  if (_projectEditMode) {
+    const contactRows = (site.contacts || []).map((c, i) => `
+      <div class="proj-edit-row">
+        <input class="proj-edit-input" style="flex:1" value="${c.name}" placeholder="Name" data-contact-name="${i}">
+        <input class="proj-edit-input" style="flex:1" value="${c.phone}" placeholder="Phone" data-contact-phone="${i}">
+        <button class="proj-edit-remove" onclick="removeEditContact(${i})" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>`).join('');
+    const sharedRows = (site.sharedWith || []).map((s, i) => `
+      <div class="proj-edit-row">
+        <input class="proj-edit-input" style="flex:1" value="${s.name}" placeholder="Name" data-shared-name="${i}">
+        <input class="proj-edit-input" style="flex:1" value="${s.email}" placeholder="Email" data-shared-email="${i}">
+        <button class="proj-edit-remove" onclick="removeEditShared(${i})" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>`).join('');
+    const unitVal = site.unit || 'imperial';
+
+    el.innerHTML = `
+      <div class="proj-details" style="margin:0 28px 0">
+        <div class="proj-details-header">
+          <div class="proj-details-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Project Details
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn" onclick="cancelProjectEdit()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveProjectEdit()">Save</button>
+          </div>
+        </div>
+        <div class="proj-details-grid">
+          <div class="proj-details-field">
+            <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Project name</div>
+            <input class="proj-edit-input" id="editProjName" value="${site.name}">
+          </div>
+          <div class="proj-details-field">
+            <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Created date</div>
+            <div class="proj-details-value">${formatDateDisplay(site.createdDate)}</div>
+          </div>
+          <div class="proj-details-field">
+            <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Owner</div>
+            <div class="proj-details-value">${site.owner || '—'}</div>
+          </div>
+        </div>
+        <div class="proj-details-grid" style="grid-template-columns:1fr 1fr;margin-top:16px">
+          <div class="proj-details-field">
+            <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Status</div>
+            <div class="proj-details-value">${site.status === 'active'
+              ? '<span class="proj-details-status active"><span class="proj-details-status-dot"></span> Active</span>'
+              : '<span class="proj-details-status closed"><span class="proj-details-status-dot"></span> Closed</span>'}</div>
+          </div>
+          <div class="proj-details-field">
+            <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 3H3v7h18V3z"/><path d="M21 14H3v7h18v-7z"/></svg> Unit of measurement</div>
+            <div class="seg-control" id="editUnitToggle">
+              <button type="button" class="seg-btn ${unitVal === 'imperial' ? 'active' : ''}" data-val="imperial" onclick="toggleEditUnit(this)">Imperial (ft)</button>
+              <button type="button" class="seg-btn ${unitVal === 'metric' ? 'active' : ''}" data-val="metric" onclick="toggleEditUnit(this)">Metric (m)</button>
+            </div>
+          </div>
+        </div>
+        <div class="proj-details-grid-2" style="margin-top:16px">
+          <div class="proj-details-field">
+            <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg> Shared with</div>
+            <div id="editSharedList">${sharedRows}</div>
+            <button class="proj-edit-add" onclick="addEditShared()">+ Add person</button>
+          </div>
+          <div class="proj-details-field">
+            <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> Contacts</div>
+            <div id="editContactsList">${contactRows}</div>
+            <button class="proj-edit-add" onclick="addEditContact()">+ Add contact</button>
+          </div>
+        </div>
+        <div class="proj-details-notes">
+          <div class="proj-details-notes-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Notes</div>
+          <textarea class="proj-edit-input" id="editProjNotes" rows="2" style="resize:vertical">${site.notes || ''}</textarea>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // View mode
+  const contactsHtml = (site.contacts || []).length
+    ? (site.contacts || []).map(c => `<div class="proj-details-list-item">${c.name} <span>${c.phone}</span></div>`).join('')
+    : '<div class="proj-details-list-item" style="color:#98a2b3">None</div>';
+  const sharedHtml = (site.sharedWith || []).length
+    ? (site.sharedWith || []).map(s => `<div class="proj-details-list-item">${s.name} <span>${s.email}</span></div>`).join('')
+    : '<div class="proj-details-list-item" style="color:#98a2b3">None</div>';
+  const unitDisplay = (site.unit === 'metric') ? 'Metric (m)' : 'Imperial (ft)';
+
+  let closureHtml = '';
+  if (site.status === 'closed') {
+    const badgeClass = site.closureReason === 'Win' ? 'closure-win' : 'closure-loss';
+    closureHtml = `
+      <div class="proj-details-closure">
+        <div class="proj-details-field">
+          <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg> Closure reason</div>
+          <span class="closure-badge ${badgeClass}">${site.closureReason}</span>
+        </div>
+        <div class="proj-details-field">
+          <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Closure notes</div>
+          <div class="proj-details-value">${site.closureNotes || '—'}</div>
+        </div>
+      </div>`;
+  }
+
+  el.innerHTML = `
+    <div class="proj-details" style="margin:0 28px 0">
+      <div class="proj-details-header">
+        <div class="proj-details-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Project Details
+        </div>
+        <button class="btn" onclick="enterProjectEdit()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+      </div>
+      <div class="proj-details-grid">
+        <div class="proj-details-field">
+          <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Project name</div>
+          <div class="proj-details-value" style="font-size:15px;font-weight:600">${site.name}</div>
+        </div>
+        <div class="proj-details-field">
+          <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Created date</div>
+          <div class="proj-details-value">${formatDateDisplay(site.createdDate)}</div>
+        </div>
+        <div class="proj-details-field">
+          <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Owner</div>
+          <div class="proj-details-value">${site.owner || '—'}</div>
+        </div>
+      </div>
+      <div class="proj-details-grid" style="grid-template-columns:1fr 1fr;margin-top:16px">
+        <div class="proj-details-field">
+          <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Status</div>
+          ${site.status === 'active'
+            ? '<span class="proj-details-status active"><span class="proj-details-status-dot"></span> Active</span>'
+            : '<span class="proj-details-status closed"><span class="proj-details-status-dot"></span> Closed</span>'}
+        </div>
+        <div class="proj-details-field">
+          <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 3H3v7h18V3z"/><path d="M21 14H3v7h18v-7z"/></svg> Unit of measurement</div>
+          <div class="proj-details-value">${unitDisplay}</div>
+        </div>
+      </div>
+      <div class="proj-details-grid-2">
+        <div class="proj-details-field">
+          <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg> Shared with</div>
+          <div class="proj-details-list">${sharedHtml}</div>
+        </div>
+        <div class="proj-details-field">
+          <div class="proj-details-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> Contacts</div>
+          <div class="proj-details-list">${contactsHtml}</div>
+        </div>
+      </div>
+      ${site.notes ? `<div class="proj-details-notes">
+        <div class="proj-details-notes-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Notes</div>
+        <div class="proj-details-value">${site.notes}</div>
+      </div>` : ''}
+      ${closureHtml}
+    </div>`;
+}
+
+function enterProjectEdit() {
+  _projectEditMode = true;
+  renderProjectDetails();
+}
+function cancelProjectEdit() {
+  _projectEditMode = false;
+  renderProjectDetails();
+}
+function saveProjectEdit() {
+  site.name = document.getElementById('editProjName').value.trim() || site.name;
+  site.notes = document.getElementById('editProjNotes').value.trim();
+  const unitBtn = document.querySelector('#editUnitToggle .seg-btn.active');
+  if (unitBtn) site.unit = unitBtn.dataset.val;
+  // Contacts
+  site.contacts = [];
+  document.querySelectorAll('#editContactsList .proj-edit-row').forEach(row => {
+    const name = row.querySelector('[data-contact-name]').value.trim();
+    const phone = row.querySelector('[data-contact-phone]').value.trim();
+    if (name || phone) site.contacts.push({ name, phone });
+  });
+  // Shared
+  site.sharedWith = [];
+  document.querySelectorAll('#editSharedList .proj-edit-row').forEach(row => {
+    const name = row.querySelector('[data-shared-name]').value.trim();
+    const email = row.querySelector('[data-shared-email]').value.trim();
+    if (name || email) site.sharedWith.push({ name, email });
+  });
+  _projectEditMode = false;
+  renderProjectDetails();
+  buildBreadcrumb();
+}
+function toggleEditUnit(btn) {
+  btn.parentElement.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function addEditContact() {
+  const list = document.getElementById('editContactsList');
+  const i = list.children.length;
+  const row = document.createElement('div');
+  row.className = 'proj-edit-row';
+  row.innerHTML = `<input class="proj-edit-input" style="flex:1" value="" placeholder="Name" data-contact-name="${i}"><input class="proj-edit-input" style="flex:1" value="" placeholder="Phone" data-contact-phone="${i}"><button class="proj-edit-remove" onclick="this.closest('.proj-edit-row').remove()" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+  list.appendChild(row);
+}
+function removeEditContact(i) {
+  const rows = document.querySelectorAll('#editContactsList .proj-edit-row');
+  if (rows[i]) rows[i].remove();
+}
+function addEditShared() {
+  const list = document.getElementById('editSharedList');
+  const i = list.children.length;
+  const row = document.createElement('div');
+  row.className = 'proj-edit-row';
+  row.innerHTML = `<input class="proj-edit-input" style="flex:1" value="" placeholder="Name" data-shared-name="${i}"><input class="proj-edit-input" style="flex:1" value="" placeholder="Email" data-shared-email="${i}"><button class="proj-edit-remove" onclick="this.closest('.proj-edit-row').remove()" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+  list.appendChild(row);
+}
+function removeEditShared(i) {
+  const rows = document.querySelectorAll('#editSharedList .proj-edit-row');
+  if (rows[i]) rows[i].remove();
+}
 
 /* ── Create Location Modal ── */
 const createLocModal = document.getElementById('createLocationModal');
