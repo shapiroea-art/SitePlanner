@@ -317,6 +317,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-toolbar-dd:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
 .bom-addon-btn { padding: 3px 6px; font-size: 11px; font-weight: 500; color: #344054; border: 1px solid #d0d5dd; border-radius: 6px; background: #fff; font-family: inherit; cursor: pointer; outline: none; transition: all 0.15s; white-space: nowrap; }
 .bom-addon-btn:hover { background: #f9fafb; border-color: #98a2b3; }
+.bom-addon-delete { display: none; align-items: center; justify-content: center; position: absolute; right: 0; top: 0; bottom: 0; padding: 0 8px; border: none; background: linear-gradient(90deg, transparent, #f9fafb 30%); color: #98a2b3; cursor: pointer; border-radius: 0; }
+.bom-addon-delete:hover { color: #d92d20; }
+.bom-item-addon:hover .bom-addon-delete { display: inline-flex; }
 .bom-view-opts-wrap { position: relative; display: inline-flex; }
 .bom-view-opts-dd { position: absolute; top: calc(100% + 5px); right: 0; width: 280px; background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; box-shadow: 0 8px 24px rgba(16,24,40,0.12); z-index: 300; display: none; flex-direction: column; padding: 14px; gap: 14px; }
 .bom-view-opts-dd.show { display: flex; }
@@ -3512,7 +3515,7 @@ function renderBomAddonItem(addon, doubleIndent) {
   }
   tagsHtml += '</span>';
 
-  return `<div class="bom-item" onclick="selectAddon(${addon.id})" style="cursor:pointer">
+  return `<div class="bom-item bom-item-addon" onclick="selectAddon(${addon.id})" style="cursor:pointer;position:relative">
     <div class="bom-item-primary">
       ${indent}
       <span class="bom-item-icon" style="color:${addon.color}">${ADDON_ICON}</span>
@@ -3523,6 +3526,9 @@ function renderBomAddonItem(addon, doubleIndent) {
       ${tagsHtml}
       <span class="bom-item-price">$${addon.price.toLocaleString()}</span>
     </div>
+    <button class="bom-addon-delete" onclick="deleteAddon(${addon.id});event.stopPropagation()" title="Delete add-on">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>`;
 }
 
@@ -3870,15 +3876,13 @@ function renderBOMPane() {
 
   const toolbarHtml = (cams.length + cores.length > 0) ? `
     <div class="bom-toolbar" style="flex-direction:column;gap:0;padding:0">
-      <!-- Row 1: Scope toggle -->
-      <div class="bom-toolbar-row" style="justify-content:flex-start">
-        <div class="bom-quick-switch" style="width:100%">
-          <button class="bom-quick-switch-btn ${!selectMode ? 'active' : ''}" onclick="bomSetScope('all')" style="flex:1;text-align:center">All</button>
-          <button class="bom-quick-switch-btn ${selectMode ? 'active' : ''}" onclick="bomSetScope('select')" style="flex:1;text-align:center">Select cameras</button>
+      <div class="bom-toolbar-row" style="justify-content:flex-start;padding:6px 16px">
+        <span style="font-size:11px;font-weight:500;color:#98a2b3;white-space:nowrap">Bulk editing</span>
+        <div class="bom-quick-switch">
+          <button class="bom-quick-switch-btn ${!selectMode ? 'active' : ''}" onclick="bomSetScope('all')" style="text-align:center">All</button>
+          <button class="bom-quick-switch-btn ${selectMode ? 'active' : ''}" onclick="bomSetScope('select')" style="text-align:center">Select cameras</button>
         </div>
-      </div>
-      <!-- Row 2: Payment, Duration, Retention, License, + Add-ons -->
-      <div class="bom-toolbar-row" style="justify-content:flex-start">
+        <span style="width:1px;height:18px;background:#eaecf0;flex-shrink:0"></span>
         <div class="bom-quick-switch${paymentMixed ? ' bom-mixed' : ''}">
           <button class="bom-quick-switch-btn ${showPaymentActive === 'Upfront' ? 'active' : ''}" onclick="bomSwitchPayment('Upfront')">Upfront</button>
           <button class="bom-quick-switch-btn ${showPaymentActive === 'Yearly' ? 'active' : ''}" onclick="bomSwitchPayment('Yearly')">Yearly</button>
