@@ -4846,17 +4846,15 @@ function setAddonScope(scope) {
   placeBtn.style.pointerEvents = 'none';
 }
 
-function openAddonPicker(preselectedCamId) {
-  addonState.scope = 'camera';
+function openAddonPicker() {
+  addonState.scope = 'plan';
   addonState.selectedCamIds = [];
   addonState.assignToCamId = null;
-  // Show scope toggle
-  document.getElementById('addonScopeToggle').style.display = '';
-  setAddonScope('camera');
-  // Pre-select camera if provided
-  if (preselectedCamId) {
-    addonState.selectedCamIds = [preselectedCamId];
-  }
+  // Hide scope toggle — toolbar modal is plan-only
+  document.getElementById('addonScopeToggle').style.display = 'none';
+  setAddonScope('plan');
+  // Reset button handler (openAddonPickerForCamera may have overridden it)
+  document.getElementById('addonPlaceBtn').setAttribute('onclick', 'placeAddon()');
   document.getElementById('addonPickerOverlay').classList.add('show');
 }
 
@@ -4866,7 +4864,8 @@ function closeAddonPicker() {
 }
 
 function openAddonPickerForCamera(camId) {
-  openAddonPicker(camId);
+  addonState.scope = 'camera';
+  addonState.selectedCamIds = [];
   addonState.assignToCamId = camId;
   // Hide scope toggle, force camera scope
   document.getElementById('addonScopeToggle').style.display = 'none';
@@ -4876,6 +4875,7 @@ function openAddonPickerForCamera(camId) {
   // Wire button to camera-specific handler
   const placeBtn = document.getElementById('addonPlaceBtn');
   placeBtn.setAttribute('onclick', 'placeAddonForCamera()');
+  document.getElementById('addonPickerOverlay').classList.add('show');
 }
 
 function onAddonTypeChange() {
