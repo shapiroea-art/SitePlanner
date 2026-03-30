@@ -3220,7 +3220,8 @@ const _bomViewOptions = {
 // ── BOM Scope State ──
 const _bomScope = {
   mode: 'all',              // 'all' | 'select'
-  selected: new Set(),      // camera IDs (numbers)
+  selectedCameras: new Set(),
+  selectedAddons: new Set(),
   paymentUnpressed: false,  // true = user deactivated the payment toggle
   durationUnpressed: false, // true = user deactivated the duration toggle
   shownRetention: null,     // temporarily show selected retention value
@@ -3230,7 +3231,7 @@ const _bomScope = {
 // ── BOM Scope Helpers ──
 function _bomTargetCameras() {
   if (_bomScope.mode === 'select') {
-    return state.cameras.filter(c => _bomScope.selected.has(c.id));
+    return state.cameras.filter(c => _bomScope.selectedCameras.has(c.id));
   }
   return state.cameras;
 }
@@ -3241,20 +3242,28 @@ function _bomTargetCores() {
 // ── BOM Scope Controls ──
 function bomSetScope(mode) {
   _bomScope.mode = mode;
-  if (mode === 'all') _bomScope.selected.clear();
+  if (mode === 'all') {
+    _bomScope.selectedCameras.clear();
+    _bomScope.selectedAddons.clear();
+  }
   _bomScope.paymentUnpressed = false;
   _bomScope.durationUnpressed = false;
   renderBOMPane();
 }
-function bomScopeToggleItem(camId, evt) {
+function bomScopeToggleItem(id, type, evt) {
   evt.stopPropagation();
-  if (_bomScope.selected.has(camId)) _bomScope.selected.delete(camId);
-  else _bomScope.selected.add(camId);
+  const set = type === 'addon' ? _bomScope.selectedAddons : _bomScope.selectedCameras;
+  if (set.has(id)) set.delete(id);
+  else set.add(id);
   renderBOMPane();
 }
 function bomScopeToggleAll(checked) {
-  _bomScope.selected.clear();
-  if (checked) state.cameras.forEach(c => _bomScope.selected.add(c.id));
+  _bomScope.selectedCameras.clear();
+  _bomScope.selectedAddons.clear();
+  if (checked) {
+    state.cameras.forEach(c => _bomScope.selectedCameras.add(c.id));
+    state.addons.forEach(a => _bomScope.selectedAddons.add(a.id));
+  }
   renderBOMPane();
 }
 
@@ -3464,8 +3473,8 @@ function renderBomCamItem(cam, coreId, idx) {
   const payment = cam.payment || 'Upfront';
   const duration = (cam.duration || 1) + ' yr';
   const selectMode = _bomScope.mode === 'select';
-  const checked = _bomScope.selected.has(cam.id);
-  const cbHtml = selectMode ? `<input type="checkbox" class="bom-cb bom-item-cb" ${checked ? 'checked' : ''} onclick="bomScopeToggleItem(${cam.id},event)">` : '';
+  const checked = _bomScope.selectedCameras.has(cam.id);
+  const cbHtml = selectMode ? `<input type="checkbox" class="bom-cb bom-item-cb" ${checked ? 'checked' : ''} onclick="bomScopeToggleItem(${cam.id},'camera',event)">` : '';
   const dragHandleSvg = `<svg class="bom-drag-handle" viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;cursor:grab;color:#98a2b3;flex-shrink:0"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>`;
   const dragAttr = selectMode ? '' : `draggable="true" ondragstart="bomDragStart(${cam.id},event)" ondragend="bomDragEnd(event)"`;
   const dropZone = `<div class="bom-drop-zone" ondragover="bomDropZoneDragOver(event)" ondragleave="bomDropZoneDragLeave(event)" ondrop="bomDropOnGroup(${coreId},${idx},event)"></div>`;
@@ -3518,9 +3527,13 @@ function renderBomAddonItem(addon, doubleIndent) {
   }
   tagsHtml += '</span>';
 
+  const addonSelectMode = _bomScope.mode === 'select';
+  const addonChecked = _bomScope.selectedAddons.has(addon.id);
+  const addonCbHtml = addonSelectMode ? `<input type="checkbox" class="bom-cb bom-item-cb" ${addonChecked ? 'checked' : ''} onclick="bomScopeToggleItem(${addon.id},'addon',event)">` : '';
+
   return `<div class="bom-item bom-item-addon" onclick="selectAddon(${addon.id})" style="cursor:pointer;position:relative">
     <div class="bom-item-primary">
-      ${indent}
+      ${indent}${addonCbHtml}
       <span class="bom-item-icon" style="color:${addon.color}">${ADDON_ICON}</span>
       <span class="bom-item-name-wrap">
         <span class="bom-item-name">${escHtml(addon.name)}</span>
@@ -3883,7 +3896,7 @@ function renderBOMPane() {
         <span style="font-size:11px;font-weight:500;color:#98a2b3;white-space:nowrap">Items:</span>
         <div class="bom-quick-switch">
           <button class="bom-quick-switch-btn ${!selectMode ? 'active' : ''}" onclick="bomSetScope('all')" style="text-align:center">All</button>
-          <button class="bom-quick-switch-btn ${selectMode ? 'active' : ''}" onclick="bomSetScope('select')" style="text-align:center">Select cameras</button>
+          <button class="bom-quick-switch-btn ${selectMode ? 'active' : ''}" onclick="bomSetScope('select')" style="text-align:center">Selected</button>
         </div>
         <span style="width:1px;height:18px;background:#eaecf0;flex-shrink:0"></span>
         <div class="bom-quick-switch${paymentMixed ? ' bom-mixed' : ''}">
