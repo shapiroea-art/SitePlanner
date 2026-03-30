@@ -333,6 +333,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .all-bom-plan-total { margin-left: auto; font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; }
 .all-bom-plan-children { padding: 4px 0 4px 16px; }
 
+/* ── Core groups inside plan ── */
+.all-bom-core-group { margin-bottom: 4px; }
+.all-bom-core-hdr { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #f9fafb; border-radius: 0 6px 6px 0; cursor: pointer; user-select: none; border-left: 4px solid var(--core-color, #667085); }
+.all-bom-core-hdr:hover { background: #f2f4f7; }
+.all-bom-core-hdr-unassigned { border-left: 4px dashed #d0d5dd; }
+.all-bom-core-chev { width: 14px; height: 14px; color: #667085; flex-shrink: 0; transition: transform 0.2s; }
+.all-bom-core-group.collapsed .all-bom-core-chev { transform: rotate(-90deg); }
+.all-bom-core-group.collapsed .all-bom-core-children { display: none; }
+.all-bom-core-icon { width: 16px; height: 16px; flex-shrink: 0; color: #667085; display: flex; align-items: center; }
+.all-bom-core-icon svg { width: 16px; height: 16px; }
+.all-bom-core-name { font-size: 13px; font-weight: 600; color: #344054; }
+.all-bom-core-type { font-size: 12px; color: #98a2b3; margin-left: 4px; }
+.all-bom-core-badge { font-size: 11px; font-weight: 600; color: #667085; background: #eaecf0; border-radius: 10px; padding: 1px 8px; }
+.all-bom-core-price { margin-left: auto; font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; }
+.all-bom-core-children { padding: 2px 0 2px 14px; }
+
 /* ── Device type grouping headers ── */
 .all-bom-type-group { margin-bottom: 4px; }
 .all-bom-type-hdr { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #f9fafb; border: 1px solid #eaecf0; border-radius: 8px; cursor: pointer; user-select: none; }
@@ -369,9 +385,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .all-bom-grand-label { font-size: 14px; font-weight: 600; color: #101828; }
 .all-bom-grand-val { font-size: 18px; font-weight: 800; color: #7c3aed; }
 
+/* ── Expand / Collapse All ── */
+.all-bom-expand-row { display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 4px 0 2px; }
+.all-bom-expand-btn { background: none; border: none; font-size: 11px; font-weight: 500; color: #667085; cursor: pointer; padding: 2px 6px; border-radius: 4px; display: flex; align-items: center; gap: 3px; }
+.all-bom-expand-btn:hover { color: #344054; background: #f2f4f7; }
+.all-bom-expand-btn svg { width: 12px; height: 12px; }
+
 /* ── What's Included ── */
 .all-bom-included { background: #faf8ff; border: 1px solid #d8b4fe; border-radius: 12px; padding: 14px 16px; margin-top: 16px; }
-.all-bom-included-headline { font-size: 12px; font-weight: 700; color: #344054; margin-bottom: 10px; }
+.all-bom-included-headline { font-size: 12px; font-weight: 700; color: #344054; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+.all-bom-included-headline:hover { color: #1d2939; }
+.all-bom-included-headline svg { width: 16px; height: 16px; flex-shrink: 0; color: #667085; transition: transform .15s; }
+.all-bom-included.expanded .all-bom-included-headline { margin-bottom: 10px; }
+.all-bom-included .all-bom-included-grid { display: none; }
+.all-bom-included.expanded .all-bom-included-grid { display: grid; }
 .all-bom-included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
 .all-bom-included-feat { display: flex; align-items: center; gap: 8px; }
 .all-bom-included-feat-icon { width: 28px; height: 28px; background: #f3f0ff; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #7c3aed; }
@@ -1046,10 +1073,67 @@ function toggleAllBomPlan(planId) {
   const el = document.getElementById('allBomPlan' + planId);
   if (el) el.classList.toggle('collapsed');
 }
+function toggleAllBomCoreGroup(key, evt) {
+  if (evt) evt.stopPropagation();
+  _allBomCollapse['core-' + key] = !_allBomCollapse['core-' + key];
+  var el = document.getElementById('allBomCore' + key);
+  if (el) el.classList.toggle('collapsed');
+}
 function toggleAllBomTypeGroup(key) {
   _allBomCollapse['type-' + key] = !_allBomCollapse['type-' + key];
   const el = document.getElementById('allBomType' + key);
   if (el) el.classList.toggle('collapsed');
+}
+
+let _allBomAllExpanded = false;
+function allBomExpandAll() {
+  _allBomAllExpanded = true;
+  // Set all collapse keys to false (expanded)
+  siteLocations.forEach(loc => {
+    _allBomCollapse['loc-' + loc.id] = false;
+    PLANS.filter(p => p.locationId === loc.id).forEach(plan => {
+      _allBomCollapse['plan-' + plan.id] = false;
+      var planCoresArr = CORES.filter(c => c.planId === plan.id);
+      planCoresArr.forEach((_, ci) => { _allBomCollapse['core-' + plan.id + '-' + ci] = false; });
+      _allBomCollapse['core-' + plan.id + '-unassigned'] = false;
+    });
+  });
+  // Type groups
+  _allBomCollapse['type-cameras'] = false;
+  _allBomCollapse['type-cores'] = false;
+  DEVICES.forEach(d => { _allBomCollapse['type-' + d.category.replace(/\s/g,'')] = false; });
+  renderAllLocationsBom();
+}
+function allBomCollapseAll() {
+  _allBomAllExpanded = false;
+  siteLocations.forEach(loc => {
+    delete _allBomCollapse['loc-' + loc.id]; // defaults to collapsed via !== false
+    PLANS.filter(p => p.locationId === loc.id).forEach(plan => {
+      delete _allBomCollapse['plan-' + plan.id];
+      var planCoresArr = CORES.filter(c => c.planId === plan.id);
+      planCoresArr.forEach((_, ci) => { _allBomCollapse['core-' + plan.id + '-' + ci] = true; });
+      _allBomCollapse['core-' + plan.id + '-unassigned'] = true;
+    });
+  });
+  _allBomCollapse['type-cameras'] = true;
+  _allBomCollapse['type-cores'] = true;
+  DEVICES.forEach(d => { _allBomCollapse['type-' + d.category.replace(/\s/g,'')] = true; });
+  renderAllLocationsBom();
+}
+
+let _allBomIncludedOpen = false;
+function toggleAllBomIncluded() {
+  _allBomIncludedOpen = !_allBomIncludedOpen;
+  var el = document.querySelector('.all-bom-included');
+  if (el) el.classList.toggle('expanded', _allBomIncludedOpen);
+  var hdr = document.querySelector('.all-bom-included-headline');
+  if (hdr) {
+    var svg = hdr.querySelector('svg');
+    if (svg) {
+      var pl = svg.querySelector('polyline');
+      if (pl) pl.setAttribute('points', _allBomIncludedOpen ? '6 15 12 9 18 15' : '6 9 12 15 18 9');
+    }
+  }
 }
 
 /* ── All-Locations BOM: Master render ── */
@@ -1155,8 +1239,12 @@ function renderAllLocationsBom() {
     '<button class="bom-delete-btn" onclick="allBomDeleteItems()">' + trashSvg + 'Delete</button>' +
   '</div>';
 
-  // Table
-  let tableHtml = '';
+  // Expand/Collapse All + Table
+  let tableHtml = '<div class="all-bom-expand-row">' +
+    (_allBomAllExpanded
+      ? '<button class="all-bom-expand-btn" onclick="allBomCollapseAll()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>Collapse all</button>'
+      : '<button class="all-bom-expand-btn" onclick="allBomExpandAll()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>Expand all</button>') +
+  '</div>';
 
   if (_allBomViewOptions.groupBy === 'locations') {
     siteLocations.forEach(loc => {
@@ -1185,12 +1273,34 @@ function renderAllLocationsBom() {
         '</div>';
         tableHtml += '<div class="all-bom-plan-children">';
 
-        // Cameras
-        if (_allBomViewOptions.devices['Cameras']) {
-          let planCams = PLAN_CAMERAS.filter(c => c.planId === plan.id);
-          planCams = planCams.filter(c => allBomMatchesSearch(c.name, c.model));
-          planCams = allBomSortItems(planCams, 'name', 'price');
-          planCams.forEach(cam => {
+        // Hierarchical: Core → Camera (matching prototype)
+        const planCoresArr = CORES.filter(c => c.planId === plan.id);
+        const planCamsAll = PLAN_CAMERAS.filter(c => c.planId === plan.id);
+        const showCams = _allBomViewOptions.devices['Cameras'];
+        const showCores = _allBomViewOptions.devices['Cores'];
+
+        // Core groups
+        planCoresArr.forEach((core, ci) => {
+          if (!showCores && !showCams) return;
+          const coreCams = showCams ? allBomSortItems(planCamsAll.filter(c => c.coreIdx === ci).filter(c => allBomMatchesSearch(c.name, c.model)), 'name', 'price') : [];
+          if (!showCores && coreCams.length === 0) return;
+          const coreKey = plan.id + '-' + ci;
+          const coreCollapsed = !!_allBomCollapse['core-' + coreKey];
+          const coreGroupTotal = core.price + coreCams.reduce((s, c) => s + c.price, 0);
+          const coreCb = selectMode && showCores ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (_allBomScope.selectedCores.has(core._cid) ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + core._cid + ',\'core\',event)">' : '';
+
+          tableHtml += '<div class="all-bom-core-group' + (coreCollapsed ? ' collapsed' : '') + '" id="allBomCore' + coreKey + '">';
+          tableHtml += '<div class="all-bom-core-hdr" style="--core-color:' + core.color + '" onclick="toggleAllBomCoreGroup(\'' + coreKey + '\',event)">' +
+            coreCb +
+            '<div class="all-bom-core-chev">' + chevronSVG16 + '</div>' +
+            '<div class="all-bom-core-icon">' + coreSVGSmall + '</div>' +
+            '<span class="all-bom-core-name">' + core.name + '</span>' +
+            '<span class="all-bom-core-type">' + core.type + '</span>' +
+            '<span class="all-bom-core-badge">' + coreCams.length + '/' + core.channels + ' ch</span>' +
+            '<span class="all-bom-core-price">$' + coreGroupTotal.toLocaleString() + '</span>' +
+          '</div>';
+          tableHtml += '<div class="all-bom-core-children">';
+          coreCams.forEach(cam => {
             const checked = _allBomScope.selectedCameras.has(cam._id);
             const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
             tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
@@ -1200,39 +1310,38 @@ function renderAllLocationsBom() {
               '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
             '</div></div>';
           });
-        }
+          tableHtml += '</div></div>';
+        });
 
-        // Cores
-        if (_allBomViewOptions.devices['Cores']) {
-          let planCoresArr = CORES.filter(c => c.planId === plan.id);
-          planCoresArr = planCoresArr.filter(c => allBomMatchesSearch(c.name, c.type));
-          planCoresArr = allBomSortItems(planCoresArr, 'name', 'price');
-          planCoresArr.forEach(core => {
-            const checked = _allBomScope.selectedCores.has(core._cid);
-            const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + core._cid + ',\'core\',event)">' : '';
-            tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'core\',' + core._cid + ')">' +
-              '<div class="all-bom-item-primary">' + cbHtml +
-              '<div class="all-bom-item-icon" style="background:' + core.color + '">' + coreSVGSmall + '</div>' +
-              '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + core.name + '</span><span class="all-bom-item-model">' + core.type + ' · ' + core.cameraCount + '/' + core.channels + ' ch</span></div>' +
-              '<span class="all-bom-item-price">$' + core.price.toLocaleString() + '</span>' +
-            '</div></div>';
-          });
-        }
-
-        // Other devices (Access Control, Intercom, etc.) — filter by each category
-        {
-          let planDevs = DEVICES.filter(d => d.planId === plan.id && d.category !== 'Video Security' && _allBomViewOptions.devices[d.category]);
-          planDevs = planDevs.filter(d => allBomMatchesSearch(d.model, d.category));
-          planDevs.forEach((dev, di) => {
-            const devGlobalIdx = DEVICES.indexOf(dev);
-            tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'device\',' + devGlobalIdx + ')">' +
-              '<div class="all-bom-item-primary">' +
-              '<div class="all-bom-item-icon plain">' + deviceIconSVG(dev.category) + '</div>' +
-              '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + dev.model + '</span><span class="all-bom-item-model">' + dev.category + '</span></div>' +
-              '<span class="all-bom-item-qty">' + dev.qty + '</span>' +
-              '<span class="all-bom-item-price">$' + (dev.price * dev.qty).toLocaleString() + '</span>' +
-            '</div></div>';
-          });
+        // Unassigned cameras (coreIdx < 0 or no matching core)
+        if (showCams) {
+          let unassigned = planCamsAll.filter(c => c.coreIdx < 0 || c.coreIdx >= planCoresArr.length);
+          unassigned = unassigned.filter(c => allBomMatchesSearch(c.name, c.model));
+          unassigned = allBomSortItems(unassigned, 'name', 'price');
+          if (unassigned.length > 0) {
+            const uKey = plan.id + '-unassigned';
+            const uCollapsed = !!_allBomCollapse['core-' + uKey];
+            const uTotal = unassigned.reduce((s, c) => s + c.price, 0);
+            tableHtml += '<div class="all-bom-core-group' + (uCollapsed ? ' collapsed' : '') + '" id="allBomCore' + uKey + '">';
+            tableHtml += '<div class="all-bom-core-hdr all-bom-core-hdr-unassigned" onclick="toggleAllBomCoreGroup(\'' + uKey + '\',event)">' +
+              '<div class="all-bom-core-chev">' + chevronSVG16 + '</div>' +
+              '<span class="all-bom-core-name">Unassigned Cameras</span>' +
+              '<span class="all-bom-core-badge">' + unassigned.length + '</span>' +
+              '<span class="all-bom-core-price">$' + uTotal.toLocaleString() + '</span>' +
+            '</div>';
+            tableHtml += '<div class="all-bom-core-children">';
+            unassigned.forEach(cam => {
+              const checked = _allBomScope.selectedCameras.has(cam._id);
+              const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
+              tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
+                '<div class="all-bom-item-primary">' + cbHtml +
+                '<div class="all-bom-item-icon" style="background:' + cam.color + '">' + camSVGSmall + '</div>' +
+                '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + '</span></div>' +
+                '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
+              '</div></div>';
+            });
+            tableHtml += '</div></div>';
+          }
         }
 
         tableHtml += '</div></div>'; // plan children + plan
@@ -1339,8 +1448,11 @@ function renderAllLocationsBom() {
   gtEl.innerHTML = '<div class="all-bom-grand"><span class="all-bom-grand-label">Grand Total</span><span class="all-bom-grand-val">$' + grandTotal.toLocaleString() + '</span></div>';
 
   // What's Included
-  inclEl.innerHTML = '<div class="all-bom-included">' +
-    '<div class="all-bom-included-headline">What\'s included</div>' +
+  var inclCls = 'all-bom-included' + (_allBomIncludedOpen ? ' expanded' : '');
+  var chevDown = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+  var chevUp = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 15 12 9 18 15"/></svg>';
+  inclEl.innerHTML = '<div class="' + inclCls + '">' +
+    '<div class="all-bom-included-headline" onclick="toggleAllBomIncluded()">What\'s included ' + (_allBomIncludedOpen ? chevUp : chevDown) + '</div>' +
     '<div class="all-bom-included-grid">' +
       '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 014 4c0 2-2 3-4 6-2-3-4-4-4-6a4 4 0 014-4z"/><path d="M6 20h12"/></svg></div><span class="all-bom-included-feat-label">Lumana AI engine</span></div>' +
       '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/><path d="M5 21h14"/></svg></div><span class="all-bom-included-feat-label">Unlimited cloud backup for video clips</span></div>' +
