@@ -335,10 +335,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 
 /* ── Core groups inside plan ── */
 .all-bom-core-group { margin-bottom: 4px; }
-.all-bom-core-hdr { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #f9fafb; border-radius: 0 6px 6px 0; cursor: pointer; user-select: none; border-left: 4px solid var(--core-color, #667085); }
+.all-bom-core-hdr { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #f9fafb; border-radius: 0 6px 6px 0; cursor: default; user-select: none; border-left: 4px solid var(--core-color, #667085); }
 .all-bom-core-hdr:hover { background: #f2f4f7; }
 .all-bom-core-hdr-unassigned { border-left: 4px dashed #d0d5dd; }
-.all-bom-core-chev { width: 14px; height: 14px; color: #667085; flex-shrink: 0; transition: transform 0.2s; }
+.all-bom-core-chev { width: 14px; height: 14px; color: #667085; flex-shrink: 0; transition: transform 0.2s; cursor: pointer; padding: 2px; border-radius: 4px; }
+.all-bom-core-chev:hover { background: #eaecf0; }
+.all-bom-core-info { display: flex; align-items: center; gap: 8px; cursor: pointer; border-radius: 4px; padding: 2px 6px; margin: -2px 0; }
+.all-bom-core-info:hover { background: #eaecf0; }
 .all-bom-core-group.collapsed .all-bom-core-chev { transform: rotate(-90deg); }
 .all-bom-core-group.collapsed .all-bom-core-children { display: none; }
 .all-bom-core-icon { width: 16px; height: 16px; flex-shrink: 0; color: #667085; display: flex; align-items: center; }
@@ -422,9 +425,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .device-info-color { width: 24px; height: 24px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.12s; }
 .device-info-color:hover { border-color: #667085; }
 .device-info-color.active { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.2); }
-.device-info-cam-row { display: flex; align-items: center; gap: 6px; padding: 4px 0; font-size: 12px; color: #344054; }
-.device-info-cam-icon { width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+.device-info-cam-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 12px; color: #344054; border-bottom: 1px solid #f2f4f7; }
+.device-info-cam-row:last-child { border-bottom: none; }
+.device-info-cam-icon { width: 18px; height: 18px; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
 .device-info-cam-icon svg { width: 10px; height: 10px; }
+.device-info-cam-tags { display: flex; gap: 4px; flex-shrink: 0; }
+.device-info-cam-tag { font-size: 10px; font-weight: 500; color: #667085; background: #f2f4f7; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
 
 </style>
 </head>
@@ -999,20 +1005,44 @@ function openDeviceInfoModal(type, id) {
   } else if (type === 'core') {
     const core = CORES.find(c => c._cid === id);
     if (!core) return;
-    const assignedCams = PLAN_CAMERAS.filter(c => c.planId === core.planId && c.coreIdx === CORES.filter(cc => cc.planId === core.planId).indexOf(core));
+    const coreIdx = CORES.filter(cc => cc.planId === core.planId).indexOf(core);
+    const assignedCams = PLAN_CAMERAS.filter(c => c.planId === core.planId && c.coreIdx === coreIdx);
+    const corePayment = core.payment || 'Upfront';
+    const coreDuration = core.duration || 1;
     title.textContent = 'Core Details';
     content.innerHTML = '<div class="device-info-section">' +
+      '<div class="device-info-section-title">Core Config</div>' +
       '<div class="device-info-row"><span class="device-info-label">Name</span><div class="device-info-ctrl"><input class="device-info-input" id="diName" value="' + core.name + '"></div></div>' +
       '<div class="device-info-row"><span class="device-info-label">Type</span><div class="device-info-ctrl"><span class="device-info-value">' + core.type + '</span></div></div>' +
       '<div class="device-info-row"><span class="device-info-label">Channels</span><div class="device-info-ctrl"><span class="device-info-value">' + core.cameraCount + '/' + core.channels + '</span></div></div>' +
       '<div class="device-info-row"><span class="device-info-label">Color</span><div class="device-info-ctrl"><div class="device-info-colors">' +
         COLORS.map(c => '<div class="device-info-color' + (c === core.color ? ' active' : '') + '" style="background:' + c + '" data-color="' + c + '" onclick="selectDeviceColor(this)"></div>').join('') +
       '</div></div></div>' +
-      '<div class="device-info-row"><span class="device-info-label">Price</span><div class="device-info-ctrl"><span class="device-info-value">$' + core.price.toLocaleString() + '</span></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Payment</span><div class="device-info-ctrl" style="display:flex;align-items:center;gap:8px">' +
+        '<select class="device-info-select" id="diPayment" onchange="document.getElementById(\'diDurationRow\').style.display=this.value===\'Yearly\'?\'flex\':\'none\'">' +
+          '<option value="Upfront"' + (corePayment === 'Upfront' ? ' selected' : '') + '>Upfront</option>' +
+          '<option value="Yearly"' + (corePayment === 'Yearly' ? ' selected' : '') + '>Yearly</option>' +
+        '</select>' +
+      '</div></div>' +
+      '<div class="device-info-row" id="diDurationRow" style="display:' + (corePayment === 'Yearly' ? 'flex' : 'none') + '"><span class="device-info-label">Duration</span><div class="device-info-ctrl">' +
+        '<select class="device-info-select" id="diDuration">' +
+          [1,3,5,10].map(d => '<option value="' + d + '"' + (coreDuration === d ? ' selected' : '') + '>' + d + ' yr</option>').join('') +
+        '</select>' +
+      '</div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Price</span><div class="device-info-ctrl"><span class="device-info-value" style="font-weight:700">$' + core.price.toLocaleString() + '</span></div></div>' +
       '</div>' +
-      (assignedCams.length ? '<div class="device-info-section"><div class="device-info-section-title">Assigned Cameras</div>' +
-        assignedCams.map(c => '<div class="device-info-cam-row"><div class="device-info-cam-icon" style="background:' + c.color + '">' + camSVGSmall + '</div>' + c.name + ' <span style="color:#98a2b3">' + c.model + '</span></div>').join('') +
-      '</div>' : '');
+      '<div class="device-info-section"><div class="device-info-section-title" style="display:flex;align-items:center;gap:8px">Assigned Cameras <span style="margin-left:auto;font-size:11px;font-weight:400;color:#98a2b3">' + assignedCams.length + ' / ' + core.channels + ' available</span></div>' +
+      (assignedCams.length === 0 ? '<div style="font-size:12px;color:#98a2b3;padding:4px 0 8px">No cameras assigned yet.</div>' :
+        assignedCams.map(c => '<div class="device-info-cam-row"><div class="device-info-cam-icon" style="background:' + c.color + '">' + camSVGSmall + '</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:#344054">' + c.name + '</div><div style="font-size:11px;color:#98a2b3">' + c.model + '</div></div>' +
+          '<span class="device-info-cam-tags">' +
+            '<span class="device-info-cam-tag">' + (c.payment || 'Upfront') + '</span>' +
+            '<span class="device-info-cam-tag">' + (c.payment === 'Yearly' ? (c.duration || 1) + ' yr' : '\u2014') + '</span>' +
+            '<span class="device-info-cam-tag">' + (c.license || 'Essential') + '</span>' +
+            '<span class="device-info-cam-tag">' + (c.retention || 30) + 'd</span>' +
+          '</span>' +
+          '<span style="font-size:12px;font-weight:600;color:#344054;white-space:nowrap">$' + c.price.toLocaleString() + '</span>' +
+        '</div>').join('')) +
+      '</div>';
   } else {
     const dev = DEVICES[id];
     if (!dev) return;
@@ -1054,6 +1084,10 @@ function saveDeviceInfo() {
     if (core) {
       if (nameInput) core.name = nameInput.value.trim() || core.name;
       if (colorEl) core.color = colorEl.dataset.color;
+      const paySelect = document.getElementById('diPayment');
+      if (paySelect) core.payment = paySelect.value;
+      const durSelect = document.getElementById('diDuration');
+      if (durSelect) core.duration = parseInt(durSelect.value);
     }
   }
   closeDeviceInfoModal();
@@ -1290,12 +1324,14 @@ function renderAllLocationsBom() {
           const coreCb = selectMode && showCores ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (_allBomScope.selectedCores.has(core._cid) ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + core._cid + ',\'core\',event)">' : '';
 
           tableHtml += '<div class="all-bom-core-group' + (coreCollapsed ? ' collapsed' : '') + '" id="allBomCore' + coreKey + '">';
-          tableHtml += '<div class="all-bom-core-hdr" style="--core-color:' + core.color + '" onclick="toggleAllBomCoreGroup(\'' + coreKey + '\',event)">' +
+          tableHtml += '<div class="all-bom-core-hdr" style="--core-color:' + core.color + '">' +
             coreCb +
-            '<div class="all-bom-core-chev">' + chevronSVG16 + '</div>' +
-            '<div class="all-bom-core-icon">' + coreSVGSmall + '</div>' +
-            '<span class="all-bom-core-name">' + core.name + '</span>' +
-            '<span class="all-bom-core-type">' + core.type + '</span>' +
+            '<div class="all-bom-core-chev" onclick="toggleAllBomCoreGroup(\'' + coreKey + '\',event)">' + chevronSVG16 + '</div>' +
+            '<div class="all-bom-core-info" onclick="openDeviceInfoModal(\'core\',' + core._cid + ')">' +
+              '<div class="all-bom-core-icon">' + coreSVGSmall + '</div>' +
+              '<span class="all-bom-core-name">' + core.name + '</span>' +
+              '<span class="all-bom-core-type">' + core.type + '</span>' +
+            '</div>' +
             '<span class="all-bom-core-badge">' + coreCams.length + '/' + core.channels + ' ch</span>' +
             '<span class="all-bom-core-price">$' + coreGroupTotal.toLocaleString() + '</span>' +
           '</div>';
