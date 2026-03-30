@@ -3880,7 +3880,7 @@ function renderBOMPane() {
   const toolbarHtml = (cams.length + cores.length > 0) ? `
     <div class="bom-toolbar" style="flex-direction:column;gap:0;padding:0">
       <div class="bom-toolbar-row" style="justify-content:flex-start;padding:6px 16px">
-        <span style="font-size:11px;font-weight:500;color:#98a2b3;white-space:nowrap">Bulk editing</span>
+        <span style="font-size:11px;font-weight:500;color:#98a2b3;white-space:nowrap">Items:</span>
         <div class="bom-quick-switch">
           <button class="bom-quick-switch-btn ${!selectMode ? 'active' : ''}" onclick="bomSetScope('all')" style="text-align:center">All</button>
           <button class="bom-quick-switch-btn ${selectMode ? 'active' : ''}" onclick="bomSetScope('select')" style="text-align:center">Select cameras</button>
