@@ -276,6 +276,128 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .fpw-btn-primary { background: #7c3aed; border-color: #7c3aed; color: #fff; }
 .fpw-btn-primary:hover { background: #6d28d9; }
 
+/* ── All-Locations BOM: View Options ── */
+.all-bom-view-opts { background: #f9fafb; border: 1px solid #eaecf0; border-radius: 10px; padding: 16px 20px; display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+.all-bom-vo-section { display: flex; flex-direction: column; gap: 6px; min-width: 140px; }
+.all-bom-vo-label { font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.5px; }
+.all-bom-vo-search { width: 180px; padding: 6px 10px; border: 1px solid #d0d5dd; border-radius: 6px; font-size: 12px; font-family: inherit; outline: none; box-sizing: border-box; }
+.all-bom-vo-search:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.15); }
+.all-bom-vo-check { display: flex; align-items: center; gap: 6px; padding: 2px 0; font-size: 12px; color: #344054; cursor: pointer; }
+.bom-cb { width: 16px; height: 16px; accent-color: #7c3aed; cursor: pointer; flex-shrink: 0; margin: 0; }
+.bom-item-cb { margin-right: 2px; }
+/* ── Filter dropdown ── */
+.all-bom-filter-wrap { position: relative; display: inline-flex; }
+.all-bom-filter-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid #d0d5dd; border-radius: 6px; font-size: 12px; font-weight: 500; color: #344054; background: #fff; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+.all-bom-filter-btn:hover { background: #f9fafb; border-color: #98a2b3; }
+.all-bom-filter-btn.active { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+.all-bom-filter-dd { position: absolute; top: calc(100% + 4px); left: 0; min-width: 180px; background: #fff; border: 1px solid #e4e7ec; border-radius: 8px; box-shadow: 0 8px 24px rgba(16,24,40,0.12); z-index: 100; display: flex; flex-direction: column; padding: 8px 12px; gap: 2px; }
+
+.bom-quick-switch { display: inline-flex; align-items: center; border: 1px solid #d0d5dd; border-radius: 6px; overflow: hidden; }
+.bom-quick-switch-btn { padding: 3px 8px; font-size: 11px; font-weight: 500; color: #667085; cursor: pointer; border: none; background: #fff; font-family: inherit; transition: all 0.12s; white-space: nowrap; }
+.bom-quick-switch-btn:not(:last-child) { border-right: 1px solid #d0d5dd; }
+.bom-quick-switch-btn.active { background: #7c3aed; color: #fff; }
+.bom-quick-switch-btn:hover:not(.active):not(.disabled) { background: #f9fafb; }
+.bom-quick-switch-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+/* ── All-Locations BOM: Toolbar ── */
+.all-bom-toolbar-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #eaecf0; flex-wrap: wrap; }
+.bom-toolbar-dd { padding: 3px 6px; font-size: 11px; font-weight: 500; color: #344054; border: 1px solid #d0d5dd; border-radius: 6px; background: #fff; font-family: inherit; cursor: pointer; outline: none; }
+.bom-toolbar-dd:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
+.bom-addon-btn { padding: 3px 6px; font-size: 11px; font-weight: 500; color: #344054; border: 1px solid #d0d5dd; border-radius: 6px; background: #fff; font-family: inherit; cursor: pointer; outline: none; transition: all 0.15s; white-space: nowrap; }
+.bom-addon-btn:hover { background: #f9fafb; border-color: #98a2b3; }
+.bom-delete-btn { padding: 3px 6px; font-size: 11px; font-weight: 500; color: #d92d20; border: 1px solid #fecaca; border-radius: 6px; background: #fff; font-family: inherit; cursor: pointer; outline: none; transition: all 0.15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; margin-left: auto; }
+.bom-delete-btn:hover { background: #fef3f2; border-color: #d92d20; }
+.bom-delete-btn svg { width: 12px; height: 12px; }
+
+/* ── All-Locations BOM: Table rows ── */
+.all-bom-loc { margin-bottom: 2px; }
+.all-bom-loc-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f9fafb; border: 1px solid #eaecf0; border-radius: 8px; cursor: pointer; user-select: none; transition: background 0.12s; }
+.all-bom-loc-row:hover { background: #f2f4f7; }
+.all-bom-loc-chev { width: 16px; height: 16px; color: #667085; flex-shrink: 0; transition: transform 0.2s; }
+.all-bom-loc.collapsed .all-bom-loc-chev { transform: rotate(-90deg); }
+.all-bom-loc.collapsed .all-bom-loc-children { display: none; }
+.all-bom-loc-name { font-size: 14px; font-weight: 600; color: #344054; }
+.all-bom-loc-meta { font-size: 12px; color: #98a2b3; }
+.all-bom-loc-total { margin-left: auto; font-size: 14px; font-weight: 700; color: #344054; white-space: nowrap; }
+.all-bom-loc-children { padding: 4px 0 4px 20px; }
+
+.all-bom-plan { margin-bottom: 2px; }
+.all-bom-plan-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f9fafb; border: 1px solid #f2f4f7; border-radius: 6px; cursor: pointer; user-select: none; transition: background 0.12s; }
+.all-bom-plan-row:hover { background: #f2f4f7; }
+.all-bom-plan-chev { width: 14px; height: 14px; color: #98a2b3; flex-shrink: 0; transition: transform 0.2s; }
+.all-bom-plan.collapsed .all-bom-plan-chev { transform: rotate(-90deg); }
+.all-bom-plan.collapsed .all-bom-plan-children { display: none; }
+.all-bom-plan-name { font-size: 13px; font-weight: 600; color: #344054; }
+.all-bom-plan-meta { font-size: 12px; color: #98a2b3; }
+.all-bom-plan-total { margin-left: auto; font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; }
+.all-bom-plan-children { padding: 4px 0 4px 16px; }
+
+/* ── Device type grouping headers ── */
+.all-bom-type-group { margin-bottom: 4px; }
+.all-bom-type-hdr { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #f9fafb; border: 1px solid #eaecf0; border-radius: 8px; cursor: pointer; user-select: none; }
+.all-bom-type-hdr:hover { background: #f2f4f7; }
+.all-bom-type-chev { width: 16px; height: 16px; color: #667085; flex-shrink: 0; transition: transform 0.2s; }
+.all-bom-type-group.collapsed .all-bom-type-chev { transform: rotate(-90deg); }
+.all-bom-type-group.collapsed .all-bom-type-children { display: none; }
+.all-bom-type-name { font-size: 14px; font-weight: 600; color: #344054; }
+.all-bom-type-badge { font-size: 11px; font-weight: 600; color: #667085; background: #eaecf0; border-radius: 10px; padding: 1px 8px; }
+.all-bom-type-total { margin-left: auto; font-size: 14px; font-weight: 700; color: #344054; white-space: nowrap; }
+.all-bom-type-children { padding: 4px 0 4px 16px; }
+
+/* ── BOM items ── */
+.all-bom-item { padding: 6px 4px; border-bottom: 1px solid #f2f4f7; border-radius: 4px; }
+.all-bom-item:hover { background: #f5f3ff; }
+.all-bom-item:hover .all-bom-item-name { color: #7c3aed; }
+.all-bom-item:last-child { border-bottom: none; }
+.all-bom-item-primary { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.all-bom-item-icon { width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+.all-bom-item-icon svg { width: 12px; height: 12px; }
+.all-bom-item-icon.plain { background: #f2f4f7; color: #667085; width: 16px; height: 16px; border-radius: 0; }
+.all-bom-item-icon.plain svg { width: 16px; height: 16px; }
+.all-bom-item-name { font-size: 13px; font-weight: 500; color: #344054; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.all-bom-item-model { font-size: 12px; font-weight: 400; color: #98a2b3; white-space: nowrap; margin-left: 4px; }
+.all-bom-item-name-wrap { flex: 1; display: flex; align-items: baseline; min-width: 80px; overflow: hidden; }
+.all-bom-item-price { font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; min-width: 72px; text-align: right; flex-shrink: 0; }
+.all-bom-item-qty { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.all-bom-tag { font-size: 11px; color: #667085; white-space: nowrap; padding: 2px 6px; border-radius: 4px; background: #f2f4f7; flex-shrink: 0; }
+.all-bom-tags { display: flex; gap: 4px; flex-shrink: 0; align-items: center; margin-left: auto; margin-right: 8px; }
+.all-bom-empty { padding: 16px; text-align: center; font-size: 13px; color: #98a2b3; }
+
+/* ── Grand Total ── */
+.all-bom-grand { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-top: 2px solid #eaecf0; margin-top: 12px; }
+.all-bom-grand-label { font-size: 14px; font-weight: 600; color: #101828; }
+.all-bom-grand-val { font-size: 18px; font-weight: 800; color: #7c3aed; }
+
+/* ── What's Included ── */
+.all-bom-included { background: #faf8ff; border: 1px solid #d8b4fe; border-radius: 12px; padding: 14px 16px; margin-top: 16px; }
+.all-bom-included-headline { font-size: 12px; font-weight: 700; color: #344054; margin-bottom: 10px; }
+.all-bom-included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+.all-bom-included-feat { display: flex; align-items: center; gap: 8px; }
+.all-bom-included-feat-icon { width: 28px; height: 28px; background: #f3f0ff; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #7c3aed; }
+.all-bom-included-feat-icon svg { width: 14px; height: 14px; }
+.all-bom-included-feat-label { font-size: 11px; font-weight: 500; color: #344054; line-height: 1.3; }
+
+/* ── Device Info Modal ── */
+.device-info-section { padding: 12px 0; border-bottom: 1px solid #f2f4f7; }
+.device-info-section:last-child { border-bottom: none; }
+.device-info-section-title { font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 10px; }
+.device-info-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.device-info-row:last-child { margin-bottom: 0; }
+.device-info-label { font-size: 12px; font-weight: 500; color: #667085; width: 100px; flex-shrink: 0; }
+.device-info-ctrl { flex: 1; }
+.device-info-input { width: 100%; padding: 6px 10px; font-size: 13px; border: 1px solid #d0d5dd; border-radius: 6px; color: #101828; outline: none; font-family: inherit; }
+.device-info-input:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
+.device-info-select { width: 100%; padding: 6px 10px; font-size: 13px; border: 1px solid #d0d5dd; border-radius: 6px; color: #101828; outline: none; font-family: inherit; background: #fff; cursor: pointer; }
+.device-info-select:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
+.device-info-value { font-size: 13px; color: #344054; font-weight: 500; }
+.device-info-colors { display: flex; gap: 6px; flex-wrap: wrap; }
+.device-info-color { width: 24px; height: 24px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.12s; }
+.device-info-color:hover { border-color: #667085; }
+.device-info-color.active { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.2); }
+.device-info-cam-row { display: flex; align-items: center; gap: 6px; padding: 4px 0; font-size: 12px; color: #344054; }
+.device-info-cam-icon { width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+.device-info-cam-icon svg { width: 10px; height: 10px; }
+
 </style>
 </head>
 <body>
@@ -489,6 +611,33 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   </div>
 </div>
 
+<!-- Device Info Modal -->
+<div class="modal-overlay" id="deviceInfoModal" onclick="if(event.target===this)closeDeviceInfoModal()">
+  <div class="modal" style="width:520px">
+    <div class="modal-title" id="deviceInfoTitle"></div>
+    <div id="deviceInfoContent"></div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeDeviceInfoModal()">Cancel</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveDeviceInfo()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="allBomDeleteModal" onclick="if(event.target===this)closeAllBomDeleteModal()">
+  <div class="modal" style="width:400px">
+    <div class="modal-title" style="display:flex;align-items:center;gap:8px">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#d92d20" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      Delete Items
+    </div>
+    <div id="allBomDeleteBody" style="font-size:13px;color:#344054;line-height:1.6;padding:0 0 16px"></div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeAllBomDeleteModal()">Cancel</button>
+      <button class="modal-btn" style="background:#d92d20;color:#fff;border-color:#d92d20" onclick="confirmAllBomDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ── Demo Data ── */
 const SITES = [
@@ -614,6 +763,557 @@ const sortedCategories = categoryOrder.filter(c => categories[c]);
 const totalDevices = locationDevices.reduce((sum, d) => sum + d.qty, 0);
 const coreMSRP = locationCores.reduce((sum, c) => sum + c.price, 0);
 const totalMSRP = locationDevices.reduce((sum, d) => sum + (d.price * d.qty), 0) + coreMSRP;
+
+/* ── Synthetic IDs for PLAN_CAMERAS and CORES ── */
+PLAN_CAMERAS.forEach((c, i) => c._id = i);
+CORES.forEach((c, i) => c._cid = i);
+
+/* ── All-Locations BOM state ── */
+/* Build dynamic device-type list from data */
+const _allBomDeviceTypes = [];
+const _allBomDeviceTypeSet = new Set();
+const _dtAllLocIds = siteLocations.map(l => l.id);
+const _dtAllPlanIds = PLANS.filter(p => _dtAllLocIds.includes(p.locationId)).map(p => p.id);
+if (PLAN_CAMERAS.some(c => _dtAllPlanIds.includes(c.planId))) { _allBomDeviceTypes.push('Cameras'); _allBomDeviceTypeSet.add('Cameras'); }
+if (CORES.some(c => _dtAllPlanIds.includes(c.planId))) { _allBomDeviceTypes.push('Cores'); _allBomDeviceTypeSet.add('Cores'); }
+DEVICES.filter(d => _dtAllPlanIds.includes(d.planId) && d.category !== 'Video Security').forEach(d => { if (!_allBomDeviceTypeSet.has(d.category)) { _allBomDeviceTypes.push(d.category); _allBomDeviceTypeSet.add(d.category); } });
+
+const _allBomViewOptions = {
+  search: '',
+  devices: {},  // keys are device type names, values are booleans
+  groupBy: 'locations',  // 'locations' | 'type'
+  sort: 'default',
+  filterOpen: false,
+};
+_allBomDeviceTypes.forEach(t => _allBomViewOptions.devices[t] = true);
+const _allBomScope = {
+  mode: 'all',
+  selectedCameras: new Set(),
+  selectedCores: new Set(),
+};
+const _allBomCollapse = {};
+
+/* ── All-Locations BOM helpers ── */
+const chevronSVG16 = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+const camSVGSmall = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>';
+const coreSVGSmall = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>';
+
+function computePlanBomTotal(pId) {
+  const cams = PLAN_CAMERAS.filter(c => c.planId === pId);
+  const cores = CORES.filter(c => c.planId === pId);
+  const devs = DEVICES.filter(d => d.planId === pId);
+  return cams.reduce((s, c) => s + c.price, 0) + cores.reduce((s, c) => s + c.price, 0) + devs.reduce((s, d) => s + d.price * d.qty, 0);
+}
+function computeLocationBomTotal(locId) {
+  return PLANS.filter(p => p.locationId === locId).reduce((s, p) => s + computePlanBomTotal(p.id), 0);
+}
+function computeProjectGrandTotal() {
+  return siteLocations.reduce((s, loc) => s + computeLocationBomTotal(loc.id), 0);
+}
+
+function allBomMatchesSearch(name, model) {
+  if (!_allBomViewOptions.search) return true;
+  const q = _allBomViewOptions.search.toLowerCase();
+  return (name || '').toLowerCase().includes(q) || (model || '').toLowerCase().includes(q);
+}
+
+function allBomSortItems(items, nameKey, priceKey) {
+  const s = _allBomViewOptions.sort;
+  if (s === 'az') return [...items].sort((a, b) => (a[nameKey] || '').localeCompare(b[nameKey] || ''));
+  if (s === 'priceLow') return [...items].sort((a, b) => a[priceKey] - b[priceKey]);
+  if (s === 'priceHigh') return [...items].sort((a, b) => b[priceKey] - a[priceKey]);
+  return items;
+}
+
+/* ── All-Locations BOM: View Options functions ── */
+function allBomVoSearch(val) {
+  _allBomViewOptions.search = val;
+  renderAllLocationsBom();
+  const inp = document.querySelector('.all-bom-vo-search');
+  if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+}
+function allBomVoToggleDevice(key) {
+  _allBomViewOptions.devices[key] = !_allBomViewOptions.devices[key];
+  renderAllLocationsBom();
+}
+function allBomVoToggleFilter(evt) {
+  if (evt) evt.stopPropagation();
+  _allBomViewOptions.filterOpen = !_allBomViewOptions.filterOpen;
+  renderAllLocationsBom();
+}
+function allBomVoFilterClickOutside(evt) {
+  if (_allBomViewOptions.filterOpen && !evt.target.closest('.all-bom-filter-wrap')) {
+    _allBomViewOptions.filterOpen = false;
+    const dd = document.querySelector('.all-bom-filter-dd');
+    if (dd) dd.remove();
+    const btn = document.querySelector('.all-bom-filter-btn');
+    if (btn) btn.classList.remove('active');
+  }
+}
+document.addEventListener('mousedown', allBomVoFilterClickOutside);
+function allBomVoGroupBy(mode) {
+  _allBomViewOptions.groupBy = mode;
+  renderAllLocationsBom();
+}
+function allBomVoSort(mode) {
+  _allBomViewOptions.sort = _allBomViewOptions.sort === mode ? 'default' : mode;
+  renderAllLocationsBom();
+}
+
+/* ── All-Locations BOM: Scope functions ── */
+function allBomSetScope(mode) {
+  _allBomScope.mode = mode;
+  if (mode === 'all') { _allBomScope.selectedCameras.clear(); _allBomScope.selectedCores.clear(); }
+  renderAllLocationsBom();
+}
+function allBomScopeToggleItem(id, type, evt) {
+  evt.stopPropagation();
+  const set = type === 'core' ? _allBomScope.selectedCores : _allBomScope.selectedCameras;
+  if (set.has(id)) set.delete(id); else set.add(id);
+  renderAllLocationsBom();
+}
+function allBomScopeToggleAll(checked) {
+  _allBomScope.selectedCameras.clear();
+  _allBomScope.selectedCores.clear();
+  if (checked) {
+    const allLocIds = siteLocations.map(l => l.id);
+    const allPlanIds = PLANS.filter(p => allLocIds.includes(p.locationId)).map(p => p.id);
+    PLAN_CAMERAS.filter(c => allPlanIds.includes(c.planId)).forEach(c => _allBomScope.selectedCameras.add(c._id));
+    CORES.filter(c => allPlanIds.includes(c.planId)).forEach(c => _allBomScope.selectedCores.add(c._cid));
+  }
+  renderAllLocationsBom();
+}
+
+/* ── All-Locations BOM: Delete ── */
+function allBomDeleteItems() {
+  const selectMode = _allBomScope.mode === 'select';
+  let camCount, coreCount;
+  if (selectMode) {
+    camCount = _allBomScope.selectedCameras.size;
+    coreCount = _allBomScope.selectedCores.size;
+  } else {
+    const allLocIds = siteLocations.map(l => l.id);
+    const allPlanIds = PLANS.filter(p => allLocIds.includes(p.locationId)).map(p => p.id);
+    camCount = PLAN_CAMERAS.filter(c => allPlanIds.includes(c.planId)).length;
+    coreCount = CORES.filter(c => allPlanIds.includes(c.planId)).length;
+  }
+  if (camCount + coreCount === 0) return;
+  const parts = [];
+  if (camCount) parts.push(camCount + ' camera' + (camCount > 1 ? 's' : ''));
+  if (coreCount) parts.push(coreCount + ' core' + (coreCount > 1 ? 's' : ''));
+  document.getElementById('allBomDeleteBody').innerHTML = 'Are you sure you want to delete <strong>' + parts.join(', ') + '</strong>?';
+  document.getElementById('allBomDeleteModal').classList.add('show');
+}
+function confirmAllBomDelete() {
+  const selectMode = _allBomScope.mode === 'select';
+  if (selectMode) {
+    _allBomScope.selectedCameras.forEach(id => { const idx = PLAN_CAMERAS.findIndex(c => c._id === id); if (idx >= 0) PLAN_CAMERAS.splice(idx, 1); });
+    _allBomScope.selectedCores.forEach(id => { const idx = CORES.findIndex(c => c._cid === id); if (idx >= 0) CORES.splice(idx, 1); });
+  } else {
+    const allLocIds = siteLocations.map(l => l.id);
+    const allPlanIds = PLANS.filter(p => allLocIds.includes(p.locationId)).map(p => p.id);
+    for (let i = PLAN_CAMERAS.length - 1; i >= 0; i--) { if (allPlanIds.includes(PLAN_CAMERAS[i].planId)) PLAN_CAMERAS.splice(i, 1); }
+    for (let i = CORES.length - 1; i >= 0; i--) { if (allPlanIds.includes(CORES[i].planId)) CORES.splice(i, 1); }
+  }
+  _allBomScope.selectedCameras.clear();
+  _allBomScope.selectedCores.clear();
+  PLAN_CAMERAS.forEach((c, i) => c._id = i);
+  CORES.forEach((c, i) => c._cid = i);
+  closeAllBomDeleteModal();
+  renderAllLocationsBom();
+}
+function closeAllBomDeleteModal() {
+  document.getElementById('allBomDeleteModal').classList.remove('show');
+}
+
+/* ── All-Locations BOM: Device Info Modal ── */
+let _deviceInfoContext = null;
+
+function openDeviceInfoModal(type, id) {
+  _deviceInfoContext = { type, id };
+  const modal = document.getElementById('deviceInfoModal');
+  const title = document.getElementById('deviceInfoTitle');
+  const content = document.getElementById('deviceInfoContent');
+  const COLORS = ['#7c3aed','#2563eb','#059669','#0891b2','#d97706','#dc2626','#be185d','#4338ca'];
+
+  if (type === 'camera') {
+    const cam = PLAN_CAMERAS.find(c => c._id === id);
+    if (!cam) return;
+    const planCores = CORES.filter(c => c.planId === cam.planId);
+    const coreOpts = planCores.map((c, i) => '<option value="' + i + '"' + (cam.coreIdx === i ? ' selected' : '') + '>' + c.name + ' (' + c.type + ')</option>').join('');
+    title.textContent = 'Camera Details';
+    content.innerHTML = '<div class="device-info-section">' +
+      '<div class="device-info-row"><span class="device-info-label">Name</span><div class="device-info-ctrl"><input class="device-info-input" id="diName" value="' + cam.name + '"></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Model</span><div class="device-info-ctrl"><span class="device-info-value">' + cam.model + '</span></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Type</span><div class="device-info-ctrl"><span class="device-info-value">' + cam.type + '</span></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Color</span><div class="device-info-ctrl"><div class="device-info-colors">' +
+        COLORS.map(c => '<div class="device-info-color' + (c === cam.color ? ' active' : '') + '" style="background:' + c + '" data-color="' + c + '" onclick="selectDeviceColor(this)"></div>').join('') +
+      '</div></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Price</span><div class="device-info-ctrl"><span class="device-info-value">$' + cam.price.toLocaleString() + '</span></div></div>' +
+      '</div>' +
+      '<div class="device-info-section"><div class="device-info-section-title">Assignment</div>' +
+      '<div class="device-info-row"><span class="device-info-label">Core</span><div class="device-info-ctrl"><select class="device-info-select" id="diCore"><option value="-1"' + (cam.coreIdx < 0 ? ' selected' : '') + '>Unassigned</option>' + coreOpts + '</select></div></div>' +
+      '</div>';
+  } else if (type === 'core') {
+    const core = CORES.find(c => c._cid === id);
+    if (!core) return;
+    const assignedCams = PLAN_CAMERAS.filter(c => c.planId === core.planId && c.coreIdx === CORES.filter(cc => cc.planId === core.planId).indexOf(core));
+    title.textContent = 'Core Details';
+    content.innerHTML = '<div class="device-info-section">' +
+      '<div class="device-info-row"><span class="device-info-label">Name</span><div class="device-info-ctrl"><input class="device-info-input" id="diName" value="' + core.name + '"></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Type</span><div class="device-info-ctrl"><span class="device-info-value">' + core.type + '</span></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Channels</span><div class="device-info-ctrl"><span class="device-info-value">' + core.cameraCount + '/' + core.channels + '</span></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Color</span><div class="device-info-ctrl"><div class="device-info-colors">' +
+        COLORS.map(c => '<div class="device-info-color' + (c === core.color ? ' active' : '') + '" style="background:' + c + '" data-color="' + c + '" onclick="selectDeviceColor(this)"></div>').join('') +
+      '</div></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Price</span><div class="device-info-ctrl"><span class="device-info-value">$' + core.price.toLocaleString() + '</span></div></div>' +
+      '</div>' +
+      (assignedCams.length ? '<div class="device-info-section"><div class="device-info-section-title">Assigned Cameras</div>' +
+        assignedCams.map(c => '<div class="device-info-cam-row"><div class="device-info-cam-icon" style="background:' + c.color + '">' + camSVGSmall + '</div>' + c.name + ' <span style="color:#98a2b3">' + c.model + '</span></div>').join('') +
+      '</div>' : '');
+  } else {
+    const dev = DEVICES[id];
+    if (!dev) return;
+    title.textContent = 'Device Details';
+    content.innerHTML = '<div class="device-info-section">' +
+      '<div class="device-info-row"><span class="device-info-label">Model</span><div class="device-info-ctrl"><span class="device-info-value">' + dev.model + '</span></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Category</span><div class="device-info-ctrl"><span class="device-info-value">' + dev.category + '</span></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Qty</span><div class="device-info-ctrl"><span class="device-info-value">' + dev.qty + '</span></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Accessories</span><div class="device-info-ctrl"><span class="device-info-value">' + dev.accessories + '</span></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Unit price</span><div class="device-info-ctrl"><span class="device-info-value">$' + dev.price.toLocaleString() + '</span></div></div>' +
+      '<div class="device-info-row"><span class="device-info-label">Total</span><div class="device-info-ctrl"><span class="device-info-value" style="font-weight:700">$' + (dev.price * dev.qty).toLocaleString() + '</span></div></div>' +
+      '</div>';
+  }
+  modal.classList.add('show');
+}
+function selectDeviceColor(el) {
+  el.parentElement.querySelectorAll('.device-info-color').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+function closeDeviceInfoModal() {
+  document.getElementById('deviceInfoModal').classList.remove('show');
+  _deviceInfoContext = null;
+}
+function saveDeviceInfo() {
+  if (!_deviceInfoContext) { closeDeviceInfoModal(); return; }
+  const { type, id } = _deviceInfoContext;
+  const nameInput = document.getElementById('diName');
+  const colorEl = document.querySelector('.device-info-color.active');
+  if (type === 'camera') {
+    const cam = PLAN_CAMERAS.find(c => c._id === id);
+    if (cam) {
+      if (nameInput) cam.name = nameInput.value.trim() || cam.name;
+      if (colorEl) cam.color = colorEl.dataset.color;
+      const coreSelect = document.getElementById('diCore');
+      if (coreSelect) cam.coreIdx = parseInt(coreSelect.value);
+    }
+  } else if (type === 'core') {
+    const core = CORES.find(c => c._cid === id);
+    if (core) {
+      if (nameInput) core.name = nameInput.value.trim() || core.name;
+      if (colorEl) core.color = colorEl.dataset.color;
+    }
+  }
+  closeDeviceInfoModal();
+  renderAllLocationsBom();
+}
+
+/* ── All-Locations BOM: Toggle collapse ── */
+function toggleAllBomLoc(locId) {
+  const key = 'loc-' + locId;
+  _allBomCollapse[key] = !_allBomCollapse[key];
+  const el = document.getElementById('allBomLoc' + locId);
+  if (el) el.classList.toggle('collapsed');
+}
+function toggleAllBomPlan(planId) {
+  const key = 'plan-' + planId;
+  _allBomCollapse[key] = !_allBomCollapse[key];
+  const el = document.getElementById('allBomPlan' + planId);
+  if (el) el.classList.toggle('collapsed');
+}
+function toggleAllBomTypeGroup(key) {
+  _allBomCollapse['type-' + key] = !_allBomCollapse['type-' + key];
+  const el = document.getElementById('allBomType' + key);
+  if (el) el.classList.toggle('collapsed');
+}
+
+/* ── All-Locations BOM: Master render ── */
+function renderAllLocationsBom() {
+  const voEl = document.getElementById('allBomViewOpts');
+  const tbEl = document.getElementById('allBomToolbar');
+  const tableEl = document.getElementById('allBomTable');
+  const gtEl = document.getElementById('allBomGrandTotal');
+  const inclEl = document.getElementById('allBomIncluded');
+  if (!voEl) return;
+
+  const selectMode = _allBomScope.mode === 'select';
+  const allLocIds = siteLocations.map(l => l.id);
+  const allPlanIds = PLANS.filter(p => allLocIds.includes(p.locationId)).map(p => p.id);
+  const allCams = PLAN_CAMERAS.filter(c => allPlanIds.includes(c.planId));
+  const allCoresArr = CORES.filter(c => allPlanIds.includes(c.planId));
+  const totalAllChecked = selectMode && (_allBomScope.selectedCameras.size + _allBomScope.selectedCores.size) ===
+    (allCams.length + allCoresArr.length) && (allCams.length + allCoresArr.length) > 0;
+
+  // View Options
+  voEl.innerHTML = '<div class="all-bom-view-opts">' +
+    '<div class="all-bom-vo-section">' +
+      '<div class="all-bom-vo-label">Search</div>' +
+      '<input class="all-bom-vo-search" type="text" placeholder="Search devices..." value="' + (_allBomViewOptions.search || '') + '" oninput="allBomVoSearch(this.value)">' +
+    '</div>' +
+    '<div class="all-bom-vo-section">' +
+      '<div class="all-bom-vo-label">Filters</div>' +
+      (function() {
+        var allOn = _allBomDeviceTypes.every(function(t) { return _allBomViewOptions.devices[t]; });
+        var noneOn = _allBomDeviceTypes.every(function(t) { return !_allBomViewOptions.devices[t]; });
+        var checkedCount = _allBomDeviceTypes.filter(function(t) { return _allBomViewOptions.devices[t]; }).length;
+        var label = allOn || noneOn ? 'All devices' : checkedCount + ' of ' + _allBomDeviceTypes.length + ' selected';
+        var ddHtml = '<div class="all-bom-filter-wrap">' +
+          '<button class="all-bom-filter-btn' + (_allBomViewOptions.filterOpen ? ' active' : '') + '" onclick="allBomVoToggleFilter(event)">' +
+            '<span>' + label + '</span>' +
+            '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 0.2s;' + (_allBomViewOptions.filterOpen ? 'transform:rotate(180deg)' : '') + '"><polyline points="6 9 12 15 18 9"/></svg>' +
+          '</button>';
+        if (_allBomViewOptions.filterOpen) {
+          ddHtml += '<div class="all-bom-filter-dd" onclick="event.stopPropagation()">';
+          _allBomDeviceTypes.forEach(function(t) {
+            var safeKey = t.replace(/'/g, "\\'");
+            ddHtml += '<label class="all-bom-vo-check"><input type="checkbox" class="bom-cb"' + (_allBomViewOptions.devices[t] ? ' checked' : '') + ' onchange="allBomVoToggleDevice(\'' + safeKey + '\')"> ' + t + '</label>';
+          });
+          ddHtml += '</div>';
+        }
+        ddHtml += '</div>';
+        return ddHtml;
+      })() +
+    '</div>' +
+    '<div class="all-bom-vo-section">' +
+      '<div class="all-bom-vo-label">Group by</div>' +
+      '<div class="bom-quick-switch">' +
+        '<button class="bom-quick-switch-btn' + (_allBomViewOptions.groupBy === 'locations' ? ' active' : '') + '" onclick="allBomVoGroupBy(\'locations\')" style="flex:1;text-align:center">Locations & Plans</button>' +
+        '<button class="bom-quick-switch-btn' + (_allBomViewOptions.groupBy === 'type' ? ' active' : '') + '" onclick="allBomVoGroupBy(\'type\')" style="flex:1;text-align:center">Device type</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="all-bom-vo-section">' +
+      '<div class="all-bom-vo-label">Sort</div>' +
+      '<div class="bom-quick-switch">' +
+        '<button class="bom-quick-switch-btn' + (_allBomViewOptions.sort === 'az' ? ' active' : '') + '" onclick="allBomVoSort(\'az\')" style="flex:1;text-align:center">A → Z</button>' +
+        '<button class="bom-quick-switch-btn' + (_allBomViewOptions.sort === 'priceLow' ? ' active' : '') + '" onclick="allBomVoSort(\'priceLow\')" style="flex:1;text-align:center">Price ↑</button>' +
+        '<button class="bom-quick-switch-btn' + (_allBomViewOptions.sort === 'priceHigh' ? ' active' : '') + '" onclick="allBomVoSort(\'priceHigh\')" style="flex:1;text-align:center">Price ↓</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+
+  // Toolbar
+  const trashSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>';
+  tbEl.innerHTML = '<div class="all-bom-toolbar-row">' +
+    '<span style="font-size:11px;font-weight:500;color:#98a2b3;white-space:nowrap">Items:</span>' +
+    '<div class="bom-quick-switch">' +
+      '<button class="bom-quick-switch-btn' + (!selectMode ? ' active' : '') + '" onclick="allBomSetScope(\'all\')">All</button>' +
+      '<button class="bom-quick-switch-btn' + (selectMode ? ' active' : '') + '" onclick="allBomSetScope(\'select\')">Selected</button>' +
+    '</div>' +
+    (selectMode ? '<label class="all-bom-vo-check" style="margin-left:4px"><input type="checkbox" class="bom-cb"' + (totalAllChecked ? ' checked' : '') + ' onchange="allBomScopeToggleAll(this.checked)"> All</label>' : '') +
+    '<span style="width:1px;height:18px;background:#eaecf0;flex-shrink:0"></span>' +
+    '<button class="bom-addon-btn" onclick="alert(\'Add-ons placeholder\')">+ Add-ons</button>' +
+    '<button class="bom-delete-btn" onclick="allBomDeleteItems()">' + trashSvg + 'Delete</button>' +
+  '</div>';
+
+  // Table
+  let tableHtml = '';
+
+  if (_allBomViewOptions.groupBy === 'locations') {
+    siteLocations.forEach(loc => {
+      const locPlans = PLANS.filter(p => p.locationId === loc.id);
+      const locTotal = computeLocationBomTotal(loc.id);
+      const locCollapsed = _allBomCollapse['loc-' + loc.id] !== false;
+
+      tableHtml += '<div class="all-bom-loc' + (locCollapsed ? ' collapsed' : '') + '" id="allBomLoc' + loc.id + '">';
+      tableHtml += '<div class="all-bom-loc-row" onclick="toggleAllBomLoc(' + loc.id + ')">' +
+        '<div class="all-bom-loc-chev">' + chevronSVG16 + '</div>' +
+        '<span class="all-bom-loc-name">' + loc.name + '</span>' +
+        '<span class="all-bom-loc-meta">' + loc.address + '</span>' +
+        '<span class="all-bom-loc-total">$' + locTotal.toLocaleString() + '</span>' +
+      '</div>';
+      tableHtml += '<div class="all-bom-loc-children">';
+
+      locPlans.forEach(plan => {
+        const planTotal = computePlanBomTotal(plan.id);
+        const planCollapsed = _allBomCollapse['plan-' + plan.id] !== false;
+
+        tableHtml += '<div class="all-bom-plan' + (planCollapsed ? ' collapsed' : '') + '" id="allBomPlan' + plan.id + '">';
+        tableHtml += '<div class="all-bom-plan-row" onclick="toggleAllBomPlan(' + plan.id + ')">' +
+          '<div class="all-bom-plan-chev">' + chevronSVG16 + '</div>' +
+          '<span class="all-bom-plan-name">' + plan.name + '</span>' +
+          '<span class="all-bom-plan-total">$' + planTotal.toLocaleString() + '</span>' +
+        '</div>';
+        tableHtml += '<div class="all-bom-plan-children">';
+
+        // Cameras
+        if (_allBomViewOptions.devices['Cameras']) {
+          let planCams = PLAN_CAMERAS.filter(c => c.planId === plan.id);
+          planCams = planCams.filter(c => allBomMatchesSearch(c.name, c.model));
+          planCams = allBomSortItems(planCams, 'name', 'price');
+          planCams.forEach(cam => {
+            const checked = _allBomScope.selectedCameras.has(cam._id);
+            const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
+            tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
+              '<div class="all-bom-item-primary">' + cbHtml +
+              '<div class="all-bom-item-icon" style="background:' + cam.color + '">' + camSVGSmall + '</div>' +
+              '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + '</span></div>' +
+              '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
+            '</div></div>';
+          });
+        }
+
+        // Cores
+        if (_allBomViewOptions.devices['Cores']) {
+          let planCoresArr = CORES.filter(c => c.planId === plan.id);
+          planCoresArr = planCoresArr.filter(c => allBomMatchesSearch(c.name, c.type));
+          planCoresArr = allBomSortItems(planCoresArr, 'name', 'price');
+          planCoresArr.forEach(core => {
+            const checked = _allBomScope.selectedCores.has(core._cid);
+            const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + core._cid + ',\'core\',event)">' : '';
+            tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'core\',' + core._cid + ')">' +
+              '<div class="all-bom-item-primary">' + cbHtml +
+              '<div class="all-bom-item-icon" style="background:' + core.color + '">' + coreSVGSmall + '</div>' +
+              '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + core.name + '</span><span class="all-bom-item-model">' + core.type + ' · ' + core.cameraCount + '/' + core.channels + ' ch</span></div>' +
+              '<span class="all-bom-item-price">$' + core.price.toLocaleString() + '</span>' +
+            '</div></div>';
+          });
+        }
+
+        // Other devices (Access Control, Intercom, etc.) — filter by each category
+        {
+          let planDevs = DEVICES.filter(d => d.planId === plan.id && d.category !== 'Video Security' && _allBomViewOptions.devices[d.category]);
+          planDevs = planDevs.filter(d => allBomMatchesSearch(d.model, d.category));
+          planDevs.forEach((dev, di) => {
+            const devGlobalIdx = DEVICES.indexOf(dev);
+            tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'device\',' + devGlobalIdx + ')">' +
+              '<div class="all-bom-item-primary">' +
+              '<div class="all-bom-item-icon plain">' + deviceIconSVG(dev.category) + '</div>' +
+              '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + dev.model + '</span><span class="all-bom-item-model">' + dev.category + '</span></div>' +
+              '<span class="all-bom-item-qty">' + dev.qty + '</span>' +
+              '<span class="all-bom-item-price">$' + (dev.price * dev.qty).toLocaleString() + '</span>' +
+            '</div></div>';
+          });
+        }
+
+        tableHtml += '</div></div>'; // plan children + plan
+      });
+
+      tableHtml += '</div></div>'; // loc children + loc
+    });
+  } else {
+    // Device type grouping
+    const allPlanIdsForSite = PLANS.filter(p => allLocIds.includes(p.locationId)).map(p => p.id);
+
+    // Cameras
+    if (_allBomViewOptions.devices['Cameras']) {
+      let cams = PLAN_CAMERAS.filter(c => allPlanIdsForSite.includes(c.planId));
+      cams = cams.filter(c => allBomMatchesSearch(c.name, c.model));
+      cams = allBomSortItems(cams, 'name', 'price');
+      const camTotal = cams.reduce((s, c) => s + c.price, 0);
+      const camCollapsed = !!_allBomCollapse['type-cameras'];
+      tableHtml += '<div class="all-bom-type-group' + (camCollapsed ? ' collapsed' : '') + '" id="allBomTypecameras">' +
+        '<div class="all-bom-type-hdr" onclick="toggleAllBomTypeGroup(\'cameras\')">' +
+          '<div class="all-bom-type-chev">' + chevronSVG16 + '</div>' +
+          '<span class="all-bom-type-name">Cameras</span>' +
+          '<span class="all-bom-type-badge">' + cams.length + '</span>' +
+          '<span class="all-bom-type-total">$' + camTotal.toLocaleString() + '</span>' +
+        '</div><div class="all-bom-type-children">';
+      cams.forEach(cam => {
+        const checked = _allBomScope.selectedCameras.has(cam._id);
+        const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
+        const planObj = PLANS.find(p => p.id === cam.planId);
+        const locObj = planObj ? LOCATIONS.find(l => l.id === planObj.locationId) : null;
+        tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
+          '<div class="all-bom-item-primary">' + cbHtml +
+          '<div class="all-bom-item-icon" style="background:' + cam.color + '">' + camSVGSmall + '</div>' +
+          '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + (locObj ? ' · ' + locObj.name : '') + '</span></div>' +
+          '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
+        '</div></div>';
+      });
+      tableHtml += '</div></div>';
+    }
+
+    // Cores
+    if (_allBomViewOptions.devices['Cores']) {
+      let cores = CORES.filter(c => allPlanIdsForSite.includes(c.planId));
+      cores = cores.filter(c => allBomMatchesSearch(c.name, c.type));
+      cores = allBomSortItems(cores, 'name', 'price');
+      const coreTotal = cores.reduce((s, c) => s + c.price, 0);
+      const coreCollapsed = !!_allBomCollapse['type-cores'];
+      tableHtml += '<div class="all-bom-type-group' + (coreCollapsed ? ' collapsed' : '') + '" id="allBomTypecores">' +
+        '<div class="all-bom-type-hdr" onclick="toggleAllBomTypeGroup(\'cores\')">' +
+          '<div class="all-bom-type-chev">' + chevronSVG16 + '</div>' +
+          '<span class="all-bom-type-name">Cores</span>' +
+          '<span class="all-bom-type-badge">' + cores.length + '</span>' +
+          '<span class="all-bom-type-total">$' + coreTotal.toLocaleString() + '</span>' +
+        '</div><div class="all-bom-type-children">';
+      cores.forEach(core => {
+        const checked = _allBomScope.selectedCores.has(core._cid);
+        const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + core._cid + ',\'core\',event)">' : '';
+        tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'core\',' + core._cid + ')">' +
+          '<div class="all-bom-item-primary">' + cbHtml +
+          '<div class="all-bom-item-icon" style="background:' + core.color + '">' + coreSVGSmall + '</div>' +
+          '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + core.name + '</span><span class="all-bom-item-model">' + core.type + ' · ' + core.cameraCount + '/' + core.channels + ' ch</span></div>' +
+          '<span class="all-bom-item-price">$' + core.price.toLocaleString() + '</span>' +
+        '</div></div>';
+      });
+      tableHtml += '</div></div>';
+    }
+
+    // Other devices — filter by each category
+    {
+      const otherDevs = DEVICES.filter(d => allPlanIdsForSite.includes(d.planId) && d.category !== 'Video Security' && _allBomViewOptions.devices[d.category]);
+      const otherCats = {};
+      otherDevs.forEach(d => { if (!otherCats[d.category]) otherCats[d.category] = []; otherCats[d.category].push(d); });
+      Object.keys(otherCats).forEach(cat => {
+        const devs = otherCats[cat];
+        const catTotal = devs.reduce((s, d) => s + d.price * d.qty, 0);
+        const catCollapsed = !!_allBomCollapse['type-' + cat];
+        tableHtml += '<div class="all-bom-type-group' + (catCollapsed ? ' collapsed' : '') + '" id="allBomType' + cat.replace(/\s/g,'') + '">' +
+          '<div class="all-bom-type-hdr" onclick="toggleAllBomTypeGroup(\'' + cat.replace(/\s/g,'') + '\')">' +
+            '<div class="all-bom-type-chev">' + chevronSVG16 + '</div>' +
+            '<span class="all-bom-type-name">' + cat + '</span>' +
+            '<span class="all-bom-type-badge">' + devs.reduce((s,d) => s+d.qty, 0) + '</span>' +
+            '<span class="all-bom-type-total">$' + catTotal.toLocaleString() + '</span>' +
+          '</div><div class="all-bom-type-children">';
+        devs.forEach(dev => {
+          const devGlobalIdx = DEVICES.indexOf(dev);
+          tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'device\',' + devGlobalIdx + ')">' +
+            '<div class="all-bom-item-primary">' +
+            '<div class="all-bom-item-icon plain">' + deviceIconSVG(dev.category) + '</div>' +
+            '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + dev.model + '</span><span class="all-bom-item-model">' + dev.accessories + '</span></div>' +
+            '<span class="all-bom-item-qty">' + dev.qty + '</span>' +
+            '<span class="all-bom-item-price">$' + (dev.price * dev.qty).toLocaleString() + '</span>' +
+          '</div></div>';
+        });
+        tableHtml += '</div></div>';
+      });
+    }
+  }
+
+  if (!tableHtml) tableHtml = '<div class="all-bom-empty">No matching devices found.</div>';
+  tableEl.innerHTML = tableHtml;
+
+  // Grand Total
+  const grandTotal = computeProjectGrandTotal();
+  gtEl.innerHTML = '<div class="all-bom-grand"><span class="all-bom-grand-label">Grand Total</span><span class="all-bom-grand-val">$' + grandTotal.toLocaleString() + '</span></div>';
+
+  // What's Included
+  inclEl.innerHTML = '<div class="all-bom-included">' +
+    '<div class="all-bom-included-headline">What\'s included</div>' +
+    '<div class="all-bom-included-grid">' +
+      '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 014 4c0 2-2 3-4 6-2-3-4-4-4-6a4 4 0 014-4z"/><path d="M6 20h12"/></svg></div><span class="all-bom-included-feat-label">Lumana AI engine</span></div>' +
+      '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/><path d="M5 21h14"/></svg></div><span class="all-bom-included-feat-label">Unlimited cloud backup for video clips</span></div>' +
+      '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><span class="all-bom-included-feat-label">Real-time alerts</span></div>' +
+      '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><span class="all-bom-included-feat-label">Unlimited users</span></div>' +
+      '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><span class="all-bom-included-feat-label">Fast investigation</span></div>' +
+      '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21.5 2v6h-6M2.5 22v-6h6"/><path d="M2.5 11.5A10 10 0 0121.5 8M21.5 12.5a10 10 0 01-19 3.5"/></svg></div><span class="all-bom-included-feat-label">Automatic software updates</span></div>' +
+      '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="3" width="20" height="18" rx="3"/><line x1="6" y1="10" x2="18" y2="10"/><line x1="6" y1="15" x2="18" y2="15"/></svg></div><span class="all-bom-included-feat-label">24/7 local storage</span></div>' +
+      '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.86 19.86 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.86 19.86 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div><span class="all-bom-included-feat-label">24/7 Support</span></div>' +
+      '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><span class="all-bom-included-feat-label">Dedicated onboarding & training ($10,000 value)</span></div>' +
+      '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="all-bom-included-feat-label">3-year warranty on hardware, up to 10 years</span></div>' +
+    '</div></div>';
+}
 
 /* ── Build sidebar ── */
 function buildSidebar() {
@@ -814,8 +1514,15 @@ function buildMain() {
         <span>$${grandTotal.toLocaleString()}</span>
       </div>`;
 
+  } else if (showAllLocations) {
+    /* ── All locations: full BOM with view options, toolbar, table ── */
+    html += '<div id="allBomViewOpts" style="margin-bottom:12px"></div>';
+    html += '<div id="allBomToolbar"></div>';
+    html += '<div id="allBomTable"></div>';
+    html += '<div id="allBomGrandTotal"></div>';
+    html += '<div id="allBomIncluded"></div>';
   } else {
-    /* ── Non-plan view: flat category-based device rows ── */
+    /* ── Single-location non-plan view: flat category-based device rows ── */
     sortedCategories.forEach((cat, idx) => {
       const devices = categories[cat];
       const catTotal = cat === 'Cores' ? devices.length : devices.reduce((sum, d) => sum + d.qty, 0);
@@ -866,6 +1573,9 @@ function buildMain() {
 
   html += '</div>';
   main.innerHTML = html;
+
+  /* Render all-locations BOM if on that tab */
+  if (showAllLocations) renderAllLocationsBom();
 }
 
 /* ── Collapse/Expand sections ── */
