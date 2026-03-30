@@ -395,13 +395,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .all-bom-expand-btn svg { width: 12px; height: 12px; }
 
 /* ── What's Included ── */
-.all-bom-included { background: #faf8ff; border: 1px solid #d8b4fe; border-radius: 12px; padding: 14px 16px; margin-top: 16px; }
-.all-bom-included-headline { font-size: 12px; font-weight: 700; color: #344054; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
-.all-bom-included-headline:hover { color: #1d2939; }
-.all-bom-included-headline svg { width: 16px; height: 16px; flex-shrink: 0; color: #667085; transition: transform .15s; }
-.all-bom-included.expanded .all-bom-included-headline { margin-bottom: 10px; }
-.all-bom-included .all-bom-included-grid { display: none; }
-.all-bom-included.expanded .all-bom-included-grid { display: grid; }
+.all-bom-included { max-width: 670px; margin-left: auto; padding: 14px 16px; margin-top: 10px; background: #faf8ff; border: 1px solid #d8b4fe; border-radius: 10px; display: none; }
+.all-bom-included.expanded { display: block; }
+.all-bom-included-link { font-size: 12px; font-weight: 500; color: #7c3aed; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; border: none; background: none; font-family: inherit; padding: 0; }
+.all-bom-included-link:hover { color: #6d28d9; }
+.all-bom-included-link svg { width: 14px; height: 14px; transition: transform .15s; }
+.all-bom-included-link.open svg { transform: rotate(180deg); }
 .all-bom-included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
 .all-bom-included-feat { display: flex; align-items: center; gap: 8px; }
 .all-bom-included-feat-icon { width: 28px; height: 28px; background: #f3f0ff; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #7c3aed; }
@@ -1172,14 +1171,8 @@ function toggleAllBomIncluded() {
   _allBomIncludedOpen = !_allBomIncludedOpen;
   var el = document.querySelector('.all-bom-included');
   if (el) el.classList.toggle('expanded', _allBomIncludedOpen);
-  var hdr = document.querySelector('.all-bom-included-headline');
-  if (hdr) {
-    var svg = hdr.querySelector('svg');
-    if (svg) {
-      var pl = svg.querySelector('polyline');
-      if (pl) pl.setAttribute('points', _allBomIncludedOpen ? '6 15 12 9 18 15' : '6 9 12 15 18 9');
-    }
-  }
+  var link = document.querySelector('.all-bom-included-link');
+  if (link) link.classList.toggle('open', _allBomIncludedOpen);
 }
 
 /* ── All-Locations BOM: Master render ── */
@@ -1188,7 +1181,6 @@ function renderAllLocationsBom() {
   const tbEl = document.getElementById('allBomToolbar');
   const tableEl = document.getElementById('allBomTable');
   const gtEl = document.getElementById('allBomGrandTotal');
-  const inclEl = document.getElementById('allBomIncluded');
   if (!voEl) return;
 
   const selectMode = _allBomScope.mode === 'select';
@@ -1490,17 +1482,15 @@ function renderAllLocationsBom() {
   if (!tableHtml) tableHtml = '<div class="all-bom-empty">No matching devices found.</div>';
   tableEl.innerHTML = tableHtml;
 
-  // Grand Total
+  // Grand Total + What's Included
   const grandTotal = computeProjectGrandTotal();
-  gtEl.innerHTML = '<div class="all-bom-grand"><span class="all-bom-grand-label">Grand Total</span><span class="all-bom-grand-val">$' + grandTotal.toLocaleString() + '</span></div>';
-
-  // What's Included
   var inclCls = 'all-bom-included' + (_allBomIncludedOpen ? ' expanded' : '');
-  var chevDown = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
-  var chevUp = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 15 12 9 18 15"/></svg>';
-  inclEl.innerHTML = '<div class="' + inclCls + '">' +
-    '<div class="all-bom-included-headline" onclick="toggleAllBomIncluded()">What\'s included ' + (_allBomIncludedOpen ? chevUp : chevDown) + '</div>' +
-    '<div class="all-bom-included-grid">' +
+  var linkCls = 'all-bom-included-link' + (_allBomIncludedOpen ? ' open' : '');
+  var chevSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+  gtEl.innerHTML = '<div class="all-bom-grand"><span class="all-bom-grand-label">Grand Total</span>' +
+    '<span class="all-bom-grand-val">$' + grandTotal.toLocaleString() + '</span></div>' +
+    '<div style="text-align:right"><button class="' + linkCls + '" onclick="toggleAllBomIncluded()">What\'s included? ' + chevSvg + '</button></div>' +
+    '<div class="' + inclCls + '"><div class="all-bom-included-grid">' +
       '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 014 4c0 2-2 3-4 6-2-3-4-4-4-6a4 4 0 014-4z"/><path d="M6 20h12"/></svg></div><span class="all-bom-included-feat-label">Lumana AI engine</span></div>' +
       '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/><path d="M5 21h14"/></svg></div><span class="all-bom-included-feat-label">Unlimited cloud backup for video clips</span></div>' +
       '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><span class="all-bom-included-feat-label">Real-time alerts</span></div>' +
@@ -1715,7 +1705,6 @@ function buildMain() {
     html += '<div id="allBomToolbar"></div>';
     html += '<div id="allBomTable"></div>';
     html += '<div id="allBomGrandTotal"></div>';
-    html += '<div id="allBomIncluded"></div>';
   } else {
     /* ── Single-location non-plan view: flat category-based device rows ── */
     sortedCategories.forEach((cat, idx) => {
