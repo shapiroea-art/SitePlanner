@@ -58,7 +58,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .map-view-plan-btn:hover { background: #6d28d9; }
 
 /* ── Header ── */
-.content-header { padding: 20px 28px 16px; border-bottom: 1px solid #eaecf0; }
+.content-header { padding: 16px 24px; border-bottom: 1px solid #eaecf0; }
 .header-row { display: flex; align-items: center; justify-content: space-between; }
 .header-row + .header-row { margin-top: 4px; }
 .header-device-count { font-size: 11px; font-weight: 600; color: #98a2b3; text-transform: uppercase; letter-spacing: 0.6px; }
@@ -110,7 +110,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .proj-edit-add:hover { color: #6d28d9; }
 
 /* ── BOM Sections ── */
-.bom-content { padding: 12px 28px 28px; }
+.bom-content { padding: 16px 24px 28px; }
 .bom-section { margin-bottom: 4px; }
 .bom-section-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 0 10px; cursor: pointer; user-select: none; border-bottom: 1px solid #eaecf0; }
 .bom-section-title { font-size: 16px; font-weight: 600; color: #101828; display: flex; align-items: center; gap: 8px; }
@@ -264,125 +264,128 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .fpw-btn-primary:hover { background: #6d28d9; }
 
 /* ── All-Locations BOM: View Options ── */
-.all-bom-view-opts { padding: 8px 0; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid #eaecf0; }
-.all-bom-vo-section { display: flex; flex-direction: row; gap: 6px; align-items: center; min-width: 0; }
-.all-bom-vo-label { font-size: 11px; font-weight: 500; color: #98a2b3; white-space: nowrap; }
-.all-bom-vo-search { width: 180px; padding: 6px 10px; border: 1px solid #d0d5dd; border-radius: 6px; font-size: 12px; font-family: inherit; outline: none; box-sizing: border-box; }
-.all-bom-vo-search:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.15); }
-.all-bom-vo-check { display: flex; align-items: center; gap: 6px; padding: 2px 0; font-size: 12px; color: #344054; cursor: pointer; }
+.all-bom-view-opts { padding: 12px 0; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid #eaecf0; }
+.all-bom-vo-section { display: flex; flex-direction: row; gap: 8px; align-items: center; min-width: 0; }
+.all-bom-vo-label { font-size: 12px; font-weight: 500; color: #98a2b3; white-space: nowrap; }
+.all-bom-vo-search { width: 240px; padding: 7px 12px; border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; box-sizing: border-box; }
+.all-bom-vo-search:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
+.all-bom-vo-check { display: flex; align-items: center; gap: 6px; padding: 2px 0; font-size: 13px; color: #344054; cursor: pointer; }
 .bom-cb { width: 16px; height: 16px; accent-color: #7c3aed; cursor: pointer; flex-shrink: 0; margin: 0; }
 .bom-item-cb { margin-right: 2px; }
 /* ── Filter dropdown ── */
 .all-bom-filter-wrap { position: relative; display: inline-flex; }
-.all-bom-filter-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid #d0d5dd; border-radius: 6px; font-size: 12px; font-weight: 500; color: #344054; background: #fff; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+.all-bom-filter-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-weight: 500; color: #344054; background: #fff; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
 .all-bom-filter-btn:hover { background: #f9fafb; border-color: #98a2b3; }
 .all-bom-filter-btn.active { background: #7c3aed; border-color: #7c3aed; color: #fff; }
-.all-bom-filter-dd { position: absolute; top: calc(100% + 4px); left: 0; min-width: 180px; background: #fff; border: 1px solid #e4e7ec; border-radius: 8px; box-shadow: 0 8px 24px rgba(16,24,40,0.12); z-index: 100; display: flex; flex-direction: column; padding: 8px 12px; gap: 2px; }
+.all-bom-filter-dd { position: absolute; top: calc(100% + 4px); left: 0; min-width: 200px; background: #fff; border: 1px solid #e4e7ec; border-radius: 8px; box-shadow: 0 8px 24px rgba(16,24,40,0.12); z-index: 100; display: flex; flex-direction: column; padding: 8px 12px; gap: 4px; }
 
-.bom-quick-switch { display: inline-flex; align-items: center; border: 1px solid #d0d5dd; border-radius: 6px; overflow: hidden; }
-.bom-quick-switch-btn { padding: 3px 8px; font-size: 11px; font-weight: 500; color: #667085; cursor: pointer; border: none; background: #fff; font-family: inherit; transition: all 0.12s; white-space: nowrap; }
+.bom-quick-switch { display: inline-flex; align-items: center; border: 1px solid #d0d5dd; border-radius: 8px; overflow: hidden; }
+.bom-quick-switch-btn { padding: 6px 12px; font-size: 12px; font-weight: 500; color: #667085; cursor: pointer; border: none; background: #fff; font-family: inherit; transition: all 0.12s; white-space: nowrap; }
 .bom-quick-switch-btn:not(:last-child) { border-right: 1px solid #d0d5dd; }
 .bom-quick-switch-btn.active { background: #7c3aed; color: #fff; }
 .bom-quick-switch-btn:hover:not(.active):not(.disabled) { background: #f9fafb; }
 .bom-quick-switch-btn.disabled { opacity: 0.35; pointer-events: none; }
 
 /* ── All-Locations BOM: Toolbar ── */
-.all-bom-toolbar-row { display: flex; align-items: center; gap: 8px; padding: 8px 0 12px; flex-wrap: wrap; }
-.bom-toolbar-dd { padding: 3px 6px; font-size: 11px; font-weight: 500; color: #344054; border: 1px solid #d0d5dd; border-radius: 6px; background: #fff; font-family: inherit; cursor: pointer; outline: none; }
-.bom-toolbar-dd:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
-.bom-addon-btn { padding: 3px 6px; font-size: 11px; font-weight: 500; color: #344054; border: 1px solid #d0d5dd; border-radius: 6px; background: #fff; font-family: inherit; cursor: pointer; outline: none; transition: all 0.15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+.all-bom-toolbar-row { display: flex; align-items: center; gap: 8px; padding: 10px 0 14px; flex-wrap: wrap; }
+.bom-toolbar-dd { padding: 6px 10px; font-size: 12px; font-weight: 500; color: #344054; border: 1px solid #d0d5dd; border-radius: 8px; background: #fff; font-family: inherit; cursor: pointer; outline: none; }
+.bom-toolbar-dd:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
+.bom-addon-btn { padding: 6px 10px; font-size: 12px; font-weight: 500; color: #344054; border: 1px solid #d0d5dd; border-radius: 8px; background: #fff; font-family: inherit; cursor: pointer; outline: none; transition: all 0.15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
 .bom-addon-btn:hover { background: #f9fafb; border-color: #98a2b3; }
-.bom-delete-btn { padding: 3px 6px; font-size: 11px; font-weight: 500; color: #d92d20; border: 1px solid #fecaca; border-radius: 6px; background: #fff; font-family: inherit; cursor: pointer; outline: none; transition: all 0.15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+.bom-delete-btn { padding: 6px 10px; font-size: 12px; font-weight: 500; color: #d92d20; border: 1px solid #fecaca; border-radius: 8px; background: #fff; font-family: inherit; cursor: pointer; outline: none; transition: all 0.15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
 .bom-delete-btn:hover { background: #fef3f2; border-color: #d92d20; }
-.bom-delete-btn svg { width: 12px; height: 12px; }
+.bom-delete-btn svg { width: 14px; height: 14px; }
 
 /* ── All-Locations BOM: Table rows ── */
-.all-bom-loc { margin-bottom: 8px; }
-.all-bom-loc:first-child { margin-top: 12px; }
-.all-bom-loc-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #f8fafc; border: 1px solid #eaecf0; border-left: 4px solid #7c3aed; border-radius: 8px; cursor: pointer; user-select: none; transition: background 0.12s; }
-.all-bom-loc-row:hover { background: #f2f4f7; }
-.all-bom-loc-chev { width: 16px; height: 16px; color: #667085; flex-shrink: 0; transition: transform 0.2s; }
+.all-bom-loc { margin-bottom: 0; }
+.all-bom-loc:first-child { margin-top: 4px; }
+.all-bom-loc-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #fff; border-bottom: 1px solid #eaecf0; cursor: pointer; user-select: none; transition: background 0.12s; min-height: 48px; }
+.all-bom-loc-row:hover { background: #f9fafb; }
+.all-bom-loc-chev { width: 20px; height: 20px; color: #98a2b3; flex-shrink: 0; transition: transform 0.2s; order: 99; margin-left: auto; }
 .all-bom-loc.collapsed .all-bom-loc-chev { transform: rotate(-90deg); }
 .all-bom-loc.collapsed .all-bom-loc-children { display: none; }
-.all-bom-loc-name { font-size: 16px; font-weight: 600; color: #101828; }
-.all-bom-loc-meta { font-size: 12px; color: #98a2b3; }
-.all-bom-loc-total { margin-left: auto; font-size: 15px; font-weight: 700; color: #344054; white-space: nowrap; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }
-.all-bom-loc-children { padding: 4px 0 4px 20px; }
+.all-bom-loc-icon { flex-shrink: 0; }
+.all-bom-loc-name { font-size: 14px; font-weight: 600; color: #101828; }
+.all-bom-loc-meta { font-size: 13px; color: #98a2b3; }
+.all-bom-loc-total { font-size: 14px; font-weight: 600; color: #344054; white-space: nowrap; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }
+.all-bom-loc-children { padding: 0 0 0 40px; }
 
-.all-bom-plan { margin-bottom: 8px; }
-.all-bom-plan-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f9fafb; border: 1px solid #f2f4f7; border-radius: 6px; cursor: pointer; user-select: none; transition: background 0.12s; }
-.all-bom-plan-row:hover { background: #f2f4f7; }
-.all-bom-plan-chev { width: 14px; height: 14px; color: #98a2b3; flex-shrink: 0; transition: transform 0.2s; }
+.all-bom-plan { margin-bottom: 0; }
+.all-bom-plan-row { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: #fff; border-bottom: 1px solid #f2f4f7; cursor: pointer; user-select: none; transition: background 0.12s; min-height: 44px; }
+.all-bom-plan-row:hover { background: #f9fafb; }
+.all-bom-plan-chev { width: 16px; height: 16px; color: #98a2b3; flex-shrink: 0; transition: transform 0.2s; order: 99; }
 .all-bom-plan.collapsed .all-bom-plan-chev { transform: rotate(-90deg); }
 .all-bom-plan.collapsed .all-bom-plan-children { display: none; }
-.all-bom-plan-name { font-size: 13px; font-weight: 600; color: #344054; }
-.all-bom-plan-meta { font-size: 12px; color: #98a2b3; }
+.all-bom-plan-icon { flex-shrink: 0; }
+.all-bom-plan-name { font-size: 14px; font-weight: 500; color: #344054; }
+.all-bom-plan-meta { font-size: 13px; color: #98a2b3; }
 .all-bom-plan-total { font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }
-.all-bom-plan-view { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; font-size: 11px; font-weight: 600; color: #7c3aed; background: #f5f3ff; border: 1px solid #ede9fe; border-radius: 5px; text-decoration: none; white-space: nowrap; transition: all 0.15s; margin-left: auto; }
-.all-bom-plan-view:hover { background: #ede9fe; color: #6d28d9; }
+.all-bom-plan-view { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; font-size: 12px; font-weight: 500; color: #7c3aed; background: #fff; border: 1px solid #d0d5dd; border-radius: 6px; text-decoration: none; white-space: nowrap; transition: all 0.15s; margin-left: auto; }
+.all-bom-plan-view:hover { background: #f5f3ff; border-color: #7c3aed; }
 .all-bom-plan-view svg { width: 12px; height: 12px; }
-.all-bom-plan-children { padding: 4px 0 4px 16px; }
-.all-bom-plan-total-line { display: flex; justify-content: space-between; padding: 10px 14px; margin-top: 4px; background: #f9fafb; border-radius: 6px; font-size: 13px; font-weight: 700; color: #344054; }
+.all-bom-plan-children { padding: 0 0 8px 0; }
+.all-bom-plan-total-line { display: flex; justify-content: space-between; padding: 10px 16px; margin-top: 4px; border-top: 1px solid #eaecf0; font-size: 13px; font-weight: 700; color: #344054; }
 
 /* ── Core groups inside plan ── */
-.all-bom-core-group { margin-bottom: 4px; }
-.all-bom-core-hdr { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #f9fafb; border-radius: 0 6px 6px 0; cursor: pointer; user-select: none; border-left: 4px solid var(--core-color, #667085); }
-.all-bom-core-hdr:hover { background: #f2f4f7; }
-.all-bom-core-hdr-unassigned { border-left: 4px dashed #d0d5dd; }
-.all-bom-core-chev { width: 14px; height: 14px; color: #667085; flex-shrink: 0; transition: transform 0.2s; padding: 2px; border-radius: 4px; }
-.all-bom-core-info { display: flex; align-items: center; gap: 8px; cursor: pointer; border-radius: 4px; padding: 2px 6px; margin: -2px 0; }
-.all-bom-core-info:hover { background: #eaecf0; }
+.all-bom-core-group { margin-bottom: 0; }
+.all-bom-core-hdr { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fff; border-bottom: 1px solid #eaecf0; cursor: pointer; user-select: none; min-height: 48px; transition: background 0.12s; }
+.all-bom-core-hdr:hover { background: #f9fafb; }
+.all-bom-core-hdr-unassigned { }
+.all-bom-core-chev { width: 16px; height: 16px; color: #98a2b3; flex-shrink: 0; transition: transform 0.2s; }
+.all-bom-core-info { display: flex; align-items: center; gap: 8px; cursor: pointer; border-radius: 6px; padding: 4px 8px; margin: -4px 0; }
+.all-bom-core-info:hover { background: #f2f4f7; }
 .all-bom-core-group.collapsed .all-bom-core-chev { transform: rotate(-90deg); }
 .all-bom-core-group.collapsed .all-bom-core-children { display: none; }
-.all-bom-core-icon { width: 16px; height: 16px; flex-shrink: 0; color: #667085; display: flex; align-items: center; }
-.all-bom-core-icon svg { width: 16px; height: 16px; }
-.all-bom-core-name { font-size: 13px; font-weight: 600; color: #344054; }
-.all-bom-core-type { font-size: 12px; color: #98a2b3; margin-left: 4px; }
-.all-bom-core-badge { font-size: 11px; font-weight: 600; color: #667085; background: #eaecf0; border-radius: 10px; padding: 1px 8px; }
+.all-bom-core-icon { width: 18px; height: 18px; flex-shrink: 0; color: #667085; display: flex; align-items: center; }
+.all-bom-core-icon svg { width: 18px; height: 18px; }
+.all-bom-core-name { font-size: 14px; font-weight: 500; color: #344054; }
+.all-bom-core-type { font-size: 13px; color: #98a2b3; margin-left: 4px; }
+.all-bom-core-badge { font-size: 11px; font-weight: 600; color: #667085; background: #f2f4f7; border-radius: 10px; padding: 2px 8px; }
 .all-bom-core-price { margin-left: auto; font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; }
-.all-bom-core-children { padding: 2px 0 2px 52px; }
+.all-bom-core-children { padding: 0 0 0 68px; }
 
 /* ── Device type grouping headers ── */
-.all-bom-type-group { margin-bottom: 4px; }
-.all-bom-type-hdr { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #f9fafb; border: 1px solid #eaecf0; border-radius: 8px; cursor: pointer; user-select: none; }
-.all-bom-type-hdr:hover { background: #f2f4f7; }
-.all-bom-type-chev { width: 16px; height: 16px; color: #667085; flex-shrink: 0; transition: transform 0.2s; }
+.all-bom-type-group { margin-bottom: 0; }
+.all-bom-type-hdr { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #fff; border-bottom: 1px solid #eaecf0; cursor: pointer; user-select: none; min-height: 48px; transition: background 0.12s; }
+.all-bom-type-hdr:hover { background: #f9fafb; }
+.all-bom-type-chev { width: 16px; height: 16px; color: #98a2b3; flex-shrink: 0; transition: transform 0.2s; }
 .all-bom-type-group.collapsed .all-bom-type-chev { transform: rotate(-90deg); }
 .all-bom-type-group.collapsed .all-bom-type-children { display: none; }
 .all-bom-type-name { font-size: 14px; font-weight: 600; color: #344054; }
-.all-bom-type-badge { font-size: 11px; font-weight: 600; color: #667085; background: #eaecf0; border-radius: 10px; padding: 1px 8px; }
-.all-bom-type-total { margin-left: auto; font-size: 14px; font-weight: 700; color: #344054; white-space: nowrap; }
-.all-bom-type-children { padding: 4px 0 4px 16px; }
+.all-bom-type-badge { font-size: 11px; font-weight: 600; color: #667085; background: #f2f4f7; border-radius: 10px; padding: 2px 8px; }
+.all-bom-type-total { margin-left: auto; font-size: 14px; font-weight: 600; color: #344054; white-space: nowrap; }
+.all-bom-type-children { padding: 0 0 0 16px; }
 
 /* ── BOM items ── */
-.all-bom-item { padding: 6px 4px; border-bottom: 1px solid #f2f4f7; border-radius: 4px; }
-.all-bom-item:hover { background: #f5f3ff; }
+.all-bom-item { padding: 0; border-bottom: 1px solid #f2f4f7; }
+.all-bom-item:hover { background: #f9fafb; }
 .all-bom-item:hover .all-bom-item-name { color: #7c3aed; }
 .all-bom-item:last-child { border-bottom: none; }
-.all-bom-item-primary { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-.all-bom-item-icon { width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
-.all-bom-item-icon svg { width: 12px; height: 12px; }
-.all-bom-item-icon.plain { background: #f2f4f7; color: #667085; width: 16px; height: 16px; border-radius: 0; }
+.all-bom-item-primary { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 16px; min-height: 44px; }
+.all-bom-item-icon { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+.all-bom-item-icon svg { width: 14px; height: 14px; }
+.all-bom-item-icon.cam-icon-neutral { background: #f2f4f7; color: #667085; }
+.all-bom-item-icon.plain { background: #f2f4f7; color: #667085; width: 20px; height: 20px; border-radius: 4px; }
 .all-bom-item-icon.plain svg { width: 16px; height: 16px; }
-.all-bom-item-name { font-size: 13px; font-weight: 500; color: #344054; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.all-bom-item-model { font-size: 12px; font-weight: 400; color: #98a2b3; white-space: nowrap; margin-left: 4px; }
+.all-bom-item-name { font-size: 14px; font-weight: 500; color: #344054; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.all-bom-item-model { font-size: 13px; font-weight: 400; color: #98a2b3; white-space: nowrap; margin-left: 6px; }
 .all-bom-item-name-wrap { flex: 1; display: flex; align-items: baseline; min-width: 80px; overflow: hidden; }
-.all-bom-item-price { font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; min-width: 72px; text-align: right; flex-shrink: 0; }
-.all-bom-item-qty { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.all-bom-item-price { font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; min-width: 80px; text-align: right; flex-shrink: 0; }
+.all-bom-item-qty { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 20px; padding: 0 6px; border-radius: 10px; background: #f2f4f7; color: #344054; font-size: 12px; font-weight: 600; flex-shrink: 0; }
 .all-bom-tag { font-size: 11px; color: #667085; white-space: nowrap; padding: 2px 6px; border-radius: 4px; background: #f2f4f7; flex-shrink: 0; }
 .all-bom-tags { display: flex; gap: 4px; flex-shrink: 0; align-items: center; margin-left: auto; margin-right: 8px; }
-.all-bom-empty { padding: 16px; text-align: center; font-size: 13px; color: #98a2b3; }
+.all-bom-empty { padding: 24px; text-align: center; font-size: 14px; color: #98a2b3; }
 
 /* ── Grand Total ── */
-.all-bom-grand { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-top: 2px solid #eaecf0; margin-top: 12px; background: #f9fafb; border-radius: 8px; }
-.all-bom-grand-label { font-size: 14px; font-weight: 600; color: #344054; }
-.all-bom-grand-val { font-size: 24px; font-weight: 800; color: #7c3aed; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }
+.all-bom-grand { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-top: 2px solid #eaecf0; margin-top: 16px; background: #f9fafb; border-radius: 8px; }
+.all-bom-grand-label { font-size: 15px; font-weight: 600; color: #101828; }
+.all-bom-grand-val { font-size: 24px; font-weight: 700; color: #7c3aed; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }
 
 /* ── Expand / Collapse All ── */
 .all-bom-expand-row { display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 4px 0 2px; }
-.all-bom-expand-btn { background: none; border: none; font-size: 11px; font-weight: 500; color: #667085; cursor: pointer; padding: 2px 6px; border-radius: 4px; display: flex; align-items: center; gap: 3px; }
-.all-bom-expand-btn:hover { color: #344054; background: #f2f4f7; }
-.all-bom-expand-btn svg { width: 12px; height: 12px; }
+.all-bom-expand-btn { background: none; border: 1px solid #d0d5dd; font-size: 12px; font-weight: 500; color: #667085; cursor: pointer; padding: 5px 10px; border-radius: 8px; display: flex; align-items: center; gap: 4px; transition: all 0.15s; }
+.all-bom-expand-btn:hover { color: #344054; background: #f9fafb; border-color: #98a2b3; }
+.all-bom-expand-btn svg { width: 14px; height: 14px; }
 
 /* ── What's Included ── */
 .all-bom-included { max-width: 670px; margin-left: auto; padding: 14px 16px; margin-top: 10px; background: #faf8ff; border: 1px solid #d8b4fe; border-radius: 10px; display: none; }
@@ -398,8 +401,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .all-bom-included-feat-label { font-size: 11px; font-weight: 500; color: #344054; line-height: 1.3; }
 
 /* ── BOM Category blocks (plan tab) ── */
-.bom-category { border: 1px solid #eaecf0; border-radius: 8px; margin: 8px 0; overflow: hidden; }
-.bom-category-hdr { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f9fafb; cursor: pointer; user-select: none; }
+.bom-category { border: 1px solid #eaecf0; border-radius: 8px; margin: 8px 0; overflow: hidden; background: #fff; }
+.bom-category-hdr { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #f9fafb; cursor: pointer; user-select: none; min-height: 44px; }
 .bom-category-hdr:hover { background: #f2f4f7; }
 .bom-category-title { font-size: 13px; font-weight: 700; color: #344054; flex: 1; }
 .bom-category-badge { font-size: 11px; font-weight: 600; color: #667085; background: #eaecf0; border-radius: 10px; padding: 1px 8px; }
@@ -408,11 +411,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-category.collapsed .bom-category-footer { display: none; }
 .bom-category.collapsed .bom-chev { transform: rotate(-90deg); }
 .bom-category-body { padding: 0; }
-.bom-category-footer { display: flex; justify-content: space-between; padding: 8px 14px; border-top: 1px solid #eaecf0; background: #fafafa; }
-.bom-category-footer-label { font-size: 12px; font-weight: 600; color: #667085; }
+.bom-category-footer { display: flex; justify-content: space-between; padding: 10px 16px; border-top: 1px solid #eaecf0; background: #f9fafb; }
+.bom-category-footer-label { font-size: 13px; font-weight: 600; color: #667085; }
 .bom-category-footer-val { font-size: 14px; font-weight: 700; color: #344054; }
 .bom-chev { width: 18px; height: 18px; flex-shrink: 0; transition: transform 0.2s; color: #98a2b3; }
-.bom-sw-row { display: flex; align-items: center; gap: 8px; padding: 8px 16px; font-size: 13px; }
+.bom-sw-row { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-size: 14px; min-height: 44px; }
 .bom-sw-icon { width: 16px; height: 16px; flex-shrink: 0; color: #667085; display: flex; align-items: center; justify-content: center; }
 .bom-sw-icon svg { width: 16px; height: 16px; }
 .bom-sw-name { font-weight: 500; color: #344054; flex: 1; }
@@ -856,6 +859,12 @@ function toggleBomCategory(key) {
 /* ── All-Locations BOM helpers ── */
 const chevronSVG16 = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
 const camSVGSmall = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>';
+const CAM_ICONS = {
+  dome: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><ellipse cx="12" cy="13" rx="9" ry="5"/><path d="M3 13V9a9 4 0 0118 0v4"/><circle cx="12" cy="10" r="2" fill="currentColor" opacity=".4"/></svg>',
+  bullet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="8" width="14" height="8" rx="2"/><circle cx="19" cy="12" r="3"/><line x1="17" y1="12" x2="22" y2="12" stroke-width="1.5"/></svg>',
+  fisheye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>',
+};
+function camIconByType(type) { return CAM_ICONS[(type || '').toLowerCase()] || CAM_ICONS.dome; }
 const coreSVGSmall = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>';
 
 function computePlanBomTotal(pId) {
@@ -1344,7 +1353,7 @@ function renderAllLocationsBom() {
         var cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
         hwGroupsHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
           '<div class="all-bom-item-primary">' + cbHtml +
-          '<div class="all-bom-item-icon" style="background:' + cam.color + '">' + camSVGSmall + '</div>' +
+          '<div class="all-bom-item-icon cam-icon-neutral">' + camIconByType(cam.type) + '</div>' +
           '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + '</span></div>' +
           '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
         '</div></div>';
@@ -1374,7 +1383,7 @@ function renderAllLocationsBom() {
           var cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
           hwGroupsHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
             '<div class="all-bom-item-primary">' + cbHtml +
-            '<div class="all-bom-item-icon" style="background:' + cam.color + '">' + camSVGSmall + '</div>' +
+            '<div class="all-bom-item-icon cam-icon-neutral">' + camIconByType(cam.type) + '</div>' +
             '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + '</span></div>' +
             '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
           '</div></div>';
@@ -1445,6 +1454,7 @@ function renderAllLocationsBom() {
         tableHtml += '<div class="all-bom-loc' + (locCollapsed ? ' collapsed' : '') + '" id="allBomLoc' + loc.id + '">';
         tableHtml += '<div class="all-bom-loc-row" onclick="toggleAllBomLoc(' + loc.id + ')">' +
           '<div class="all-bom-loc-chev">' + chevronSVG16 + '</div>' +
+          '<svg class="all-bom-loc-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#98a2b3" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
           '<span class="all-bom-loc-name">' + loc.name + '</span>' +
           '<span class="all-bom-loc-meta">' + loc.address + '</span>' +
           '<span class="all-bom-loc-total">$' + locTotal.toLocaleString() + '</span>' +
@@ -1463,6 +1473,7 @@ function renderAllLocationsBom() {
         var viewPlanHref = 'site-planner-prototype.html?siteId=' + siteId + '&locationId=' + plan.locationId + '&planId=' + plan.id;
         tableHtml += '<div class="all-bom-plan-row" onclick="toggleAllBomPlan(' + plan.id + ')">' +
           '<div class="all-bom-plan-chev">' + chevronSVG16 + '</div>' +
+          '<svg class="all-bom-plan-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#98a2b3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(-45 12 12)"><circle cx="12" cy="5" r="3"/><path d="M9 7l-7 14h20L15 7"/></g></svg>' +
           '<span class="all-bom-plan-name">' + plan.name + '</span>' +
           '<a class="all-bom-plan-view" href="' + viewPlanHref + '" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>View plan</a>' +
           '<span class="all-bom-plan-total">$' + planTotal.toLocaleString() + '</span>' +
@@ -1505,7 +1516,7 @@ function renderAllLocationsBom() {
             const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
             locHwGroupsHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
               '<div class="all-bom-item-primary">' + cbHtml +
-              '<div class="all-bom-item-icon" style="background:' + cam.color + '">' + camSVGSmall + '</div>' +
+              '<div class="all-bom-item-icon cam-icon-neutral">' + camIconByType(cam.type) + '</div>' +
               '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + '</span></div>' +
               '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
             '</div></div>';
@@ -1535,7 +1546,7 @@ function renderAllLocationsBom() {
               const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
               locHwGroupsHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
                 '<div class="all-bom-item-primary">' + cbHtml +
-                '<div class="all-bom-item-icon" style="background:' + cam.color + '">' + camSVGSmall + '</div>' +
+                '<div class="all-bom-item-icon cam-icon-neutral">' + camIconByType(cam.type) + '</div>' +
                 '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + '</span></div>' +
                 '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
               '</div></div>';
@@ -1628,7 +1639,7 @@ function renderAllLocationsBom() {
         const locObj = planObj ? LOCATIONS.find(l => l.id === planObj.locationId) : null;
         tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
           '<div class="all-bom-item-primary">' + cbHtml +
-          '<div class="all-bom-item-icon" style="background:' + cam.color + '">' + camSVGSmall + '</div>' +
+          '<div class="all-bom-item-icon cam-icon-neutral">' + camIconByType(cam.type) + '</div>' +
           '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + (locObj ? ' · ' + locObj.name : '') + '</span></div>' +
           '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
         '</div></div>';
