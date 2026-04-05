@@ -301,17 +301,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .all-bom-loc:first-child { margin-top: 4px; }
 .all-bom-loc-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #fff; border-bottom: 1px solid #eaecf0; cursor: pointer; user-select: none; transition: background 0.12s; min-height: 48px; }
 .all-bom-loc-row:hover { background: #f9fafb; }
-.all-bom-loc-chev { width: 20px; height: 20px; color: #98a2b3; flex-shrink: 0; transition: transform 0.2s; order: 99; }
+.all-bom-loc-chev { width: 20px; height: 20px; color: #98a2b3; flex-shrink: 0; transition: transform 0.2s; }
 .all-bom-loc.collapsed .all-bom-loc-chev { transform: rotate(-90deg); }
 .all-bom-loc.collapsed .all-bom-loc-children { display: none; }
 .all-bom-loc-icon { flex-shrink: 0; }
 .all-bom-loc-name { font-size: 14px; font-weight: 600; color: #101828; }
 .all-bom-loc-meta { font-size: 13px; color: #98a2b3; }
-.all-bom-loc-total { font-size: 14px; font-weight: 600; color: #344054; white-space: nowrap; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; order: 98; }
-.all-bom-loc-edit { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: 1px solid #d0d5dd; border-radius: 6px; background: #fff; cursor: pointer; color: #667085; transition: all 0.15s; flex-shrink: 0; order: 96; margin-left: auto; }
+.all-bom-loc-total { font-size: 14px; font-weight: 600; color: #344054; white-space: nowrap; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }
+.all-bom-loc-edit { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: 1px solid #d0d5dd; border-radius: 6px; background: #fff; cursor: pointer; color: #667085; transition: all 0.15s; flex-shrink: 0; }
 .all-bom-loc-edit:hover { background: #f9fafb; color: #344054; border-color: #98a2b3; }
 .all-bom-loc-edit svg { width: 14px; height: 14px; }
-.all-bom-loc-create-plan { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; font-size: 12px; font-weight: 500; color: #667085; background: #fff; border: 1px solid #d0d5dd; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.15s; font-family: inherit; order: 97; }
+.all-bom-loc-create-plan { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; font-size: 12px; font-weight: 500; color: #667085; background: #fff; border: 1px solid #d0d5dd; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.15s; font-family: inherit; }
 .all-bom-loc-create-plan:hover { background: #f9fafb; border-color: #98a2b3; color: #344054; }
 .all-bom-loc-create-plan svg { width: 12px; height: 12px; }
 .all-bom-loc-children { padding: 0 0 0 40px; }
@@ -319,15 +319,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .all-bom-plan { margin-bottom: 0; }
 .all-bom-plan-row { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: #fff; border-bottom: 1px solid #f2f4f7; cursor: pointer; user-select: none; transition: background 0.12s; min-height: 44px; }
 .all-bom-plan-row:hover { background: #f9fafb; }
-.all-bom-plan-chev { width: 16px; height: 16px; color: #98a2b3; flex-shrink: 0; transition: transform 0.2s; order: 99; }
+.all-bom-plan-chev { width: 16px; height: 16px; color: #98a2b3; flex-shrink: 0; transition: transform 0.2s; }
 .all-bom-plan.collapsed .all-bom-plan-chev { transform: rotate(-90deg); }
 .all-bom-plan.collapsed .all-bom-plan-children { display: none; }
 .all-bom-plan-icon { flex-shrink: 0; }
 .all-bom-plan-name { font-size: 14px; font-weight: 500; color: #344054; }
 .all-bom-plan-meta { font-size: 13px; color: #98a2b3; }
-.all-bom-plan-total { font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }
-.all-bom-plan-view { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; font-size: 12px; font-weight: 500; color: #7c3aed; background: #fff; border: 1px solid #d0d5dd; border-radius: 6px; text-decoration: none; white-space: nowrap; transition: all 0.15s; margin-left: auto; }
-.all-bom-plan-view:hover { background: #f5f3ff; border-color: #7c3aed; }
+.all-bom-plan-total { font-size: 13px; font-weight: 600; color: #344054; white-space: nowrap; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; margin-left: auto; }
+.all-bom-plan-view { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; font-size: 12px; font-weight: 500; color: #fff; background: #7c3aed; border: 1px solid #7c3aed; border-radius: 6px; text-decoration: none; white-space: nowrap; transition: all 0.15s; }
+.all-bom-plan-view:hover { background: #6d28d9; border-color: #6d28d9; color: #fff; }
 .all-bom-plan-view svg { width: 12px; height: 12px; }
 .all-bom-plan-children { padding: 0 0 8px 40px; }
 .all-bom-plan-total-line { display: flex; justify-content: space-between; padding: 10px 16px; margin-top: 4px; border-top: 1px solid #eaecf0; font-size: 13px; font-weight: 700; color: #344054; }
@@ -1350,7 +1350,7 @@ function renderAllLocationsBom() {
         '<button class="bom-quick-switch-btn' + (_allBomViewOptions.sort === 'priceHigh' ? ' active' : '') + '" onclick="allBomVoSort(\'priceHigh\')" style="flex:1;text-align:center">Price ↓</button>' +
       '</div>' +
     '</div>' +
-    (showAllLocations ? '<button class="btn btn-primary" onclick="openCreateLocationModal()" style="margin-left:auto;flex-shrink:0"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Create location</button>' : '') +
+    (showAllLocations ? '<button class="btn" onclick="openCreateLocationModal()" style="margin-left:auto;flex-shrink:0"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Location</button>' : '') +
   '</div>';
 
   // Toolbar
@@ -1537,13 +1537,13 @@ function renderAllLocationsBom() {
       if (!singleLoc && !singlePlan) {
         tableHtml += '<div class="all-bom-loc' + (locCollapsed ? ' collapsed' : '') + '" id="allBomLoc' + loc.id + '">';
         tableHtml += '<div class="all-bom-loc-row" onclick="toggleAllBomLoc(' + loc.id + ')">' +
-          '<div class="all-bom-loc-chev">' + chevronSVG16 + '</div>' +
           '<svg class="all-bom-loc-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#98a2b3" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
           '<span class="all-bom-loc-name">' + loc.name + '</span>' +
           '<span class="all-bom-loc-meta">' + loc.address + '</span>' +
-          '<span class="all-bom-loc-total">$' + locTotal.toLocaleString() + '</span>' +
           '<button class="all-bom-loc-edit" onclick="openEditLocationModal(' + loc.id + ');event.stopPropagation()" title="Edit location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
-          '<button class="all-bom-loc-create-plan" onclick="openCreatePlanForLocation(' + loc.id + ');event.stopPropagation()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Sublocation</button>' +
+          '<button class="all-bom-loc-create-plan" onclick="openCreatePlanForLocation(' + loc.id + ');event.stopPropagation()" style="margin-left:auto"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Sublocation</button>' +
+          '<span class="all-bom-loc-total">$' + locTotal.toLocaleString() + '</span>' +
+          '<div class="all-bom-loc-chev">' + chevronSVG16 + '</div>' +
         '</div>';
         tableHtml += '<div class="all-bom-loc-children">';
       }
@@ -1558,11 +1558,11 @@ function renderAllLocationsBom() {
         tableHtml += '<div class="all-bom-plan' + (planCollapsed ? ' collapsed' : '') + '" id="allBomPlan' + plan.id + '">';
         var viewPlanHref = 'site-planner-prototype.html?siteId=' + siteId + '&locationId=' + plan.locationId + '&planId=' + plan.id;
         tableHtml += '<div class="all-bom-plan-row" onclick="toggleAllBomPlan(' + plan.id + ')">' +
-          '<div class="all-bom-plan-chev">' + chevronSVG16 + '</div>' +
           '<svg class="all-bom-plan-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#98a2b3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(-45 12 12)"><circle cx="12" cy="5" r="3"/><path d="M9 7l-7 14h20L15 7"/></g></svg>' +
           '<span class="all-bom-plan-name">' + plan.name + '</span>' +
           '<a class="all-bom-plan-view" href="' + viewPlanHref + '" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>View plan</a>' +
           '<span class="all-bom-plan-total">$' + planTotal.toLocaleString() + '</span>' +
+          '<div class="all-bom-plan-chev">' + chevronSVG16 + '</div>' +
         '</div>';
         tableHtml += '<div class="all-bom-plan-children">';
         }
