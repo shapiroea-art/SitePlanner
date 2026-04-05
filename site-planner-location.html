@@ -860,7 +860,7 @@ DEVICES.filter(d => _dtAllPlanIds.includes(d.planId) && d.category !== 'Video Se
 const _allBomViewOptions = {
   search: '',
   devices: {},  // keys are device type names, values are booleans
-  groupBy: 'locations',  // 'locations' | 'type'
+  groupBy: 'cores',  // 'cores' | 'type'
   sort: 'default',
   filterOpen: false,
 };
@@ -1338,7 +1338,7 @@ function renderAllLocationsBom() {
     '<div class="all-bom-vo-section">' +
       '<div class="all-bom-vo-label">Group by</div>' +
       '<div class="bom-quick-switch">' +
-        '<button class="bom-quick-switch-btn' + (_allBomViewOptions.groupBy === 'locations' ? ' active' : '') + '" onclick="allBomVoGroupBy(\'locations\')" style="flex:1;text-align:center">' + (showPlan ? 'Cores' : (!showAllLocations ? 'Plans' : 'Locations')) + '</button>' +
+        '<button class="bom-quick-switch-btn' + (_allBomViewOptions.groupBy === 'cores' ? ' active' : '') + '" onclick="allBomVoGroupBy(\'cores\')" style="flex:1;text-align:center">Cores</button>' +
         '<button class="bom-quick-switch-btn' + (_allBomViewOptions.groupBy === 'type' ? ' active' : '') + '" onclick="allBomVoGroupBy(\'type\')" style="flex:1;text-align:center">Device type</button>' +
       '</div>' +
     '</div>' +
@@ -1524,7 +1524,7 @@ function renderAllLocationsBom() {
       '</div>';
     }
 
-  } else if (_allBomViewOptions.groupBy === 'locations') {
+  } else {
     const singleLoc = (!showAllLocations && !showPlan);
     const singlePlan = showPlan;
     bomLocations.forEach(loc => {
@@ -1567,67 +1567,39 @@ function renderAllLocationsBom() {
         tableHtml += '<div class="all-bom-plan-children">';
         }
 
-        // Hierarchical: Core → Camera wrapped in Hardware/Software blocks
+        // Build hardware inner HTML — grouped by Cores or Device type
         const planCoresArr = CORES.filter(c => c.planId === plan.id);
         const planCamsAll = PLAN_CAMERAS.filter(c => c.planId === plan.id);
         const showCams = _allBomViewOptions.devices['Cameras'];
         const showCores = _allBomViewOptions.devices['Cores'];
 
-        // Build hardware inner HTML (core groups + cameras)
         var locHwGroupsHtml = '';
-        planCoresArr.forEach((core, ci) => {
-          if (!showCores && !showCams) return;
-          const coreCams = showCams ? allBomSortItems(planCamsAll.filter(c => c.coreIdx === ci).filter(c => allBomMatchesSearch(c.name, c.model)), 'name', 'price') : [];
-          if (!showCores && coreCams.length === 0) return;
-          const coreKey = plan.id + '-' + ci;
-          const coreCollapsed = !!_allBomCollapse['core-' + coreKey];
-          const coreGroupTotal = core.price + coreCams.reduce((s, c) => s + c.price, 0);
-          const coreCb = selectMode && showCores ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (_allBomScope.selectedCores.has(core._cid) ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + core._cid + ',\'core\',event)">' : '';
 
-          locHwGroupsHtml += '<div class="all-bom-core-group' + (coreCollapsed ? ' collapsed' : '') + '" id="allBomCore' + coreKey + '">';
-          locHwGroupsHtml += '<div class="all-bom-core-hdr" style="--core-color:' + core.color + '" onclick="toggleAllBomCoreGroup(\'' + coreKey + '\',event)">' +
-            coreCb +
-            '<div class="all-bom-core-chev">' + chevronSVG16 + '</div>' +
-            '<div class="all-bom-core-info" onclick="event.stopPropagation();openDeviceInfoModal(\'core\',' + core._cid + ')">' +
-              '<div class="all-bom-core-icon">' + coreSVGSmall + '</div>' +
-              '<span class="all-bom-core-name">' + core.name + '</span>' +
-              '<span class="all-bom-core-type">' + core.type + '</span>' +
-            '</div>' +
-            '<span class="all-bom-core-badge">' + coreCams.length + '/' + core.channels + ' ch</span>' +
-            '<span class="all-bom-core-price">$' + coreGroupTotal.toLocaleString() + '</span>' +
-          '</div>';
-          locHwGroupsHtml += '<div class="all-bom-core-children">';
-          coreCams.forEach(cam => {
-            const checked = _allBomScope.selectedCameras.has(cam._id);
-            const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
-            locHwGroupsHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
-              '<div class="all-bom-item-primary">' + cbHtml +
-              '<div class="all-bom-item-icon cam-icon-neutral">' + camIconByType(cam.type) + '</div>' +
-              '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + '</span></div>' +
-              '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
-            '</div></div>';
-          });
-          locHwGroupsHtml += '</div></div>';
-        });
+        if (_allBomViewOptions.groupBy === 'cores') {
+          // ── Group by Cores: core groups with nested cameras ──
+          planCoresArr.forEach((core, ci) => {
+            if (!showCores && !showCams) return;
+            const coreCams = showCams ? allBomSortItems(planCamsAll.filter(c => c.coreIdx === ci).filter(c => allBomMatchesSearch(c.name, c.model)), 'name', 'price') : [];
+            if (!showCores && coreCams.length === 0) return;
+            const coreKey = plan.id + '-' + ci;
+            const coreCollapsed = !!_allBomCollapse['core-' + coreKey];
+            const coreGroupTotal = core.price + coreCams.reduce((s, c) => s + c.price, 0);
+            const coreCb = selectMode && showCores ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (_allBomScope.selectedCores.has(core._cid) ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + core._cid + ',\'core\',event)">' : '';
 
-        // Unassigned cameras
-        if (showCams) {
-          let unassigned = planCamsAll.filter(c => c.coreIdx < 0 || c.coreIdx >= planCoresArr.length);
-          unassigned = unassigned.filter(c => allBomMatchesSearch(c.name, c.model));
-          unassigned = allBomSortItems(unassigned, 'name', 'price');
-          if (unassigned.length > 0) {
-            const uKey = plan.id + '-unassigned';
-            const uCollapsed = !!_allBomCollapse['core-' + uKey];
-            const uTotal = unassigned.reduce((s, c) => s + c.price, 0);
-            locHwGroupsHtml += '<div class="all-bom-core-group' + (uCollapsed ? ' collapsed' : '') + '" id="allBomCore' + uKey + '">';
-            locHwGroupsHtml += '<div class="all-bom-core-hdr all-bom-core-hdr-unassigned" onclick="toggleAllBomCoreGroup(\'' + uKey + '\',event)">' +
+            locHwGroupsHtml += '<div class="all-bom-core-group' + (coreCollapsed ? ' collapsed' : '') + '" id="allBomCore' + coreKey + '">';
+            locHwGroupsHtml += '<div class="all-bom-core-hdr" style="--core-color:' + core.color + '" onclick="toggleAllBomCoreGroup(\'' + coreKey + '\',event)">' +
+              coreCb +
               '<div class="all-bom-core-chev">' + chevronSVG16 + '</div>' +
-              '<span class="all-bom-core-name">Unassigned Cameras</span>' +
-              '<span class="all-bom-core-badge">' + unassigned.length + '</span>' +
-              '<span class="all-bom-core-price">$' + uTotal.toLocaleString() + '</span>' +
+              '<div class="all-bom-core-info" onclick="event.stopPropagation();openDeviceInfoModal(\'core\',' + core._cid + ')">' +
+                '<div class="all-bom-core-icon">' + coreSVGSmall + '</div>' +
+                '<span class="all-bom-core-name">' + core.name + '</span>' +
+                '<span class="all-bom-core-type">' + core.type + '</span>' +
+              '</div>' +
+              '<span class="all-bom-core-badge">' + coreCams.length + '/' + core.channels + ' ch</span>' +
+              '<span class="all-bom-core-price">$' + coreGroupTotal.toLocaleString() + '</span>' +
             '</div>';
             locHwGroupsHtml += '<div class="all-bom-core-children">';
-            unassigned.forEach(cam => {
+            coreCams.forEach(cam => {
               const checked = _allBomScope.selectedCameras.has(cam._id);
               const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
               locHwGroupsHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
@@ -1638,6 +1610,96 @@ function renderAllLocationsBom() {
               '</div></div>';
             });
             locHwGroupsHtml += '</div></div>';
+          });
+
+          // Unassigned cameras
+          if (showCams) {
+            let unassigned = planCamsAll.filter(c => c.coreIdx < 0 || c.coreIdx >= planCoresArr.length);
+            unassigned = unassigned.filter(c => allBomMatchesSearch(c.name, c.model));
+            unassigned = allBomSortItems(unassigned, 'name', 'price');
+            if (unassigned.length > 0) {
+              const uKey = plan.id + '-unassigned';
+              const uCollapsed = !!_allBomCollapse['core-' + uKey];
+              const uTotal = unassigned.reduce((s, c) => s + c.price, 0);
+              locHwGroupsHtml += '<div class="all-bom-core-group' + (uCollapsed ? ' collapsed' : '') + '" id="allBomCore' + uKey + '">';
+              locHwGroupsHtml += '<div class="all-bom-core-hdr all-bom-core-hdr-unassigned" onclick="toggleAllBomCoreGroup(\'' + uKey + '\',event)">' +
+                '<div class="all-bom-core-chev">' + chevronSVG16 + '</div>' +
+                '<span class="all-bom-core-name">Unassigned Cameras</span>' +
+                '<span class="all-bom-core-badge">' + unassigned.length + '</span>' +
+                '<span class="all-bom-core-price">$' + uTotal.toLocaleString() + '</span>' +
+              '</div>';
+              locHwGroupsHtml += '<div class="all-bom-core-children">';
+              unassigned.forEach(cam => {
+                const checked = _allBomScope.selectedCameras.has(cam._id);
+                const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
+                locHwGroupsHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
+                  '<div class="all-bom-item-primary">' + cbHtml +
+                  '<div class="all-bom-item-icon cam-icon-neutral">' + camIconByType(cam.type) + '</div>' +
+                  '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + '</span></div>' +
+                  '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
+                '</div></div>';
+              });
+              locHwGroupsHtml += '</div></div>';
+            }
+          }
+
+        } else {
+          // ── Group by Device Type: flat Cameras + Cores groups ──
+          // Cameras group
+          if (showCams) {
+            let typeCams = planCamsAll.filter(c => allBomMatchesSearch(c.name, c.model));
+            typeCams = allBomSortItems(typeCams, 'name', 'price');
+            if (typeCams.length > 0) {
+              const tcKey = 'type-cam-' + plan.id;
+              const tcCollapsed = !!_allBomCollapse[tcKey];
+              const tcTotal = typeCams.reduce((s, c) => s + c.price, 0);
+              locHwGroupsHtml += '<div class="all-bom-type-group' + (tcCollapsed ? ' collapsed' : '') + '" id="allBomType' + tcKey + '">' +
+                '<div class="all-bom-type-hdr" onclick="toggleAllBomTypeGroup(\'' + tcKey + '\')">' +
+                  '<div class="all-bom-type-chev">' + chevronSVG16 + '</div>' +
+                  '<span class="all-bom-type-name">Cameras</span>' +
+                  '<span class="all-bom-type-badge">' + typeCams.length + '</span>' +
+                  '<span class="all-bom-type-total">$' + tcTotal.toLocaleString() + '</span>' +
+                '</div><div class="all-bom-type-children">';
+              typeCams.forEach(cam => {
+                const checked = _allBomScope.selectedCameras.has(cam._id);
+                const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
+                locHwGroupsHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
+                  '<div class="all-bom-item-primary">' + cbHtml +
+                  '<div class="all-bom-item-icon cam-icon-neutral">' + camIconByType(cam.type) + '</div>' +
+                  '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + '</span></div>' +
+                  '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
+                '</div></div>';
+              });
+              locHwGroupsHtml += '</div></div>';
+            }
+          }
+          // Cores group
+          if (showCores) {
+            let typeCores = planCoresArr.filter(c => allBomMatchesSearch(c.name, c.type));
+            typeCores = allBomSortItems(typeCores, 'name', 'price');
+            if (typeCores.length > 0) {
+              const tkKey = 'type-core-' + plan.id;
+              const tkCollapsed = !!_allBomCollapse[tkKey];
+              const tkTotal = typeCores.reduce((s, c) => s + c.price, 0);
+              locHwGroupsHtml += '<div class="all-bom-type-group' + (tkCollapsed ? ' collapsed' : '') + '" id="allBomType' + tkKey + '">' +
+                '<div class="all-bom-type-hdr" onclick="toggleAllBomTypeGroup(\'' + tkKey + '\')">' +
+                  '<div class="all-bom-type-chev">' + chevronSVG16 + '</div>' +
+                  '<span class="all-bom-type-name">Cores</span>' +
+                  '<span class="all-bom-type-badge">' + typeCores.length + '</span>' +
+                  '<span class="all-bom-type-total">$' + tkTotal.toLocaleString() + '</span>' +
+                '</div><div class="all-bom-type-children">';
+              typeCores.forEach(core => {
+                const checked = _allBomScope.selectedCores.has(core._cid);
+                const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + core._cid + ',\'core\',event)">' : '';
+                locHwGroupsHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'core\',' + core._cid + ')">' +
+                  '<div class="all-bom-item-primary">' + cbHtml +
+                  '<div class="all-bom-item-icon cam-icon-neutral" style="color:#667085">' + coreSVGSmall + '</div>' +
+                  '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + core.name + '</span><span class="all-bom-item-model">' + core.type + ' · ' + core.cameraCount + '/' + core.channels + ' ch</span></div>' +
+                  '<span class="all-bom-item-price">$' + core.price.toLocaleString() + '</span>' +
+                '</div></div>';
+              });
+              locHwGroupsHtml += '</div></div>';
+            }
           }
         }
 
@@ -1700,95 +1762,6 @@ function renderAllLocationsBom() {
 
       if (!singleLoc && !singlePlan) tableHtml += '</div></div>'; // loc children + loc
     });
-  } else {
-    // Device type grouping
-    const allPlanIdsForSite = PLANS.filter(p => allLocIds.includes(p.locationId)).map(p => p.id);
-
-    // Cameras
-    if (_allBomViewOptions.devices['Cameras']) {
-      let cams = PLAN_CAMERAS.filter(c => allPlanIdsForSite.includes(c.planId));
-      cams = cams.filter(c => allBomMatchesSearch(c.name, c.model));
-      cams = allBomSortItems(cams, 'name', 'price');
-      const camTotal = cams.reduce((s, c) => s + c.price, 0);
-      const camCollapsed = !!_allBomCollapse['type-cameras'];
-      tableHtml += '<div class="all-bom-type-group' + (camCollapsed ? ' collapsed' : '') + '" id="allBomTypecameras">' +
-        '<div class="all-bom-type-hdr" onclick="toggleAllBomTypeGroup(\'cameras\')">' +
-          '<div class="all-bom-type-chev">' + chevronSVG16 + '</div>' +
-          '<span class="all-bom-type-name">Cameras</span>' +
-          '<span class="all-bom-type-badge">' + cams.length + '</span>' +
-          '<span class="all-bom-type-total">$' + camTotal.toLocaleString() + '</span>' +
-        '</div><div class="all-bom-type-children">';
-      cams.forEach(cam => {
-        const checked = _allBomScope.selectedCameras.has(cam._id);
-        const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + cam._id + ',\'camera\',event)">' : '';
-        const planObj = PLANS.find(p => p.id === cam.planId);
-        const locObj = planObj ? LOCATIONS.find(l => l.id === planObj.locationId) : null;
-        tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'camera\',' + cam._id + ')">' +
-          '<div class="all-bom-item-primary">' + cbHtml +
-          '<div class="all-bom-item-icon cam-icon-neutral">' + camIconByType(cam.type) + '</div>' +
-          '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + cam.name + '</span><span class="all-bom-item-model">' + cam.type + ' · ' + cam.model + (locObj ? ' · ' + locObj.name : '') + '</span></div>' +
-          '<span class="all-bom-item-price">$' + cam.price.toLocaleString() + '</span>' +
-        '</div></div>';
-      });
-      tableHtml += '</div></div>';
-    }
-
-    // Cores
-    if (_allBomViewOptions.devices['Cores']) {
-      let cores = CORES.filter(c => allPlanIdsForSite.includes(c.planId));
-      cores = cores.filter(c => allBomMatchesSearch(c.name, c.type));
-      cores = allBomSortItems(cores, 'name', 'price');
-      const coreTotal = cores.reduce((s, c) => s + c.price, 0);
-      const coreCollapsed = !!_allBomCollapse['type-cores'];
-      tableHtml += '<div class="all-bom-type-group' + (coreCollapsed ? ' collapsed' : '') + '" id="allBomTypecores">' +
-        '<div class="all-bom-type-hdr" onclick="toggleAllBomTypeGroup(\'cores\')">' +
-          '<div class="all-bom-type-chev">' + chevronSVG16 + '</div>' +
-          '<span class="all-bom-type-name">Cores</span>' +
-          '<span class="all-bom-type-badge">' + cores.length + '</span>' +
-          '<span class="all-bom-type-total">$' + coreTotal.toLocaleString() + '</span>' +
-        '</div><div class="all-bom-type-children">';
-      cores.forEach(core => {
-        const checked = _allBomScope.selectedCores.has(core._cid);
-        const cbHtml = selectMode ? '<input type="checkbox" class="bom-cb bom-item-cb"' + (checked ? ' checked' : '') + ' onclick="allBomScopeToggleItem(' + core._cid + ',\'core\',event)">' : '';
-        tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'core\',' + core._cid + ')">' +
-          '<div class="all-bom-item-primary">' + cbHtml +
-          '<div class="all-bom-item-icon" style="background:' + core.color + '">' + coreSVGSmall + '</div>' +
-          '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + core.name + '</span><span class="all-bom-item-model">' + core.type + ' · ' + core.cameraCount + '/' + core.channels + ' ch</span></div>' +
-          '<span class="all-bom-item-price">$' + core.price.toLocaleString() + '</span>' +
-        '</div></div>';
-      });
-      tableHtml += '</div></div>';
-    }
-
-    // Other devices — filter by each category
-    {
-      const otherDevs = DEVICES.filter(d => allPlanIdsForSite.includes(d.planId) && d.category !== 'Video Security' && _allBomViewOptions.devices[d.category]);
-      const otherCats = {};
-      otherDevs.forEach(d => { if (!otherCats[d.category]) otherCats[d.category] = []; otherCats[d.category].push(d); });
-      Object.keys(otherCats).forEach(cat => {
-        const devs = otherCats[cat];
-        const catTotal = devs.reduce((s, d) => s + d.price * d.qty, 0);
-        const catCollapsed = !!_allBomCollapse['type-' + cat];
-        tableHtml += '<div class="all-bom-type-group' + (catCollapsed ? ' collapsed' : '') + '" id="allBomType' + cat.replace(/\s/g,'') + '">' +
-          '<div class="all-bom-type-hdr" onclick="toggleAllBomTypeGroup(\'' + cat.replace(/\s/g,'') + '\')">' +
-            '<div class="all-bom-type-chev">' + chevronSVG16 + '</div>' +
-            '<span class="all-bom-type-name">' + cat + '</span>' +
-            '<span class="all-bom-type-badge">' + devs.reduce((s,d) => s+d.qty, 0) + '</span>' +
-            '<span class="all-bom-type-total">$' + catTotal.toLocaleString() + '</span>' +
-          '</div><div class="all-bom-type-children">';
-        devs.forEach(dev => {
-          const devGlobalIdx = DEVICES.indexOf(dev);
-          tableHtml += '<div class="all-bom-item" onclick="openDeviceInfoModal(\'device\',' + devGlobalIdx + ')">' +
-            '<div class="all-bom-item-primary">' +
-            '<div class="all-bom-item-icon plain">' + deviceIconSVG(dev.category) + '</div>' +
-            '<div class="all-bom-item-name-wrap"><span class="all-bom-item-name">' + dev.model + '</span><span class="all-bom-item-model">' + dev.accessories + '</span></div>' +
-            '<span class="all-bom-item-qty">' + dev.qty + '</span>' +
-            '<span class="all-bom-item-price">$' + (dev.price * dev.qty).toLocaleString() + '</span>' +
-          '</div></div>';
-        });
-        tableHtml += '</div></div>';
-      });
-    }
   }
 
   if (!tableHtml) tableHtml = '<div class="all-bom-empty">No matching devices found.</div>';
