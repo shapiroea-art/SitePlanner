@@ -3621,10 +3621,9 @@ function renderBomAddonItem(addon, doubleIndent) {
   return `<div class="bom-item bom-item-addon" onclick="selectAddon(${addon.id})" style="cursor:pointer">
     <div class="bom-item-primary">
       ${indent}${addonCbHtml}
-      <span class="bom-item-icon" style="color:${addon.color}">${ADDON_ICON}</span>
+      <span class="bom-item-icon" style="color:#667085">${ADDON_ICON}</span>
       <span class="bom-item-name-wrap">
-        <span class="bom-item-name">${escHtml(addon.name)}</span>
-        <span class="bom-item-model">${escHtml(def.name)}</span>
+        <span class="bom-item-name">${escHtml(def.name)}</span>
       </span>
       ${tagsHtml}
       <span class="bom-item-price">$${addon.price.toLocaleString()}</span>
@@ -5101,7 +5100,7 @@ function renderAddonProperties(id) {
   propsPrice.textContent = '$' + addon.price.toLocaleString();
   const propsIcon = document.getElementById('propsIcon');
   propsIcon.className = 'props-hdr-icon show';
-  propsIcon.style.background = addon.color || '#667085';
+  propsIcon.style.background = '#667085';
   propsIcon.innerHTML = ADDON_ICON;
 
   // Camera section (per-camera types only)
@@ -5181,26 +5180,12 @@ function renderAddonProperties(id) {
     <div class="props-section">
       <div class="props-section-title">Add-On Config</div>
       <div class="prop-row">
-        <span class="prop-label">Name</span>
-        <div class="prop-ctrl"><input class="prop-input" style="width:160px" value="${escHtml(addon.name)}" oninput="updateAddonProp(${id},'name',this.value)"></div>
-      </div>
-      <div class="prop-row">
         <span class="prop-label">Type</span>
         <div class="prop-ctrl">
           <div style="width:160px;flex-shrink:0">
             <select class="prop-select" style="width:100%" onchange="updateAddonType(${id},this.value)">
               ${Object.values(ADDON_TYPES).filter(t => t.scope === def.scope).map(t => `<option value="${t.id}" ${addon.typeId === t.id ? 'selected' : ''}>${t.name}</option>`).join('')}
             </select>
-          </div>
-        </div>
-      </div>
-      <div class="prop-row">
-        <span class="prop-label">Color</span>
-        <div class="prop-ctrl">
-          <div style="display:flex;gap:5px;flex-wrap:wrap">
-            ${['#0891b2','#2563eb','#7c3aed','#dc2626','#d97706','#db2777','#059669','#374151'].map(col => `
-              <div onclick="updateAddonColor(${id},'${col}')" title="${col}" style="width:20px;height:20px;border-radius:4px;background:${col};cursor:pointer;border:2px solid ${addon.color === col ? '#fff' : 'transparent'};outline:2px solid ${addon.color === col ? col : 'transparent'};box-sizing:border-box;transition:all 0.1s"></div>
-            `).join('')}
           </div>
         </div>
       </div>
