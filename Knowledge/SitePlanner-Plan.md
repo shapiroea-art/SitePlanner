@@ -28,7 +28,7 @@ site-planner-location.html           (Project hub — locations, BOM, project de
 
 ---
 
-### site-planner-sites.html — Projects List (~1,100 lines)
+### site-planner-sites.html — Projects List (~1,110 lines)
 
 Landing page showing all projects in a filterable, searchable table.
 
@@ -36,29 +36,34 @@ Landing page showing all projects in a filterable, searchable table.
 |---|---|
 | **Layout** | 64px left nav + full-width main area |
 | **Top bar** | Breadcrumb ("Projects") + "+ New Project" button |
-| **Tabs** | My projects · Closed projects (with search + status filter) |
-| **Project table** | Columns: Project name · Status badge (Active/Closed with Win/Loss) · Created date · Locations count · Plans count · Devices count · BOM total · Actions dropdown (Edit, Duplicate, Close/Reopen, Delete) |
+| **Tabs** | My projects · Shared with me · Closed (with search + date-range + win/loss filters; win/loss filter only on Closed tab) |
+| **Project table** | Columns: Project name (purple link) · BOM (device count) · Created date · Actions (⋯ menu: Edit, Duplicate, Close/Reopen, Delete). Closed tab adds a Closure reason column. |
 | **Inline row actions** | Click row → navigates to `site-planner-location.html?siteId=X` |
-| **Create Project modal** | Project name input + unit selection (Imperial/Metric) + location name + address with Leaflet map preview + "Create" button |
-| **Floor Plan Wizard** | 3-step overlay (Crop → Scale → Align) triggered after project creation |
+| **Create Project modal** | Project name + optional contacts (add/remove rows) + unit selection (Imperial/Metric) + notes |
+| **Create Location modal** | Name + address input with draggable Leaflet marker (optional) |
+| **Create Plan modal** | Plan name + optional floor-plan image upload (PDF/JPG/PNG ≤15MB, with preview) |
+| **Close Reason modal** | Win/Loss toggle |
+| **Floor Plan Wizard** | 3-step overlay (Crop → Scale → Align) triggered after uploading a floor plan |
 | **Data** | `SITES` (id, name, status, createdDate, closureReason, bom), `LOCATIONS`, `PLANS`, `DEVICES` arrays |
 | **State** | `sites` mutable array, `activeTab`, `searchQuery`, `statusFilter`, `openDropdown` |
 
 ---
 
-### site-planner-location.html — Project Hub (~2,500 lines)
+### site-planner-location.html — Project Hub (~2,460 lines)
 
 The central hub between the Projects list and the interactive Plan editor. Three distinct view modes based on URL parameters. All three views share a single `renderAllLocationsBom()` function that scopes data based on the active view.
 
-**Shared layout:** 64px left nav → 220px sidebar (location/plan tree) → main content area with top bar breadcrumb + action buttons.
+**Shared layout:** 64px left nav → 220px sidebar (location/plan tree, always shows full hierarchy) → main content area with top bar breadcrumb + action buttons.
 
-#### Top Bar Actions (per tab)
+#### Top Bar Actions (per view)
 
 | View | Buttons |
 |---|---|
-| **All Locations** | Project details · \| · Delete · Close/Reopen · Share · Export · + Create location |
-| **Single Location** | Delete · + Create plan |
-| **Single Plan** | Delete |
+| **All Locations** | Project details (edit icon) · \| · Close/Reopen · Share · Export |
+| **Single Location** | Delete (icon) · + Create plan |
+| **Single Plan** | Delete (icon) |
+
+> The project-wide Delete action lives inside the Project Details modal (not on the top bar). Share and Export are currently placeholder alerts. Creating a new location happens from inside the sidebar tree, not from a top-bar button.
 
 #### View Mode 1: All Locations (no `locationId` or `planId`)
 
@@ -66,10 +71,10 @@ The most feature-rich view — project-wide BOM management.
 
 | Element | Details |
 |---|---|
-| **Project Details** | Topbar button opens a modal in edit mode (single column, 20px gaps). Fields: project name, created date, owner, status badge, unit system, shared users, contacts, notes. |
-| **View Options** | Always-visible panel: search input, device type filter dropdown (dynamic from data), group-by toggle (Locations & Plans / Device type), sort (A-Z, Price ↑, Price ↓) |
+| **Project Details** | Edit icon in topbar opens a modal in edit mode (single column, 20px gaps). Fields: project name, created date, owner, status badge, unit system, shared users, contacts, notes. Delete button lives at the bottom of this modal. |
+| **View Options** | Always-visible panel: search input, device type filter dropdown (dynamic from data), group-by toggle (**Cores / Device type**), sort (A-Z, Price ↑, Price ↓) |
 | **Bulk Editing Toolbar** | Items All/Selected toggle with select-all checkbox, Upfront/Yearly payment, 1/3/5/10yr duration, Retention dropdown, License dropdown, +Add-ons button, Delete button, Expand/Collapse all (right-aligned) |
-| **BOM Table** | Hierarchical collapsible: Location (purple left border, #F8FAFC bg, 16px semibold) → Plan → Core group (colored left border, chevron-only expand, name click opens device info modal) → Cameras (click opens modal). Alternate "Device type" flat grouping. |
+| **BOM Table** | Hierarchical collapsible: Location (purple left border, #F8FAFC bg, 16px semibold — always shown, even in Single Location view) → Plan → Core group (colored left border, chevron-only expand, name click opens device info modal) → Cameras (click opens modal). Alternate "Device type" flat grouping. |
 | **Grand Total** | Label in dark grey, amount in 24px bold purple, tabular-nums font |
 | **What's Included** | Collapsible link below Grand Total, right-aligned, 670px max width, lilac background (#faf8ff) with purple border. 10 features in 2-column grid. |
 
@@ -78,7 +83,7 @@ The most feature-rich view — project-wide BOM management.
 | Element | Details |
 |---|---|
 | **Content header** | Location address with pin icon |
-| **BOM** | Same shared BOM table (search, filters, toolbar) scoped to this location's plans. Group-by toggle shows "Plans / Device type". Location wrapper is skipped (goes straight to plan → core → camera hierarchy). |
+| **BOM** | Same shared BOM table (search, filters, toolbar) scoped to this location's plans. Group-by toggle shows **Cores / Device type**. Location header row is still rendered above the plans. |
 
 #### View Mode 3: Single Plan (`planId` set)
 
@@ -105,7 +110,7 @@ Plan tab uses a dedicated `if (showPlan)` branch that renders Hardware/Software 
 
 | Modal | Details |
 |---|---|
-| **Project Details** | Edit mode only (opens from topbar button). Single column layout, 20px gaps. Project name, date, owner, status, unit, shared users, contacts, notes. Cancel/Save. |
+| **Project Details** | Edit mode only (opens from topbar edit icon). Single column layout, 20px gaps. Project name, date, owner, status, unit, shared users, contacts, notes. Cancel/Save + Delete. |
 | **Device Info** (Camera) | Name (editable), Model, Type, Color picker (8 colors), Price, Core assignment dropdown. Cancel/Save. |
 | **Device Info** (Core) | Name (editable), Type, Channels, Color picker, Payment (Upfront/Yearly), Duration (1/3/5/10yr, conditional on Yearly), Price, Assigned Cameras list with tags (payment, duration, license, retention) and per-camera price. Cancel/Save. |
 | **Device Info** (Device) | Model, Category, Qty, Accessories, Unit price, Total (read-only). Cancel/Save. |
@@ -137,19 +142,21 @@ Hierarchy: Site → Locations → Plans → (Cores → Cameras + Devices)
 
 ### site-planner-plan.html — Plan Viewer (456 lines)
 
-Read-only view of a single plan's BOM. Same sidebar + data structure as `site-planner-location.html` but without the interactive canvas.
+Read-only view of a single plan. Same sidebar + data structure as `site-planner-location.html` but without the interactive canvas.
 
 | Element | Details |
 |---|---|
-| **Layout** | Same navbar + sidebar + BOM as location page |
-| **Content** | Full device list with categories, quantities, pricing, grand total |
+| **Layout** | Nav + sidebar + main content area |
+| **Map preview** | 280px Leaflet map with optional floor-plan overlay SVG and a "View plan" button → links to `site-planner-prototype.html` |
+| **Content** | Content header (address, device count), project details card, Hardware/Software collapsible BOM sections with device rows |
+| **Top bar** | Edit and Export buttons (currently placeholder alerts) |
 | **Use case** | Stakeholder review — no editing capability |
 
 ---
 
-### site-planner-prototype.html — Interactive Editor (~6,200 lines)
+### site-planner-prototype.html — Interactive Editor (~6,250 lines)
 
-The main floor-plan editor. Covered in detail in the rest of this document.
+The main floor-plan editor. Full canvas-based editor built on Konva + Leaflet + Three.js. Covered in detail in the rest of this document.
 
 ---
 
@@ -183,10 +190,10 @@ The main floor-plan editor. Covered in detail in the rest of this document.
 
 ```
 Lumana-Desktop/
-├── site-planner-sites.html              ← Projects list (entry point, ~1,100 lines)
-├── site-planner-location.html           ← Project hub + BOM management (~2,370 lines)
+├── site-planner-sites.html              ← Projects list (entry point, ~1,110 lines)
+├── site-planner-location.html           ← Project hub + BOM management (~2,460 lines)
 ├── site-planner-plan.html               ← Read-only plan viewer (~456 lines)
-├── site-planner-prototype.html          ← Full interactive floor-plan editor (~6,200 lines)
+├── site-planner-prototype.html          ← Full interactive floor-plan editor (~6,250 lines)
 │
 ├── Knowledge/
 │   ├── SitePlanner-Plan.md              ← This file (build plan & architecture)
@@ -492,8 +499,8 @@ For a camera at mounting height `H`, tilt angle `θ`, and focal length `f`:
     - Per-plan add-ons appear in a separate "Plan Add-Ons" section in the BOM
     - Add-on properties viewable in right panel on selection
 
-35. **[✅] Add-On Properties Panel**
-    - Name, type dropdown (filtered by scope), color picker (8 colors)
+35. **[✅] Add-On Properties Panel** *(simplified — no Name/Color fields)*
+    - Type dropdown (filtered by scope) — Name and Color fields were removed; BOM shows the type label only
     - Retention selector (per-camera types with retention options)
     - Payment method + duration (per-plan types)
     - Camera section (per-camera types): shows assigned camera name (clickable → navigates to camera), assign/remove

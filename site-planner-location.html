@@ -556,11 +556,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       You created a location
     </div>
-    <div class="modal-title">Create sublocation</div>
+    <div class="modal-title">Create plan</div>
     <div class="modal-breadcrumb" id="planModalBreadcrumb"></div>
     <div class="modal-field">
-      <label class="modal-label" for="planNameInput">Sublocation name</label>
-      <input class="modal-input" id="planNameInput" type="text" placeholder="Enter sublocation name" autocomplete="off"/>
+      <label class="modal-label" for="planNameInput">Plan name</label>
+      <input class="modal-input" id="planNameInput" type="text" placeholder="Enter plan name" autocomplete="off"/>
     </div>
     <div class="modal-field">
       <label class="modal-label">Upload a floor plan <span style="color:#98a2b3;font-weight:400">(optional)</span></label>
@@ -582,7 +582,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
     <div class="modal-actions">
       <button class="modal-btn" id="cancelPlanBtn">Cancel</button>
-      <button class="modal-btn modal-btn-primary" id="confirmPlanBtn" disabled>Create sublocation</button>
+      <button class="modal-btn modal-btn-primary" id="confirmPlanBtn" disabled>Create plan</button>
     </div>
   </div>
 </div>
@@ -594,7 +594,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       <div class="fpw-header-left">
         <div class="fpw-success">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          You created a sublocation. Floor plan uploaded
+          You created a plan. Floor plan uploaded
         </div>
         <div class="fpw-title">Update floor plan</div>
       </div>
@@ -1199,7 +1199,7 @@ document.getElementById('confirmEditLocBtn').addEventListener('click', function(
   buildMain();
 });
 
-/* ── Create sublocation from location row ── */
+/* ── Create plan from location row ── */
 var _createPlanTargetLocId = null;
 function openCreatePlanForLocation(locId) {
   _createPlanTargetLocId = locId;
@@ -1544,7 +1544,7 @@ function renderAllLocationsBom() {
           '<span class="all-bom-loc-name">' + loc.name + '</span>' +
           '<span class="all-bom-loc-meta">' + loc.address + '</span>' +
           '<button class="all-bom-loc-edit" onclick="openEditLocationModal(' + loc.id + ');event.stopPropagation()" title="Edit location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
-          '<button class="all-bom-loc-create-plan" onclick="openCreatePlanForLocation(' + loc.id + ');event.stopPropagation()" style="margin-left:auto"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Sublocation</button>' +
+          '<button class="all-bom-loc-create-plan" onclick="openCreatePlanForLocation(' + loc.id + ');event.stopPropagation()" style="margin-left:auto"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Plan</button>' +
           '<span class="all-bom-loc-total">$' + locTotal.toLocaleString() + '</span>' +
           '<div class="all-bom-loc-chev">' + chevronSVG16 + '</div>' +
         '</div>';
@@ -1939,7 +1939,7 @@ function buildBreadcrumb() {
     : `<button class="btn" onclick="reopenProject()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>Reopen</button>`;
   const deleteBtn = `<button class="btn-icon btn-danger" onclick="deleteProject()" title="Delete project"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>`;
   const createLocBtn = '';
-  const createPlanBtn = (!showAllLocations && !showPlan) ? `<button class="btn btn-primary" id="createPlanFromLocBtn"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Create sublocation</button>` : '';
+  const createPlanBtn = (!showAllLocations && !showPlan) ? `<button class="btn btn-primary" id="createPlanFromLocBtn"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>Create plan</button>` : '';
   const locDeleteBtn = (!showAllLocations && !showPlan) ? `<button class="btn-icon btn-danger" onclick="alert('Delete location (placeholder)')" title="Delete location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>` : '';
   const projDetailsBtn = `<button class="btn-icon" onclick="openProjectDetailsModal()" title="Project details"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`;
   const topSep = '<span style="width:1px;height:24px;background:#eaecf0;flex-shrink:0"></span>';

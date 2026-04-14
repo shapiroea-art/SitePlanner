@@ -32,13 +32,69 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
 /* ── Top Bar ── */
-.topbar { height: 50px; flex-shrink: 0; background: #fff; border-bottom: 1px solid #eaecf0; display: flex; align-items: center; padding: 0 16px 0 20px; gap: 12px; z-index: 10; }
+.topbar { height: 50px; flex-shrink: 0; background: #fff; border-bottom: 1px solid #eaecf0; display: flex; align-items: center; padding: 0 16px 0 20px; gap: 12px; z-index: 10; position: relative; }
 .topbar-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #667085; }
 .topbar-breadcrumb a { color: #667085; text-decoration: none; }
 .topbar-breadcrumb a:hover { color: #344054; text-decoration: underline; }
 .topbar-breadcrumb .sep { color: #d0d5dd; }
 .topbar-breadcrumb .current { color: #344054; font-weight: 500; }
 .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+/* Plan / List view-mode segmented control (centered in topbar) */
+.topbar-viewmode { position: absolute; left: 50%; transform: translateX(-50%); display: inline-flex; border: 1px solid #d0d5dd; border-radius: 8px; overflow: hidden; background: #fff; }
+.topbar-viewmode button { border: 0; background: transparent; padding: 6px 16px; font-size: 13px; font-weight: 500; color: #667085; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; }
+.topbar-viewmode button svg { width: 14px; height: 14px; }
+.topbar-viewmode button.active { background: #7c3aed; color: #fff; }
+.topbar-viewmode button:not(.active):hover { background: #f5f3ff; color: #344054; }
+
+/* List view — hide canvas/toolbar; BOM panel takes full width */
+body.list-view .toolbar { display: none !important; }
+body.list-view .canvas-area { display: none !important; }
+body.list-view .wall-draw-hint { display: none !important; }
+body.list-view aside.properties { width: 100% !important; border-left: none; }
+body.list-view .props-collapse-tab { display: none !important; }
+body.list-view .rp-tabs { display: none !important; }
+body.list-view #propsPane { display: none !important; }
+body.list-view #bomPane { display: block !important; }
+
+/* Unplaced tag */
+.unplaced-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; font-size: 10px; font-weight: 500; color: #667085; background: #f2f4f7; border: 1px solid #eaecf0; border-radius: 10px; cursor: pointer; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0; }
+.unplaced-tag:hover { background: #eaecf0; color: #344054; }
+.unplaced-tag svg { width: 10px; height: 10px; }
+
+/* Auto-assign button + undo banner */
+.bom-auto-assign-btn { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: #344054; background: #fff; border: 1px solid #d0d5dd; border-radius: 6px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.bom-auto-assign-btn:hover { background: #f9fafb; border-color: #98a2b3; }
+.bom-auto-assign-btn svg { width: 13px; height: 13px; color: #7c3aed; }
+.auto-assign-banner { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px 18px; border-radius: 10px; display: none; align-items: center; gap: 14px; font-size: 13px; font-weight: 500; box-shadow: 0 8px 24px rgba(16,24,40,0.12); z-index: 10000; max-width: 560px; }
+.auto-assign-banner.show { display: flex; }
+.auto-assign-banner > svg { width: 18px; height: 18px; flex-shrink: 0; color: #10b981; }
+.auto-assign-banner .aab-msg { flex: 1; }
+.auto-assign-banner .aab-undo { border: 0; background: transparent; color: #065f46; font-weight: 700; font-size: 13px; cursor: pointer; padding: 0 4px; text-decoration: underline; font-family: inherit; }
+.auto-assign-banner .aab-close { border: 0; background: transparent; cursor: pointer; color: #065f46; padding: 0; font-family: inherit; display: flex; }
+.auto-assign-banner .aab-close svg { width: 14px; height: 14px; }
+
+/* Row flash (for auto-assigned rows) */
+@keyframes rowFlash { 0% { background: #d1fae5; } 100% { background: transparent; } }
+.row-flash { animation: rowFlash 1.8s ease-out; }
+
+/* Stamp-to-place mode */
+.canvas-area.stamp-mode { cursor: crosshair; }
+.stamp-hint { position: fixed; top: 72px; left: 50%; transform: translateX(-50%); background: #101828; color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; z-index: 9999; display: none; align-items: center; gap: 10px; }
+.stamp-hint.show { display: flex; }
+.stamp-hint .stamp-count { background: #7c3aed; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.stamp-hint button { border: 0; background: #344054; color: #fff; padding: 3px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; font-family: inherit; }
+
+/* Picker quantity stepper */
+.pk-qty-row { display: flex; align-items: center; justify-content: flex-end; padding: 12px 24px; border-top: 1px solid #eaecf0; background: #fff; }
+.pk-qty-wrap { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #344054; }
+.pk-qty-wrap label { font-weight: 500; color: #667085; }
+.pk-qty-stepper { display: inline-flex; align-items: center; border: 1px solid #d0d5dd; border-radius: 6px; overflow: hidden; }
+.pk-qty-stepper button { width: 28px; height: 30px; border: 0; background: #fff; color: #667085; font-size: 16px; cursor: pointer; font-family: inherit; font-weight: 500; }
+.pk-qty-stepper button:hover { background: #f9fafb; color: #344054; }
+.pk-qty-stepper input { width: 42px; border: 0; border-left: 1px solid #d0d5dd; border-right: 1px solid #d0d5dd; text-align: center; font-size: 13px; font-weight: 500; color: #344054; height: 30px; font-family: inherit; }
+.pk-qty-stepper input::-webkit-outer-spin-button, .pk-qty-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.pk-qty-stepper input[type=number] { -moz-appearance: textfield; }
 .success-banner { display: none; align-items: center; gap: 8px; padding: 10px 16px; background: #ecfdf5; border-bottom: 1px solid #a7f3d0; font-size: 13px; font-weight: 500; color: #065f46; flex-shrink: 0; }
 .success-banner.show { display: flex; }
 .success-banner svg { width: 16px; height: 16px; flex-shrink: 0; color: #10b981; }
@@ -642,7 +698,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .core-picker-label { font-size: 13px; font-weight: 500; color: #344054; margin-bottom: 8px; }
 .core-picker-select { width: 100%; padding: 9px 12px; border: 1px solid #d0d5dd; border-radius: 8px; font-size: 14px; color: #344054; background: #fff; cursor: pointer; outline: none; font-family: inherit; }
 .core-picker-select:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
-.core-picker-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 24px 20px; border-top: 1px solid #eaecf0; }
+.core-picker-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 16px 24px 20px; border-top: 1px solid #eaecf0; }
 .core-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .core-chip { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #344054; background: #fff; border: 1px solid #d0d5dd; cursor: pointer; font-family: inherit; transition: all 0.15s; }
 .core-chip:hover { border-color: #98a2b3; background: #f9fafb; }
@@ -746,9 +802,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <span class="sep">›</span>
         <a href="#" id="bc-site">Project: HQ Campus</a>
         <span class="sep">›</span>
-        <span class="current" id="bc-loc-plan">Location: Main Building, Sublocation: Level 1</span>
+        <span class="current" id="bc-loc-plan">Location: Main Building, Plan: Level 1</span>
+      </div>
+      <div class="topbar-viewmode" id="topbarViewmode">
+        <button id="vmPlanBtn" class="active" onclick="setViewMode('plan')" title="Plan view — floor plan and map">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+          Plan
+        </button>
+        <button id="vmListBtn" onclick="setViewMode('list')" title="List view — BOM only">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          List view
+        </button>
       </div>
       <div class="topbar-actions">
+        <button class="btn-icon" onclick="duplicatePlan()" title="Duplicate plan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        </button>
         <button class="btn-icon" onclick="openRenamePlanModal()" title="Edit plan">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
@@ -788,7 +857,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <!-- Success Banner -->
     <div class="success-banner" id="newPlanBanner">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      You created a sublocation
+      You created a plan
       <button class="banner-close" id="closeBanner" title="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
 
@@ -1110,11 +1179,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
     <div class="mp-info" id="mpInfo"></div>
   </div>
+  <div class="pk-qty-row" id="mpQtyRow" style="display:none">
+    <div class="pk-qty-wrap" id="mpQtyWrap">
+      <label>Quantity</label>
+      <div class="pk-qty-stepper">
+        <button type="button" onclick="mpQtyStep(-1)">−</button>
+        <input type="number" id="mpQtyInput" value="1" min="1" max="99" oninput="mpQtyInputChange()">
+        <button type="button" onclick="mpQtyStep(1)">+</button>
+      </div>
+    </div>
+  </div>
   <div class="mp-ftr">
     <span class="mp-count" id="mpCount"><strong>0</strong> models</span>
     <div class="mp-ftr-actions">
       <button class="btn" onclick="closeModelPicker()">Cancel</button>
-      <button class="btn btn-primary" id="mpPlaceBtn" onclick="placeFromPicker()" style="opacity:0.4;pointer-events:none">Place Camera</button>
+      <button class="btn" id="mpAddListBtn" onclick="addFromPickerToList()" style="opacity:0.4;pointer-events:none">Add to list</button>
+      <button class="btn btn-primary" id="mpPlaceBtn" onclick="placeFromPicker()" style="opacity:0.4;pointer-events:none">Place on map</button>
     </div>
   </div>
 </div>
@@ -1137,9 +1217,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <button class="core-chip" data-val="2u-core-256" onclick="selectCoreChip(this)">2U Core 256</button>
       </div>
     </div>
+    <div class="pk-qty-row">
+      <div class="pk-qty-wrap">
+        <label>Quantity</label>
+        <div class="pk-qty-stepper">
+          <button type="button" onclick="cpQtyStep(-1)">−</button>
+          <input type="number" id="cpQtyInput" value="1" min="1" max="99" oninput="cpQtyInputChange()">
+          <button type="button" onclick="cpQtyStep(1)">+</button>
+        </div>
+      </div>
+    </div>
     <div class="core-picker-footer">
       <button class="btn" onclick="closeCoreTypePicker()">Cancel</button>
-      <button class="btn btn-primary" onclick="placeCore()">Place core</button>
+      <button class="btn" onclick="addCoreFromPickerToList()">Add to list</button>
+      <button class="btn btn-primary" onclick="placeCore()">Place on map</button>
     </div>
   </div>
 </div>
@@ -1193,6 +1284,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <button type="button" class="btn" style="width:100%;padding:8px 12px;font-size:13px;border:1px solid #d0d5dd;border-radius:8px;background:#fff;color:#344054;cursor:pointer;text-align:left" onclick="openAddonCamModal()">
           <span style="color:#98a2b3">Select cameras…</span>
         </button>
+      </div>
+    </div>
+    <div class="pk-qty-row" id="addonQtyRow" style="display:none">
+      <div class="pk-qty-wrap">
+        <label>Quantity</label>
+        <div class="pk-qty-stepper">
+          <button type="button" onclick="apQtyStep(-1)">−</button>
+          <input type="number" id="addonQtyInput" value="1" min="1" max="99" oninput="apQtyInputChange()">
+          <button type="button" onclick="apQtyStep(1)">+</button>
+        </div>
       </div>
     </div>
     <div class="addon-picker-footer">
@@ -1641,7 +1742,7 @@ function lookupCameraModel(typeId) {
   return CAMERA_DB.find(m => m.id === typeId) || CATALOG.find(c => c.id === typeId);
 }
 
-function addCamera(typeId, x, y, skipNameInput) {
+function addCamera(typeId, x, y, skipNameInput, opts) {
   const def = lookupCameraModel(typeId);
   if (!def) return;
   // Track recently used (CAMERA_DB models only)
@@ -1650,6 +1751,7 @@ function addCamera(typeId, x, y, skipNameInput) {
   }
 
   saveUndo();
+  const unplaced = !!(opts && opts.unplaced);
   const cam = {
     id: state.nextId++,
     typeId, x, y,
@@ -1677,12 +1779,15 @@ function addCamera(typeId, x, y, skipNameInput) {
     license: 'Essential',
     // DORI visibility
     showDet: true, showRec: true, showId: true,
+    unplaced,
   };
   state.cameras.push(cam);
-  renderCamera(cam);
-  selectCamera(cam.id);
+  if (!unplaced) {
+    renderCamera(cam);
+    selectCamera(cam.id);
+    if (!skipNameInput) showCamNameInput(cam);
+  }
   updateUI();
-  if (!skipNameInput) showCamNameInput(cam);
   return cam;
 }
 
@@ -1691,6 +1796,7 @@ function renderCamera(cam) {
   const existing = cameraLayer.findOne('#cam-' + cam.id);
   if (existing) existing.destroy();
   const existingFov = fovLayer.findOne('#fov-' + cam.id);
+  if (cam.unplaced) { if (existingFov) existingFov.destroy(); const lblEl = document.getElementById('camlbl-' + cam.id); if (lblEl) lblEl.remove(); return; }
   if (existingFov) existingFov.destroy();
 
   // ── FOV Layer ──
@@ -1814,6 +1920,7 @@ function hexToRgbArr(hex) {
 function drawFov(cam) {
   const existing = fovLayer.findOne('#fov-' + cam.id);
   if (existing) existing.destroy();
+  if (cam.unplaced) return;
 
   const fovGroup = new Konva.Group({ id:'fov-'+cam.id, listening:false });
   const walls = [...DEMO_WALLS, ...state.userWalls];
@@ -2040,6 +2147,12 @@ function setWallType(type) {
 
 function onStageClick(e) {
   if (state.tool === 'move') return; // Move tool — clicks handled by pan, not stage actions
+  // Stamp-to-place mode (batch placement from picker or unplaced tag click)
+  if (state.stamp && e.target === stage) {
+    const p = getScaledPos(stage.getPointerPosition());
+    stampAt(p.x, p.y);
+    return;
+  }
   if (e.target === stage) {
     if (state.tool === 'select') {
       selectCamera(null);
@@ -3578,18 +3691,38 @@ function renderBomCamItem(cam, coreId, idx) {
     : [];
   const camAddonsHtml = camAddons.map(a => renderBomAddonItem(a, true)).join('');
 
-  return `${dropZone}<div class="bom-item" ${dragAttr}>
-    <div class="bom-item-primary" onclick="selectCamera(${cam.id})" title="Select camera">
+  const unplacedBadge = cam.unplaced ? `<span class="unplaced-tag" onclick="placeUnplacedCamera(${cam.id});event.stopPropagation()" title="Click to place on map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Unplaced</span>` : '';
+
+  return `${dropZone}<div class="bom-item" data-cam-row="${cam.id}" ${dragAttr}>
+    <div class="bom-item-primary" onclick="${cam.unplaced ? 'placeUnplacedCamera('+cam.id+')' : 'selectCamera('+cam.id+')'}" title="${cam.unplaced ? 'Click to place on map' : 'Select camera'}">
       ${indent}${selectMode ? '' : dragHandleSvg}${cbHtml}
       <span class="bom-item-icon">${icon}</span>
       <span class="bom-item-name-wrap">
-        <span class="bom-item-name">${escHtml(cam.name)}</span>
+        <span class="bom-item-name">${escHtml(cam.name)}${unplacedBadge}</span>
         <span class="bom-item-model">${escHtml(cam.model || 'Generic')}</span>
       </span>
       ${tagsHtml}
       <span class="bom-item-price">$${cam.price.toLocaleString()}</span>
     </div>
   </div>${camAddonsHtml}`;
+}
+
+function placeUnplacedCamera(id) {
+  const cam = state.cameras.find(c => c.id === id);
+  if (!cam || !cam.unplaced) { if (cam) selectCamera(id); return; }
+  if (state.viewMode === 'list') setViewMode('plan');
+  // Collect all unplaced cameras of the same model so user can stamp them in one flow
+  const sameModel = state.cameras.filter(c => c.unplaced && c.typeId === cam.typeId);
+  const ids = [cam.id, ...sameModel.filter(c => c.id !== cam.id).map(c => c.id)];
+  startStampMode('camera', cam.typeId, ids);
+}
+function placeUnplacedCore(id) {
+  const core = state.cores.find(c => c.id === id);
+  if (!core || !core.unplaced) { if (core) selectCore(id); return; }
+  if (state.viewMode === 'list') setViewMode('plan');
+  const sameModel = state.cores.filter(c => c.unplaced && c.typeId === core.typeId);
+  const ids = [core.id, ...sameModel.filter(c => c.id !== core.id).map(c => c.id)];
+  startStampMode('core', core.typeId, ids);
 }
 
 function renderBomAddonItem(addon, doubleIndent) {
@@ -3720,7 +3853,7 @@ function renderBOMPane() {
             <span onclick="toggleBomGroup('${core.id}',event)">${chevronSvg}</span>
             <span class="bom-group-icon">${BOM_CORE_ICON}</span>
             <span class="bom-group-name-wrap">
-              <span class="bom-group-name" onclick="selectCore(${core.id});event.stopPropagation()" title="View core details">${escHtml(core.name)}</span>
+              <span class="bom-group-name" onclick="${core.unplaced ? 'placeUnplacedCore('+core.id+');event.stopPropagation()' : 'selectCore('+core.id+');event.stopPropagation()'}" title="${core.unplaced ? 'Click to place on map' : 'View core details'}">${escHtml(core.name)}${core.unplaced ? '<span class="unplaced-tag" onclick="placeUnplacedCore('+core.id+');event.stopPropagation()" title="Click to place on map"><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z\'/><circle cx=\'12\' cy=\'10\' r=\'3\'/></svg>Unplaced</span>' : ''}</span>
               <span class="bom-group-type">${escHtml(core.type)}</span>
               <span class="bom-group-count-badge">${coreCamsFilt.length}</span>
             </span>
@@ -3935,10 +4068,12 @@ function renderBOMPane() {
   const showPaymentActive = !_bomScope.paymentUnpressed && activePayment;
   const showDurationActive = !_bomScope.durationUnpressed && activeDuration;
 
-  // Render View Options into the BOM header row
+  // Render View Options + Auto-assign into the BOM header row
   const bomHeaderActions = document.getElementById('bomHeaderActions');
+  const autoAssignBtnHtml = (cams.length > 0) ? `<button class="bom-auto-assign-btn" onclick="autoAssignCores()" title="Auto-assign unassigned cameras to cores (creates new cores as needed)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Auto-assign cores</button>` : '';
   if (bomHeaderActions) {
     bomHeaderActions.innerHTML = (cams.length + cores.length > 0) ? `
+      ${autoAssignBtnHtml}
       <div class="bom-view-opts-wrap">
         <button class="bom-bulk-btn ${_bomViewOptions.open ? 'active' : ''}" onclick="toggleBomViewOpts(event)">
           View options
@@ -3954,7 +4089,7 @@ function renderBOMPane() {
               <label class="bom-vo-check"><input type="checkbox" class="bom-cb" ${_bomViewOptions.devices.cores ? 'checked' : ''} onchange="bomVoToggleDevice('cores')"> Cores</label>
             </div>
           </div>
-          <div>
+          <div id="bomVoGroupByBlock">
             <div class="bom-vo-label">Group by</div>
             <div class="bom-quick-switch" style="width:100%">
               <button class="bom-quick-switch-btn ${_bomViewOptions.groupBy === 'cores' ? 'active' : ''}" onclick="bomVoGroupBy('cores')" style="flex:1;text-align:center">Cores</button>
@@ -4412,7 +4547,18 @@ function openModelPicker(editCamId) {
   mpState.selectedModelId = 'generic-cam';
   placeBtn.style.opacity = '1';
   placeBtn.style.pointerEvents = 'auto';
-  placeBtn.textContent = mpState.editCamId ? 'Select Model' : 'Place Camera';
+  placeBtn.textContent = mpState.editCamId ? 'Select Model' : 'Place on map';
+  // Quantity + Add-to-list visibility (hidden in edit mode)
+  const qtyRow = document.getElementById('mpQtyRow');
+  const addListBtn = document.getElementById('mpAddListBtn');
+  const qtyInput = document.getElementById('mpQtyInput');
+  if (qtyInput) qtyInput.value = 1;
+  if (qtyRow) qtyRow.style.display = mpState.editCamId ? 'none' : 'flex';
+  if (addListBtn) {
+    addListBtn.style.display = mpState.editCamId ? 'none' : '';
+    addListBtn.style.opacity = '1';
+    addListBtn.style.pointerEvents = 'auto';
+  }
   renderMpFfChips();
   renderMpBrands();
   renderMpModels();
@@ -4641,7 +4787,52 @@ function selectMpModel(modelId) {
   const btn = document.getElementById('mpPlaceBtn');
   btn.style.opacity = '1';
   btn.style.pointerEvents = 'auto';
-  btn.textContent = mpState.editCamId ? 'Select Model' : 'Place Camera';
+  btn.textContent = mpState.editCamId ? 'Select Model' : 'Place on map';
+  const addBtn = document.getElementById('mpAddListBtn');
+  if (addBtn) {
+    const editing = !!mpState.editCamId;
+    addBtn.style.opacity = editing ? '0.4' : '1';
+    addBtn.style.pointerEvents = editing ? 'none' : 'auto';
+  }
+}
+
+function mpQtyStep(delta) {
+  const inp = document.getElementById('mpQtyInput');
+  if (!inp) return;
+  let v = parseInt(inp.value, 10) || 1;
+  v = Math.max(1, Math.min(99, v + delta));
+  inp.value = v;
+}
+function mpQtyInputChange() {
+  const inp = document.getElementById('mpQtyInput');
+  if (!inp) return;
+  let v = parseInt(inp.value, 10) || 1;
+  v = Math.max(1, Math.min(99, v));
+  inp.value = v;
+}
+function mpGetQty() {
+  const inp = document.getElementById('mpQtyInput');
+  if (!inp) return 1;
+  return Math.max(1, Math.min(99, parseInt(inp.value, 10) || 1));
+}
+
+function addFromPickerToList() {
+  if (!mpState.selectedModelId || mpState.editCamId) return;
+  const modelId = mpState.selectedModelId;
+  const qty = mpGetQty();
+  closeModelPicker();
+  const createdIds = [];
+  for (let i = 0; i < qty; i++) {
+    const cam = addCamera(modelId, 0, 0, true, { unplaced: true });
+    if (cam) createdIds.push(cam.id);
+  }
+  selectCamera(null);
+  renderBOMPane();
+  updateUI();
+  // Banner confirmation
+  const def = CAMERA_DB.find(m => m.id === modelId);
+  const label = def ? (def.brand ? def.brand + ' ' + def.name : def.name) : 'camera';
+  showAutoAssignBanner('Added ' + qty + ' × ' + label + ' to list (unplaced).', null);
 }
 
 function setMpFf(ff) {
@@ -4736,6 +4927,19 @@ function placeFromPicker() {
   }
 
   // Place mode
+  const qty = mpGetQty();
+  if (qty > 1) {
+    // Create N unplaced cameras and enter stamp mode for all of them
+    const ids = [];
+    for (let i = 0; i < qty; i++) {
+      const cam = addCamera(modelId, 0, 0, true, { unplaced: true });
+      if (cam) ids.push(cam.id);
+    }
+    renderBOMPane();
+    updateUI();
+    startStampMode('camera', modelId, ids);
+    return;
+  }
   state.dragType = modelId;
   state.activeModel = null;
   setTool('camera');
@@ -4822,6 +5026,30 @@ function setAddonScope(scope) {
   const placeBtn = document.getElementById('addonPlaceBtn');
   placeBtn.style.opacity = '0.4';
   placeBtn.style.pointerEvents = 'none';
+  // Quantity row — only for per-plan scope
+  const qtyRow = document.getElementById('addonQtyRow');
+  const qtyInput = document.getElementById('addonQtyInput');
+  if (qtyInput) qtyInput.value = 1;
+  if (qtyRow) qtyRow.style.display = scope === 'plan' ? 'flex' : 'none';
+}
+
+function apQtyStep(delta) {
+  const inp = document.getElementById('addonQtyInput');
+  if (!inp) return;
+  let v = parseInt(inp.value, 10) || 1;
+  v = Math.max(1, Math.min(99, v + delta));
+  inp.value = v;
+}
+function apQtyInputChange() {
+  const inp = document.getElementById('addonQtyInput');
+  if (!inp) return;
+  let v = parseInt(inp.value, 10) || 1;
+  v = Math.max(1, Math.min(99, v));
+  inp.value = v;
+}
+function apGetQty() {
+  const inp = document.getElementById('addonQtyInput');
+  return inp ? Math.max(1, Math.min(99, parseInt(inp.value, 10) || 1)) : 1;
 }
 
 function openAddonPicker() {
@@ -5008,6 +5236,7 @@ function placeAddon() {
   if (def.fields.includes('payment')) baseOpts.payment = document.getElementById('addonPaymentSelect').value;
   if (def.fields.includes('duration')) baseOpts.duration = +document.getElementById('addonDurationSelect').value;
   const fromBom = addonState.bomBulk;
+  const qty = def.scope === 'plan' ? apGetQty() : 1;
   closeAddonPicker();
   let lastAddon = null;
   if (def.fields.includes('camera')) {
@@ -5015,10 +5244,12 @@ function placeAddon() {
       lastAddon = addAddon(type, { ...baseOpts, cameraId: camId });
     });
   } else {
-    lastAddon = addAddon(type, baseOpts);
+    for (let i = 0; i < qty; i++) {
+      lastAddon = addAddon(type, baseOpts);
+    }
   }
-  if (lastAddon && !fromBom) selectAddon(lastAddon.id);
-  if (fromBom) renderBOMPane();
+  if (lastAddon && !fromBom && qty === 1) selectAddon(lastAddon.id);
+  if (fromBom || qty > 1) renderBOMPane();
 }
 
 function placeAddonForCamera() {
@@ -5278,15 +5509,48 @@ function deleteAddon(id) {
 
 function openCoreTypePicker() {
   document.querySelectorAll('#coreChips .core-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+  const qty = document.getElementById('cpQtyInput'); if (qty) qty.value = 1;
   document.getElementById('corePickerOverlay').classList.add('show');
 }
 function closeCoreTypePicker() {
   document.getElementById('corePickerOverlay').classList.remove('show');
 }
+function cpQtyStep(delta) {
+  const inp = document.getElementById('cpQtyInput');
+  if (!inp) return;
+  let v = parseInt(inp.value, 10) || 1;
+  v = Math.max(1, Math.min(99, v + delta));
+  inp.value = v;
+}
+function cpQtyInputChange() {
+  const inp = document.getElementById('cpQtyInput');
+  if (!inp) return;
+  let v = parseInt(inp.value, 10) || 1;
+  v = Math.max(1, Math.min(99, v));
+  inp.value = v;
+}
+function cpGetQty() {
+  const inp = document.getElementById('cpQtyInput');
+  return inp ? Math.max(1, Math.min(99, parseInt(inp.value, 10) || 1)) : 1;
+}
+
 function placeCore() {
   const active = document.querySelector('#coreChips .core-chip.active');
   const typeId = active ? active.dataset.val : 'core-10';
+  const qty = cpGetQty();
   closeCoreTypePicker();
+  if (qty > 1) {
+    // Create N unplaced cores, enter stamp mode
+    const ids = [];
+    for (let i = 0; i < qty; i++) {
+      const c = addCore(typeId, 0, 0, true, { unplaced: true });
+      if (c) ids.push(c.id);
+    }
+    renderBOMPane();
+    updateUI();
+    startStampMode('core', typeId, ids);
+    return;
+  }
   state.placingCoreType = typeId;
   setTool('place-core');
   // Show placement hint
@@ -5298,10 +5562,25 @@ function placeCore() {
   setTimeout(() => tip.remove(), 3000);
 }
 
-function addCore(typeId, x, y, skipNameInput) {
+function addCoreFromPickerToList() {
+  const active = document.querySelector('#coreChips .core-chip.active');
+  const typeId = active ? active.dataset.val : 'core-10';
+  const qty = cpGetQty();
+  closeCoreTypePicker();
+  for (let i = 0; i < qty; i++) {
+    addCore(typeId, 0, 0, true, { unplaced: true });
+  }
+  renderBOMPane();
+  updateUI();
+  const def = CORE_TYPES[typeId];
+  showAutoAssignBanner('Added ' + qty + ' × ' + def.name + ' to list (unplaced).', null);
+}
+
+function addCore(typeId, x, y, skipNameInput, opts) {
   const def = CORE_TYPES[typeId];
   if (!def) return;
   saveUndo();
+  const unplaced = !!(opts && opts.unplaced);
   const core = {
     id: state.nextCoreId++,
     typeId,
@@ -5314,18 +5593,22 @@ function addCore(typeId, x, y, skipNameInput) {
     payment: 'Upfront',
     duration: 1,
     cameraIds: [],
+    unplaced,
   };
   state.cores.push(core);
-  renderCoreOnCanvas(core);
-  selectCore(core.id);
+  if (!unplaced) {
+    renderCoreOnCanvas(core);
+    selectCore(core.id);
+    if (!skipNameInput) showCoreNameInput(core);
+  }
   updateUI();
-  if (!skipNameInput) showCoreNameInput(core);
   return core;
 }
 
 function renderCoreOnCanvas(core) {
   const existing = cameraLayer.findOne('#core-' + core.id);
   if (existing) existing.destroy();
+  if (core.unplaced) return;
 
   const group = new Konva.Group({ x: core.x, y: core.y, id: 'core-' + core.id, draggable: true });
 
@@ -6178,7 +6461,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const bcSite = document.getElementById('bc-site');
   const bcLocPlan = document.getElementById('bc-loc-plan');
   if (bcSite) { bcSite.href = `site-planner-location.html?siteId=${siteId}`; bcSite.textContent = 'Project: ' + (bcSiteNames[siteId] || 'Project'); }
-  if (bcLocPlan) { bcLocPlan.textContent = 'Location: ' + (bcLocNames[locationId] || 'Location') + ', Sublocation: ' + (bcPlanNames[planId] || 'Plan'); }
+  if (bcLocPlan) { bcLocPlan.textContent = 'Location: ' + (bcLocNames[locationId] || 'Location') + ', Plan: ' + (bcPlanNames[planId] || 'Plan'); }
 
   /* Always default to Floor plan & Map */
   setMapMode('both');
@@ -6241,7 +6524,228 @@ function deletePlan() {
   var locationId = params.get('locationId') || '1';
   window.location.href = 'site-planner-location.html?siteId=' + siteId + '&locationId=' + locationId;
 }
+
+function duplicatePlan() {
+  alert('Plan duplicated (placeholder).');
+}
+
+/* ── Plan / List view mode ── */
+state.viewMode = 'plan';
+function setViewMode(mode) {
+  state.viewMode = mode;
+  document.body.classList.toggle('list-view', mode === 'list');
+  const planBtn = document.getElementById('vmPlanBtn');
+  const listBtn = document.getElementById('vmListBtn');
+  if (planBtn && listBtn) {
+    planBtn.classList.toggle('active', mode === 'plan');
+    listBtn.classList.toggle('active', mode === 'list');
+  }
+  if (mode === 'list') {
+    // Close any basemap or wall overlay, cancel stamp
+    const bmp = document.getElementById('basemapPanel'); if (bmp) bmp.classList.remove('show');
+    cancelStampMode();
+    // Force BOM pane visible
+    _activeTab = 'bom';
+    document.getElementById('bomPane').style.display = '';
+    document.getElementById('propsPane').style.display = 'none';
+    const bomHdr = document.getElementById('rpBomHeader'); if (bomHdr) bomHdr.style.display = 'flex';
+    const camHdr = document.getElementById('rpCamHeader'); if (camHdr) camHdr.style.display = 'none';
+    // Deselect any selected camera/core to avoid stale Properties state
+    if (typeof selectCamera === 'function') selectCamera(null);
+    if (typeof deselectCores === 'function') deselectCores();
+    // Uncollapse right panel in case it was collapsed before entering list view
+    document.querySelector('.properties').classList.remove('collapsed');
+    renderBOMPane();
+  } else {
+    // Resize Konva stage in case container size changed
+    if (typeof stage !== 'undefined' && stage) {
+      const container = document.getElementById('konva-container');
+      if (container) { stage.width(container.offsetWidth); stage.height(container.offsetHeight); stage.draw(); }
+    }
+    if (typeof map !== 'undefined' && map && map.invalidateSize) { setTimeout(() => map.invalidateSize(), 50); }
+    renderBOMPane();
+  }
+}
+
+/* ── Stamp-to-place mode (unplaced device → click canvas to place) ── */
+state.stamp = null;  // { kind:'camera'|'core', typeId, remaining, ids: [unplacedId...] }
+
+function startStampMode(kind, typeId, ids) {
+  if (state.viewMode === 'list') setViewMode('plan');
+  state.stamp = { kind, typeId, remaining: ids.length, ids: ids.slice() };
+  const ca = document.getElementById('canvasArea'); if (ca) ca.classList.add('stamp-mode');
+  const hint = document.getElementById('stampHint');
+  const labelText = kind === 'camera' ? 'camera' : 'core';
+  if (hint) {
+    hint.innerHTML = 'Click canvas to place <span class="stamp-count" id="stampCount">' + ids.length + '</span> ' + labelText + (ids.length > 1 ? 's' : '') + ' <button onclick="cancelStampMode()">Done (Esc)</button>';
+    hint.classList.add('show');
+  }
+}
+function cancelStampMode() {
+  state.stamp = null;
+  const ca = document.getElementById('canvasArea'); if (ca) ca.classList.remove('stamp-mode');
+  const hint = document.getElementById('stampHint'); if (hint) hint.classList.remove('show');
+}
+function stampAt(x, y) {
+  if (!state.stamp || state.stamp.remaining <= 0) { cancelStampMode(); return; }
+  const id = state.stamp.ids.shift();
+  if (state.stamp.kind === 'camera') {
+    const cam = state.cameras.find(c => c.id === id);
+    if (cam) { cam.unplaced = false; cam.x = x; cam.y = y; renderCamera(cam); drawFov(cam); }
+  } else {
+    const core = state.cores.find(c => c.id === id);
+    if (core) { core.unplaced = false; core.x = x; core.y = y; renderCoreOnCanvas(core); }
+  }
+  state.stamp.remaining--;
+  const cnt = document.getElementById('stampCount'); if (cnt) cnt.textContent = state.stamp.remaining;
+  updateUI();
+  if (state.stamp.remaining <= 0) cancelStampMode();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && state.stamp) { cancelStampMode(); e.preventDefault(); }
+});
+
+/* ── Auto-assign cores ── */
+state.autoAssignUndo = null;
+let _autoAssignBannerTimer = null;
+
+function autoAssignCores() {
+  const cams = state.cameras;
+  const cores = state.cores;
+  // Unassigned cameras (not yet in any core.cameraIds)
+  const assignedSet = new Set();
+  cores.forEach(c => (c.cameraIds || []).forEach(id => assignedSet.add(id)));
+  const unassigned = cams.filter(c => !assignedSet.has(c.id));
+  if (unassigned.length === 0) {
+    showAutoAssignBanner('All cameras are already assigned to cores.', null);
+    return;
+  }
+
+  saveUndo();
+  // Snapshot for undo
+  const undoSnapshot = {
+    cores: JSON.parse(JSON.stringify(cores.map(c => ({ id: c.id, cameraIds: [...(c.cameraIds || [])] })))),
+    newCoreIds: [],
+    affectedCamIds: unassigned.map(c => c.id),
+  };
+
+  // Remaining capacity per existing core
+  const capMap = new Map();
+  cores.forEach(c => {
+    const used = (c.cameraIds || []).length;
+    capMap.set(c.id, Math.max(0, (c.channels || 0) - used));
+  });
+
+  // First fill existing cores (largest capacity first)
+  let remaining = unassigned.slice();
+  const fillOrder = cores.slice().sort((a, b) => (capMap.get(b.id) || 0) - (capMap.get(a.id) || 0));
+  for (const core of fillOrder) {
+    let free = capMap.get(core.id) || 0;
+    while (free > 0 && remaining.length > 0) {
+      const cam = remaining.shift();
+      core.cameraIds = core.cameraIds || [];
+      core.cameraIds.push(cam.id);
+      free--;
+    }
+    capMap.set(core.id, free);
+  }
+
+  // Create new cores for leftovers. Pack greedily by channel size (largest first that fits).
+  const coreOrder = Object.values(CORE_TYPES).sort((a, b) => b.channels - a.channels);
+  const createdByType = {};
+  while (remaining.length > 0) {
+    const needed = remaining.length;
+    // Choose smallest core type whose channel count >= needed, else largest
+    const fit = coreOrder.slice().reverse().find(t => t.channels >= needed) || coreOrder[0];
+    const newCore = addCore(fit.id, 60, 60, true, { unplaced: true });
+    if (!newCore) break;
+    const take = Math.min(fit.channels, remaining.length);
+    newCore.cameraIds = remaining.splice(0, take).map(c => c.id);
+    undoSnapshot.newCoreIds.push(newCore.id);
+    createdByType[fit.name] = (createdByType[fit.name] || 0) + 1;
+  }
+
+  state.autoAssignUndo = undoSnapshot;
+
+  // Build message
+  const createdParts = Object.entries(createdByType).map(([name, n]) => n + '× ' + name);
+  const assignedCount = undoSnapshot.affectedCamIds.length;
+  let msg;
+  if (createdParts.length > 0) {
+    msg = 'Created ' + createdParts.join(', ') + ' and assigned ' + assignedCount + ' camera' + (assignedCount === 1 ? '' : 's') + '.';
+  } else {
+    msg = 'Assigned ' + assignedCount + ' camera' + (assignedCount === 1 ? '' : 's') + ' to existing cores.';
+  }
+  showAutoAssignBanner(msg, undoSnapshot);
+
+  renderBOMPane();
+  updateUI();
+
+  // Flash affected rows
+  requestAnimationFrame(() => {
+    const pane = document.getElementById('bomPane');
+    if (!pane) return;
+    undoSnapshot.affectedCamIds.forEach(id => {
+      const row = pane.querySelector('[data-cam-row="' + id + '"]');
+      if (row) { row.classList.remove('row-flash'); void row.offsetWidth; row.classList.add('row-flash'); }
+    });
+    undoSnapshot.newCoreIds.forEach(id => {
+      const grp = pane.querySelector('[data-bom-group="' + id + '"]');
+      if (grp) { grp.classList.remove('row-flash'); void grp.offsetWidth; grp.classList.add('row-flash'); }
+    });
+  });
+}
+
+function showAutoAssignBanner(msg, undoSnapshot) {
+  const banner = document.getElementById('autoAssignBanner');
+  if (!banner) return;
+  const msgEl = document.getElementById('aabMsg');
+  const undoBtn = document.getElementById('aabUndo');
+  if (msgEl) msgEl.textContent = msg;
+  if (undoBtn) undoBtn.style.display = undoSnapshot ? '' : 'none';
+  banner.classList.add('show');
+  if (_autoAssignBannerTimer) { clearTimeout(_autoAssignBannerTimer); }
+  _autoAssignBannerTimer = setTimeout(() => { banner.classList.remove('show'); }, 5000);
+}
+
+function undoAutoAssign() {
+  const snap = state.autoAssignUndo;
+  if (!snap) return;
+  // Remove newly created cores
+  snap.newCoreIds.forEach(id => {
+    const idx = state.cores.findIndex(c => c.id === id);
+    if (idx >= 0) state.cores.splice(idx, 1);
+  });
+  // Restore cameraIds on existing cores
+  snap.cores.forEach(prev => {
+    const core = state.cores.find(c => c.id === prev.id);
+    if (core) core.cameraIds = [...prev.cameraIds];
+  });
+  state.autoAssignUndo = null;
+  document.getElementById('autoAssignBanner').classList.remove('show');
+  if (_autoAssignBannerTimer) clearTimeout(_autoAssignBannerTimer);
+  renderBOMPane();
+  updateUI();
+}
+function closeAutoAssignBanner() {
+  document.getElementById('autoAssignBanner').classList.remove('show');
+  if (_autoAssignBannerTimer) clearTimeout(_autoAssignBannerTimer);
+}
 </script>
+
+<!-- Auto-assign undo banner -->
+<div class="auto-assign-banner" id="autoAssignBanner">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span class="aab-msg" id="aabMsg"></span>
+  <button class="aab-undo" id="aabUndo" onclick="undoAutoAssign()">Undo</button>
+  <button class="aab-close" onclick="closeAutoAssignBanner()" title="Dismiss">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+</div>
+
+<!-- Stamp-to-place hint -->
+<div class="stamp-hint" id="stampHint"></div>
 
 </body>
 </html>
