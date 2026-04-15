@@ -56,11 +56,17 @@ body.list-view .props-collapse-tab { display: none !important; }
 body.list-view .rp-tabs { display: none !important; }
 body.list-view #propsPane { display: none !important; }
 body.list-view #bomPane { display: block !important; }
+body.list-view .bom-delete-btn { margin-left: 0 !important; }
 
-/* Unplaced tag */
-.unplaced-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; font-size: 10px; font-weight: 500; color: #667085; background: #f2f4f7; border: 1px solid #eaecf0; border-radius: 10px; cursor: pointer; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0; }
-.unplaced-tag:hover { background: #eaecf0; color: #344054; }
+/* Unplaced tag (legacy — used by cores) */
+.unplaced-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; font-size: 10px; font-weight: 500; color: #667085; background: #f2f4f7; border: 1px solid #eaecf0; border-radius: 10px; cursor: pointer; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0; transition: background 0.12s, color 0.12s, border-color 0.12s; }
+.unplaced-tag:hover { background: #ede9fe; color: #7c3aed; border-color: #ddd6fe; }
 .unplaced-tag svg { width: 10px; height: 10px; }
+
+/* Place-on-map action button (replaces Unplaced tag for cameras in BOM list) */
+.place-btn { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; font-size: 11px; font-weight: 500; color: #7c3aed; background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 6px; cursor: pointer; margin-left: 6px; white-space: nowrap; flex-shrink: 0; font-family: inherit; transition: background 0.12s, border-color 0.12s; }
+.place-btn:hover { background: #ede9fe; border-color: #c4b5fd; }
+.place-btn svg { width: 11px; height: 11px; }
 
 /* Auto-assign button + undo banner */
 .bom-auto-assign-btn { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: #344054; background: #fff; border: 1px solid #d0d5dd; border-radius: 6px; cursor: pointer; font-family: inherit; white-space: nowrap; }
@@ -1194,7 +1200,7 @@ body.list-view #bomPane { display: block !important; }
     <div class="mp-ftr-actions">
       <button class="btn" onclick="closeModelPicker()">Cancel</button>
       <button class="btn" id="mpAddListBtn" onclick="addFromPickerToList()" style="opacity:0.4;pointer-events:none">Add to list</button>
-      <button class="btn btn-primary" id="mpPlaceBtn" onclick="placeFromPicker()" style="opacity:0.4;pointer-events:none">Place on map</button>
+      <button class="btn btn-primary" id="mpPlaceBtn" onclick="placeFromPicker()" style="opacity:0.4;pointer-events:none">Place on plan</button>
     </div>
   </div>
 </div>
@@ -1229,8 +1235,8 @@ body.list-view #bomPane { display: block !important; }
     </div>
     <div class="core-picker-footer">
       <button class="btn" onclick="closeCoreTypePicker()">Cancel</button>
-      <button class="btn" onclick="addCoreFromPickerToList()">Add to list</button>
-      <button class="btn btn-primary" onclick="placeCore()">Place on map</button>
+      <button class="btn" id="cpAddListBtn" onclick="addCoreFromPickerToList()">Add to list</button>
+      <button class="btn btn-primary" id="cpPlaceBtn" onclick="placeCore()">Place on plan</button>
     </div>
   </div>
 </div>
@@ -2845,6 +2851,10 @@ function renderProperties(id) {
           </div>
         </div>
       </div>
+      <div class="prop-row">
+        <span class="prop-label">Placement</span>
+        <div class="prop-ctrl">${_placementBtnHtml('camera', id, !!cam.unplaced)}</div>
+      </div>
     </div>
     <div class="props-section">
       <div class="props-section-title">Camera Config</div>
@@ -3691,10 +3701,10 @@ function renderBomCamItem(cam, coreId, idx) {
     : [];
   const camAddonsHtml = camAddons.map(a => renderBomAddonItem(a, true)).join('');
 
-  const unplacedBadge = cam.unplaced ? `<span class="unplaced-tag" onclick="placeUnplacedCamera(${cam.id});event.stopPropagation()" title="Click to place on map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Unplaced</span>` : '';
+  const unplacedBadge = cam.unplaced ? `<button type="button" class="place-btn" onclick="placeUnplacedCamera(${cam.id});event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Place on plan</button>` : '';
 
   return `${dropZone}<div class="bom-item" data-cam-row="${cam.id}" ${dragAttr}>
-    <div class="bom-item-primary" onclick="${cam.unplaced ? 'placeUnplacedCamera('+cam.id+')' : 'selectCamera('+cam.id+')'}" title="${cam.unplaced ? 'Click to place on map' : 'Select camera'}">
+    <div class="bom-item-primary" onclick="selectCamera(${cam.id})" title="Select camera">
       ${indent}${selectMode ? '' : dragHandleSvg}${cbHtml}
       <span class="bom-item-icon">${icon}</span>
       <span class="bom-item-name-wrap">
@@ -4108,9 +4118,36 @@ function renderBOMPane() {
       </div>` : '';
   }
 
+  const isListMode = state.viewMode === 'list';
+  const listAddBtnsHtml = isListMode ? `
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <button class="toolbar-add-btn toolbar-add-device" onclick="toggleBomDeviceDropdown(event)" style="height:26px;font-size:11px">
+            + Device
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            <div class="device-dropdown" id="bomDeviceDropdown">
+              <div class="device-dropdown-item" onclick="event.stopPropagation();closeBomDeviceDropdown();openCoreTypePicker()">Core</div>
+              <div class="device-dropdown-item" onclick="event.stopPropagation();closeBomDeviceDropdown();openAddonPicker()">Add-On</div>
+            </div>
+          </button>
+          <button class="toolbar-add-btn toolbar-add-cam" onclick="openModelPicker()" style="height:26px;font-size:11px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            + Camera
+          </button>
+        </div>` : '';
+
+  const rowStyle = isListMode
+    ? 'justify-content:space-between;padding:6px 16px;flex-wrap:nowrap'
+    : 'justify-content:flex-start;padding:6px 16px';
+  const rightGroupOpen = isListMode
+    ? '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;min-width:0;margin-left:24px">'
+    : '';
+  const rightGroupClose = isListMode ? '</div>' : '';
+
   const toolbarHtml = (cams.length + cores.length > 0) ? `
     <div class="bom-toolbar" style="flex-direction:column;gap:0;padding:0">
-      <div class="bom-toolbar-row" style="justify-content:flex-start;padding:6px 16px">
+      <div class="bom-toolbar-row" style="${rowStyle}">
+        ${listAddBtnsHtml}
+        ${rightGroupOpen}
         <span style="font-size:11px;font-weight:500;color:#98a2b3;white-space:nowrap">Items:</span>
         <div class="bom-quick-switch">
           <button class="bom-quick-switch-btn ${!selectMode ? 'active' : ''}" onclick="bomSetScope('all')" style="text-align:center">All</button>
@@ -4142,6 +4179,7 @@ function renderBOMPane() {
         </select>
         <button class="bom-addon-btn" onclick="bomAddAddonsToCameras()" title="Add add-ons to ${selectMode ? 'selected' : 'all'} cameras">+ Add-ons</button>
         <button class="bom-delete-btn" onclick="bomDeleteItems()" title="Delete ${selectMode ? 'selected' : 'all'} items"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>Delete</button>
+        ${rightGroupClose}
       </div>
     </div>` : '';
 
@@ -4395,6 +4433,7 @@ function renderCamLabel(cam) {
   if (!labelLayer) return;
   const existing = labelLayer.findOne('#lbl-' + cam.id);
   if (existing) existing.destroy();
+  if (cam.unplaced) { labelLayer.draw(); return; }
   if (state.selectedId !== cam.id) { labelLayer.draw(); return; }
 
   const lbl = new Konva.Label({ x: cam.x, y: cam.y + 24, id: 'lbl-' + cam.id, listening: false });
@@ -4433,6 +4472,48 @@ function deleteCamera(id) {
   cameraLayer.draw(); fovLayer.draw();
   selectCamera(null);
   updateUI();
+}
+
+function _placementBtnHtml(kind, id, isUnplaced) {
+  const pinIcon = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+  const pinOffIcon = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/><line x1="4" y1="4" x2="20" y2="20"/></svg>';
+  if (isUnplaced) {
+    const handler = kind === 'camera' ? 'placeUnplacedCamera' : 'placeUnplacedCore';
+    return '<button type="button" onclick="' + handler + '(' + id + ')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:12px;font-weight:500;color:#fff;background:#7c3aed;border:1px solid #7c3aed;border-radius:6px;cursor:pointer;font-family:inherit" onmouseover="this.style.background=\'#6d28d9\';this.style.borderColor=\'#6d28d9\'" onmouseout="this.style.background=\'#7c3aed\';this.style.borderColor=\'#7c3aed\'">' + pinIcon + 'Place on plan</button>';
+  }
+  const handler = kind === 'camera' ? 'unplaceCamera' : 'unplaceCore';
+  return '<button type="button" onclick="' + handler + '(' + id + ')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:12px;font-weight:500;color:#344054;background:#fff;border:1px solid #d0d5dd;border-radius:6px;cursor:pointer;font-family:inherit" onmouseover="this.style.background=\'#f9fafb\';this.style.borderColor=\'#98a2b3\'" onmouseout="this.style.background=\'#fff\';this.style.borderColor=\'#d0d5dd\'">' + pinOffIcon + 'Unplace</button>';
+}
+
+function unplaceCamera(id) {
+  const cam = state.cameras.find(c => c.id === id);
+  if (!cam || cam.unplaced) return;
+  saveUndo();
+  cam.unplaced = true;
+  cam.x = 0; cam.y = 0;
+  const g = cameraLayer.findOne('#cam-' + id);
+  if (g) g.destroy();
+  const f = fovLayer.findOne('#fov-' + id);
+  if (f) f.destroy();
+  cameraLayer.draw(); fovLayer.draw();
+  updateUI();
+  renderProperties(id);
+}
+
+function unplaceCore(id) {
+  const core = state.cores.find(c => c.id === id);
+  if (!core || core.unplaced) return;
+  saveUndo();
+  core.unplaced = true;
+  core.x = 0; core.y = 0;
+  const g = cameraLayer.findOne('#core-' + id);
+  if (g) g.destroy();
+  const lbl = labelLayer ? labelLayer.findOne('#core-lbl-' + id) : null;
+  if (lbl) lbl.destroy();
+  cameraLayer.draw();
+  if (labelLayer) labelLayer.draw();
+  updateUI();
+  renderCoreProperties(id);
 }
 function duplicateCamera(id) {
   const cam = state.cameras.find(c => c.id === id);
@@ -4547,7 +4628,7 @@ function openModelPicker(editCamId) {
   mpState.selectedModelId = 'generic-cam';
   placeBtn.style.opacity = '1';
   placeBtn.style.pointerEvents = 'auto';
-  placeBtn.textContent = mpState.editCamId ? 'Select Model' : 'Place on map';
+  placeBtn.textContent = mpState.editCamId ? 'Select Model' : 'Place on plan';
   // Quantity + Add-to-list visibility (hidden in edit mode)
   const qtyRow = document.getElementById('mpQtyRow');
   const addListBtn = document.getElementById('mpAddListBtn');
@@ -4559,6 +4640,10 @@ function openModelPicker(editCamId) {
     addListBtn.style.opacity = '1';
     addListBtn.style.pointerEvents = 'auto';
   }
+  // List view: hide "Place on plan", promote "Add to list" to primary
+  const isListMode = state.viewMode === 'list' && !mpState.editCamId;
+  placeBtn.style.display = isListMode ? 'none' : '';
+  if (addListBtn) addListBtn.classList.toggle('btn-primary', isListMode);
   renderMpFfChips();
   renderMpBrands();
   renderMpModels();
@@ -4787,7 +4872,7 @@ function selectMpModel(modelId) {
   const btn = document.getElementById('mpPlaceBtn');
   btn.style.opacity = '1';
   btn.style.pointerEvents = 'auto';
-  btn.textContent = mpState.editCamId ? 'Select Model' : 'Place on map';
+  btn.textContent = mpState.editCamId ? 'Select Model' : 'Place on plan';
   const addBtn = document.getElementById('mpAddListBtn');
   if (addBtn) {
     const editing = !!mpState.editCamId;
@@ -5001,6 +5086,19 @@ function toggleDeviceDropdown(e) {
 }
 function closeDeviceDropdown() {
   document.getElementById('deviceDropdown').classList.remove('show');
+}
+function toggleBomDeviceDropdown(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('bomDeviceDropdown');
+  if (!dd) return;
+  dd.classList.toggle('show');
+  if (dd.classList.contains('show')) {
+    setTimeout(() => document.addEventListener('click', closeBomDeviceDropdown, { once: true }), 0);
+  }
+}
+function closeBomDeviceDropdown() {
+  const dd = document.getElementById('bomDeviceDropdown');
+  if (dd) dd.classList.remove('show');
 }
 const addonState = { selectedCamIds: [], assignToCamId: null, scope: 'camera', bomBulk: false };
 
@@ -5510,6 +5608,12 @@ function deleteAddon(id) {
 function openCoreTypePicker() {
   document.querySelectorAll('#coreChips .core-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
   const qty = document.getElementById('cpQtyInput'); if (qty) qty.value = 1;
+  // List view: hide "Place on plan", promote "Add to list" to primary
+  const isListMode = state.viewMode === 'list';
+  const cpPlaceBtn = document.getElementById('cpPlaceBtn');
+  const cpAddListBtn = document.getElementById('cpAddListBtn');
+  if (cpPlaceBtn) cpPlaceBtn.style.display = isListMode ? 'none' : '';
+  if (cpAddListBtn) cpAddListBtn.classList.toggle('btn-primary', isListMode);
   document.getElementById('corePickerOverlay').classList.add('show');
 }
 function closeCoreTypePicker() {
@@ -5754,6 +5858,10 @@ function renderCoreProperties(id) {
           </div>
           ${durationInlineHtml}
         </div>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Placement</span>
+        <div class="prop-ctrl">${_placementBtnHtml('core', id, !!core.unplaced)}</div>
       </div>
     </div>
     <div class="props-section">
