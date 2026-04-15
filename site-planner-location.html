@@ -295,6 +295,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bom-delete-btn { padding: 6px 10px; font-size: 12px; font-weight: 500; color: #d92d20; border: 1px solid #fecaca; border-radius: 8px; background: #fff; font-family: inherit; cursor: pointer; outline: none; transition: all 0.15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
 .bom-delete-btn:hover { background: #fef3f2; border-color: #d92d20; }
 .bom-delete-btn svg { width: 14px; height: 14px; }
+.bom-auto-assign-btn { display: inline-flex; align-items: center; padding: 6px 12px; font-size: 12px; font-weight: 600; color: #344054; background: #fff; border: 1px solid #d0d5dd; border-radius: 6px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.bom-auto-assign-btn:hover { background: #f9fafb; border-color: #98a2b3; }
 
 /* ── All-Locations BOM: Table rows ── */
 .all-bom-loc { margin-bottom: 0; }
@@ -917,6 +919,25 @@ function allBomMatchesSearch(name, model) {
   return (name || '').toLowerCase().includes(q) || (model || '').toLowerCase().includes(q);
 }
 
+function locAutoAssignCores() {
+  const bomLocations = showPlan ? [planLocation] : (!showAllLocations ? [currentLocation] : siteLocations);
+  const allLocIds = bomLocations.map(l => l.id);
+  const planIds = showPlan ? [planId] : PLANS.filter(p => allLocIds.includes(p.locationId)).map(p => p.id);
+  let changed = 0;
+  planIds.forEach(pid => {
+    const planCores = CORES.filter(c => c.planId === pid);
+    if (!planCores.length) return;
+    PLAN_CAMERAS.filter(c => c.planId === pid && (c.coreIdx < 0 || c.coreIdx >= planCores.length)).forEach(cam => {
+      cam.coreIdx = 0;
+      changed++;
+    });
+  });
+  if (changed > 0) renderAllLocationsBom();
+  alert(changed > 0
+    ? 'Auto-assigned ' + changed + ' camera' + (changed === 1 ? '' : 's') + ' to cores.'
+    : 'No unassigned cameras to assign.');
+}
+
 function allBomSortItems(items, nameKey, priceKey) {
   const s = _allBomViewOptions.sort;
   if (s === 'az') return [...items].sort((a, b) => (a[nameKey] || '').localeCompare(b[nameKey] || ''));
@@ -1361,6 +1382,8 @@ function renderAllLocationsBom() {
   const payAct = _allBomScope.shownPayment;
   const durAct = _allBomScope.shownDuration;
   tbEl.innerHTML = '<div class="all-bom-toolbar-row" style="justify-content:flex-start;padding:8px 0">' +
+    '<button class="bom-auto-assign-btn" onclick="locAutoAssignCores()" title="Auto-assign unassigned cameras to cores">Auto-assign cores</button>' +
+    '<span style="width:1px;height:18px;background:#eaecf0;flex-shrink:0;margin:0 8px"></span>' +
     '<span style="font-size:11px;font-weight:500;color:#98a2b3;white-space:nowrap">Items:</span>' +
     '<div class="bom-quick-switch">' +
       '<button class="bom-quick-switch-btn' + (!selectMode ? ' active' : '') + '" onclick="allBomSetScope(\'all\')">All</button>' +
