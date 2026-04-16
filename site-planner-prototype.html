@@ -315,9 +315,18 @@ body.list-view #bomVoGroupByBlock { display: none !important; }
 .bom-line-qty { color: #98a2b3; font-size: 11px; white-space: nowrap; }
 .bom-line-unit { color: #667085; font-size: 11px; white-space: nowrap; }
 .bom-line-total { font-weight: 600; color: #344054; white-space: nowrap; margin-left: auto; }
-.bom-grand { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 2px solid #eaecf0; background: #fafafa; }
-.bom-grand-label { font-size: 12px; font-weight: 600; color: #344054; }
-.bom-grand-val { font-size: 18px; font-weight: 800; color: #7c3aed; }
+.bom-grand { background: #f9fafb; border-top: 1px solid #eaecf0; padding: 0 20px 16px; border-radius: 4px; }
+.bom-grand-row { display: flex; align-items: center; justify-content: space-between; height: 48px; }
+.bom-grand-label { font-size: 16px; font-weight: 600; color: #344054; }
+.bom-grand-val { font-size: 16px; font-weight: 600; color: #344054; font-variant-numeric: tabular-nums; }
+.bom-grand-details { display: flex; flex-direction: column; gap: 8px; }
+.bom-grand-detail-row { display: flex; align-items: flex-start; justify-content: space-between; font-size: 14px; color: #344054; }
+.bom-grand-detail-label { font-weight: 500; }
+.bom-grand-detail-vals { display: flex; gap: 8px; align-items: center; font-weight: 500; font-variant-numeric: tabular-nums; }
+.bom-grand-detail-old { color: #98a2b3; text-decoration: line-through; font-weight: 400; }
+.bom-grand-detail-sub { font-size: 13px; color: #667085; text-align: right; }
+.bom-grand-sep { height: 1px; background: #eaecf0; }
+.bom-grand-detail-row.regular { font-weight: 400; }
 /* ── What's Included marketing block ── */
 .bom-included { margin: 12px; padding: 14px 16px; background: #faf8ff; border: 1px solid #d8b4fe; border-radius: 10px; }
 .bom-included-headline { font-size: 12px; font-weight: 700; color: #344054; margin-bottom: 10px; }
@@ -4311,6 +4320,9 @@ function renderBOMPane() {
   const hwTotal = camTotal + coreTotal + addonTotal;
   const swTotal = cams.length * LICENSE_PRICE.Standard;
   const grandTotal = hwTotal + swTotal;
+  const annualCost = swTotal;
+  const annualCost1yr = cams.length > 0 ? Math.round(grandTotal / (cams[0].duration || 1)) : 0;
+  const costPerCamMonth = cams.length > 0 ? (grandTotal / cams.length / 12) : 0;
 
   const chevronSvg = '<svg class="bom-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
 
@@ -4704,8 +4716,27 @@ function renderBOMPane() {
     ${hardwareHtml}
     ${softwareHtml}
     <div class="bom-grand">
-      <span class="bom-grand-label">Grand Total</span>
-      <span class="bom-grand-val">$${grandTotal.toLocaleString()}</span>
+      <div class="bom-grand-row">
+        <span class="bom-grand-label">Grand total</span>
+        <span class="bom-grand-val">$${grandTotal.toLocaleString()}</span>
+      </div>
+      <div class="bom-grand-details">
+        <div>
+          <div class="bom-grand-detail-row">
+            <span class="bom-grand-detail-label">Annual cost</span>
+            <div class="bom-grand-detail-vals">
+              <span>$${annualCost.toLocaleString()}</span>
+              <span class="bom-grand-detail-old">$${annualCost1yr.toLocaleString()}</span>
+            </div>
+          </div>
+          <div class="bom-grand-detail-sub">Compared to 1 year contract</div>
+        </div>
+        <div class="bom-grand-sep"></div>
+        <div class="bom-grand-detail-row regular">
+          <span>Cost per camera per month</span>
+          <span>$${costPerCamMonth.toFixed(2)}</span>
+        </div>
+      </div>
     </div>
     <div class="bom-included">
       <div class="bom-included-headline">What's included</div>

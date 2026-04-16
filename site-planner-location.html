@@ -385,9 +385,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .all-bom-empty { padding: 24px; text-align: center; font-size: 14px; color: #98a2b3; }
 
 /* ── Grand Total ── */
-.all-bom-grand { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-top: 2px solid #eaecf0; margin-top: 16px; background: #f9fafb; border-radius: 8px; }
-.all-bom-grand-label { font-size: 15px; font-weight: 600; color: #101828; }
-.all-bom-grand-val { font-size: 24px; font-weight: 700; color: #7c3aed; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }
+.all-bom-grand { background: #f9fafb; border-top: 1px solid #eaecf0; padding: 0 20px 16px; border-radius: 4px; margin-top: 16px; }
+.all-bom-grand-row { display: flex; align-items: center; justify-content: space-between; height: 48px; }
+.all-bom-grand-label { font-size: 16px; font-weight: 600; color: #344054; }
+.all-bom-grand-val { font-size: 16px; font-weight: 600; color: #344054; font-variant-numeric: tabular-nums; }
+.all-bom-grand-details { display: flex; flex-direction: column; gap: 8px; }
+.all-bom-grand-detail-row { display: flex; align-items: flex-start; justify-content: space-between; font-size: 14px; color: #344054; }
+.all-bom-grand-detail-label { font-weight: 500; }
+.all-bom-grand-detail-vals { display: flex; gap: 8px; align-items: center; font-weight: 500; font-variant-numeric: tabular-nums; }
+.all-bom-grand-detail-old { color: #98a2b3; text-decoration: line-through; font-weight: 400; }
+.all-bom-grand-detail-sub { font-size: 13px; color: #667085; text-align: right; }
+.all-bom-grand-sep { height: 1px; background: #eaecf0; }
+.all-bom-grand-detail-row.regular { font-weight: 400; }
 
 /* ── Expand / Collapse All ── */
 .all-bom-expand-row { display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 4px 0 2px; }
@@ -1802,8 +1811,24 @@ function renderAllLocationsBom() {
   // Grand Total computation
   var grandTotal = showPlan ? baseTotal + allCams.length * LICENSE_PRICE : baseTotal;
 
-  gtEl.innerHTML = '<div class="all-bom-grand"><span class="all-bom-grand-label">Grand Total</span>' +
+  var annualCost = allCams.length * LICENSE_PRICE;
+  var annualCost1yr = allCams.length > 0 ? Math.round(grandTotal / (allCams[0].duration || 1)) : 0;
+  var costPerCamMonth = allCams.length > 0 ? (grandTotal / allCams.length / 12) : 0;
+
+  gtEl.innerHTML = '<div class="all-bom-grand">' +
+    '<div class="all-bom-grand-row"><span class="all-bom-grand-label">Grand total</span>' +
     '<span class="all-bom-grand-val">$' + grandTotal.toLocaleString() + '</span></div>' +
+    '<div class="all-bom-grand-details">' +
+      '<div>' +
+        '<div class="all-bom-grand-detail-row"><span class="all-bom-grand-detail-label">Annual cost</span>' +
+        '<div class="all-bom-grand-detail-vals"><span>$' + annualCost.toLocaleString() + '</span>' +
+        '<span class="all-bom-grand-detail-old">$' + annualCost1yr.toLocaleString() + '</span></div></div>' +
+        '<div class="all-bom-grand-detail-sub">Compared to 1 year contract</div>' +
+      '</div>' +
+      '<div class="all-bom-grand-sep"></div>' +
+      '<div class="all-bom-grand-detail-row regular"><span>Cost per camera per month</span>' +
+      '<span>$' + costPerCamMonth.toFixed(2) + '</span></div>' +
+    '</div></div>' +
     '<div style="text-align:right"><button class="' + linkCls + '" onclick="toggleAllBomIncluded()">What\'s included? ' + chevSvg + '</button></div>' +
     '<div class="' + inclCls + '"><div class="all-bom-included-grid">' +
       '<div class="all-bom-included-feat"><div class="all-bom-included-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 014 4c0 2-2 3-4 6-2-3-4-4-4-6a4 4 0 014-4z"/><path d="M6 20h12"/></svg></div><span class="all-bom-included-feat-label">Lumana AI engine</span></div>' +
